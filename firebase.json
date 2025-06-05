@@ -22,6 +22,7 @@
     }
   ],
   "hosting": {
+    "site": "medical-specialist-app-d3a46",
     "public": "public",
     "ignore": [
       "firebase.json",
