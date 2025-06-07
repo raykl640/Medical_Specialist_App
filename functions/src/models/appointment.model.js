@@ -1,32 +1,108 @@
-const mongoose = require('mongoose');
+const { collections, addTimestamps } = require('../config/database');
 
-const appointmentSchema = new mongoose.Schema({
-  patientId: { type: String, required: true }, // Firebase UID
-  specialistId: { type: mongoose.Schema.Types.ObjectId, ref: 'Specialist', required: true },
-  clinicId: { type: mongoose.Schema.Types.ObjectId, ref: 'Clinic', required: true },
-  date: { type: String, required: true }, // YYYY-MM-DD format
-  time: { type: String, required: true }, // HH:mm format
-  status: { 
-    type: String, 
-    enum: ['confirmed', 'cancelled', 'completed'], 
-    default: 'confirmed' 
-  },
-  reason: { type: String, required: true },
-  notes: String,
-  cancellationReason: String,
-  cancelledAt: Date,
-  createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now }
-});
+class Appointment {
+  static async create(data) {
+    const appointmentData = {
+      appointmentId: collections.appointments.doc().id,
+      patientId: data.patientId,
+      specialistId: data.specialistId,
+      clinicId: data.clinicId,
+      date: data.date,
+      time: data.time,
+      status: 'scheduled',
+      appointmentType: data.appointmentType || 'consultation',
+      reason: data.reason,
+      notes: data.notes || '',
+      duration: data.duration || 30
+    };
 
-appointmentSchema.pre('save', function(next) {
-  this.updatedAt = new Date();
-  next();
-});
+    // Check for conflicting appointments
+    const isAvailable = await this.checkAvailability(
+      appointmentData.specialistId,
+      appointmentData.date,
+      appointmentData.time
+    );
 
-// Index for querying appointments by specialist and date
-appointmentSchema.index({ specialistId: 1, date: 1, time: 1 });
-// Index for querying patient appointments
-appointmentSchema.index({ patientId: 1, date: -1 });
+    if (!isAvailable) {
+      throw new Error('Time slot is not available');
+    }
 
-module.exports = mongoose.model('Appointment', appointmentSchema);
+    const docRef = collections.appointments.doc(appointmentData.appointmentId);
+    await docRef.set(addTimestamps(appointmentData));
+    return { id: docRef.id, ...appointmentData };
+  }
+
+  static async findById(id) {
+    const doc = await collections.appointments.doc(id).get();
+    if (!doc.exists) return null;
+    return { id: doc.id, ...doc.data() };
+  }
+
+  static async findByPatient(patientId, options = {}) {
+    const { status, startDate } = options;
+    let query = collections.appointments
+      .where('patientId', '==', patientId)
+      .orderBy('date', 'desc');
+
+    if (status) {
+      query = query.where('status', '==', status);
+    }
+    if (startDate) {
+      query = query.where('date', '>=', startDate);
+    }
+
+    const snapshot = await query.get();
+    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  }
+
+  static async findBySpecialist(specialistId, date) {
+    const snapshot = await collections.appointments
+      .where('specialistId', '==', specialistId)
+      .where('date', '==', date)
+      .where('status', '==', 'scheduled')
+      .orderBy('time')
+      .get();
+
+    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  }
+
+  static async update(id, data) {
+    const updateData = addTimestamps(data, false);
+    await collections.appointments.doc(id).update(updateData);
+    return this.findById(id);
+  }
+
+  static async cancel(id, reason) {
+    const updateData = addTimestamps({
+      status: 'cancelled',
+      cancellationReason: reason,
+      cancelledAt: new Date().toISOString()
+    }, false);
+
+    await collections.appointments.doc(id).update(updateData);
+    return this.findById(id);
+  }
+
+  static async complete(id, notes) {
+    const updateData = addTimestamps({
+      status: 'completed',
+      notes: notes || ''
+    }, false);
+
+    await collections.appointments.doc(id).update(updateData);
+    return this.findById(id);
+  }
+
+  static async checkAvailability(specialistId, date, time) {
+    const snapshot = await collections.appointments
+      .where('specialistId', '==', specialistId)
+      .where('date', '==', date)
+      .where('time', '==', time)
+      .where('status', '==', 'scheduled')
+      .get();
+
+    return snapshot.empty;
+  }
+}
+
+module.exports = Appointment;

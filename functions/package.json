@@ -11,15 +11,13 @@
     "init-db": "node src/scripts/init-db.js"
   },
   "engines": {
-    "node": "18"
+    "node": "22"
   },
   "main": "index.js",
   "dependencies": {
     "cors": "^2.8.5",
-    "express": "^4.18.2",
-    "firebase-admin": "^11.8.0",
+    "express": "^4.18.2",    "firebase-admin": "^11.8.0",
     "firebase-functions": "^4.3.1",
-    "mongoose": "^7.0.0",
     "dotenv": "^16.0.3"
   },
   "devDependencies": {

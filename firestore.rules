@@ -2,18 +2,91 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isAdmin() {
+      return isAuthenticated() && 
+        exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.userType == 'admin';
+    }
+    
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
 
-    // This rule allows anyone with your Firestore database reference to view, edit,
-    // and delete all data in your Firestore database. It is useful for getting
-    // started, but it is configured to expire after 30 days because it
-    // leaves your app open to attackers. At that time, all client
-    // requests to your Firestore database will be denied.
-    //
-    // Make sure to write security rules for your app before that time, or else
-    // all client requests to your Firestore database will be denied until you Update
-    // your rules
-    match /{document=**} {
-      allow read, write: if request.time < timestamp.date(2025, 6, 29);
+    // Users collection
+    match /users/{userId} {
+      allow read: if isAuthenticated() && (isOwner(userId) || isAdmin());
+      allow create: if isAuthenticated();
+      allow update: if isAuthenticated() && (isOwner(userId) || isAdmin());
+      allow delete: if isAdmin();
+    }
+
+    // Specialists collection
+    match /specialists/{specialistId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+
+    // Clinics collection
+    match /clinics/{clinicId} {
+      allow read: if isAuthenticated();
+      allow write: if isAdmin();
+    }
+
+    // Appointments collection
+    match /appointments/{appointmentId} {
+      allow read: if isAuthenticated() && (
+        resource.data.patientId == request.auth.uid || 
+        resource.data.specialistId == request.auth.uid ||
+        isAdmin()
+      );
+      allow create: if isAuthenticated();
+      allow update: if isAuthenticated() && (
+        resource.data.patientId == request.auth.uid || 
+        resource.data.specialistId == request.auth.uid ||
+        isAdmin()
+      );
+      allow delete: if isAdmin();
+    }
+
+    // Medical History collection
+    match /medicalHistory/{historyId} {
+      allow read: if isAuthenticated() && (
+        resource.data.patientId == request.auth.uid || 
+        isAdmin()
+      );
+      allow create: if isAuthenticated();
+      allow update, delete: if isAuthenticated() && (
+        resource.data.patientId == request.auth.uid || 
+        isAdmin()
+      );
+    }
+
+    // Lab Tests collection
+    match /labTests/{testId} {
+      allow read: if isAuthenticated() && (
+        resource.data.patientId == request.auth.uid || 
+        isAdmin()
+      );
+      allow create: if isAuthenticated();
+      allow update: if isAuthenticated() && (
+        resource.data.patientId == request.auth.uid || 
+        isAdmin()
+      );
+      allow delete: if isAdmin();
+
+      // Lab test parameters subcollection
+      match /parameters/{paramId} {
+        allow read: if isAuthenticated() && (
+          get(/databases/$(database)/documents/labTests/$(testId)).data.patientId == request.auth.uid || 
+          isAdmin()
+        );
+        allow write: if isAuthenticated() && isAdmin();
+      }
     }
   }
 }

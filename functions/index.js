@@ -3,7 +3,6 @@ const express = require('express');
 const cors = require('cors');
 const { verifyAuth } = require('./src/middleware/auth.middleware');
 const { db } = require('./src/config/firebase');
-require('./src/config/database'); // Initialize MongoDB connection
 
 const app = express();
 

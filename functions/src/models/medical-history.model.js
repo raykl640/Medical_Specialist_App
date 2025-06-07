@@ -1,38 +1,64 @@
-const mongoose = require('mongoose');
+const { collections, addTimestamps } = require('../config/database');
 
-const medicalHistorySchema = new mongoose.Schema({
-  patientId: { type: String, required: true }, // Firebase UID
-  type: { 
-    type: String, 
-    enum: ['condition', 'surgery', 'allergy', 'medication', 'vaccination'],
-    required: true 
-  },
-  title: { type: String, required: true },
-  description: String,
-  date: { type: Date, required: true },
-  status: { 
-    type: String, 
-    enum: ['active', 'resolved', 'ongoing'],
-    default: 'active'
-  },
-  treatedBy: {
-    specialistId: { type: mongoose.Schema.Types.ObjectId, ref: 'Specialist' },
-    clinicId: { type: mongoose.Schema.Types.ObjectId, ref: 'Clinic' }
-  },
-  attachments: [{
-    type: { type: String },
-    url: { type: String },
-    name: { type: String }
-  }],
-  createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now }
-});
+class MedicalHistory {
+  static async create(data) {
+    const historyData = {
+      historyId: collections.medicalHistory.doc().id,
+      patientId: data.patientId,
+      type: data.type,
+      title: data.title,
+      description: data.description || '',
+      date: data.date,
+      status: data.status || 'active',
+      treatedBy: {
+        specialistId: data.treatedBy?.specialistId || null,
+        clinicId: data.treatedBy?.clinicId || null
+      },
+      attachments: data.attachments || []
+    };
 
-medicalHistorySchema.pre('save', function(next) {
-  this.updatedAt = new Date();
-  next();
-});
+    const docRef = collections.medicalHistory.doc(historyData.historyId);
+    await docRef.set(addTimestamps(historyData));
+    return { id: docRef.id, ...historyData };
+  }
 
-medicalHistorySchema.index({ patientId: 1, type: 1, date: -1 });
+  static async findById(id) {
+    const doc = await collections.medicalHistory.doc(id).get();
+    if (!doc.exists) return null;
+    return { id: doc.id, ...doc.data() };
+  }
 
-module.exports = mongoose.model('MedicalHistory', medicalHistorySchema);
+  static async findByPatient(patientId) {
+    const snapshot = await collections.medicalHistory
+      .where('patientId', '==', patientId)
+      .orderBy('date', 'desc')
+      .get();
+    
+    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  }
+
+  static async update(id, data) {
+    const docRef = collections.medicalHistory.doc(id);
+    const doc = await docRef.get();
+    if (!doc.exists) throw new Error('Medical history record not found');
+
+    const updates = {
+      ...data,
+      updatedAt: new Date().toISOString()
+    };
+
+    await docRef.update(updates);
+    return { id, ...doc.data(), ...updates };
+  }
+
+  static async delete(id) {
+    const docRef = collections.medicalHistory.doc(id);
+    const doc = await docRef.get();
+    if (!doc.exists) throw new Error('Medical history record not found');
+
+    await docRef.delete();
+    return { id, ...doc.data() };
+  }
+}
+
+module.exports = MedicalHistory;

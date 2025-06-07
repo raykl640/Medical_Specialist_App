@@ -1,25 +1,77 @@
-const mongoose = require('mongoose');
+const { collections, addTimestamps } = require('../config/database');
 
-const specialistSchema = new mongoose.Schema({
-  name: { type: String, required: true },
-  specialty: { type: String, required: true },
-  clinicId: { type: mongoose.Schema.Types.ObjectId, ref: 'Clinic', required: true },
-  qualifications: [String],
-  experience: String,
-  languages: [String],
-  availability: [{
-    day: { type: String, required: true },
-    startTime: { type: String, required: true },
-    endTime: { type: String, required: true }
-  }],
-  consultationFee: { type: Number, required: true },
-  createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now }
-});
+class Specialist {
+  static async create(data) {
+    const specialistData = {
+      specialistId: collections.specialists.doc().id,
+      name: data.name,
+      specialty: data.specialty,
+      clinicId: data.clinicId,
+      qualifications: data.qualifications || [],
+      experience: data.experience || '',
+      languages: data.languages || [],
+      availability: data.availability || [],
+      consultationFee: data.consultationFee
+    };
 
-specialistSchema.pre('save', function(next) {
-  this.updatedAt = new Date();
-  next();
-});
+    const docRef = collections.specialists.doc(specialistData.specialistId);
+    await docRef.set(addTimestamps(specialistData));
+    return { id: docRef.id, ...specialistData };
+  }
 
-module.exports = mongoose.model('Specialist', specialistSchema);
+  static async findById(id) {
+    const doc = await collections.specialists.doc(id).get();
+    if (!doc.exists) return null;
+    return { id: doc.id, ...doc.data() };
+  }
+
+  static async findByClinic(clinicId) {
+    const snapshot = await collections.specialists
+      .where('clinicId', '==', clinicId)
+      .get();
+    
+    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  }
+
+  static async update(id, data) {
+    const docRef = collections.specialists.doc(id);
+    const doc = await docRef.get();
+    if (!doc.exists) throw new Error('Specialist not found');
+
+    const updates = {
+      ...data,
+      updatedAt: new Date().toISOString()
+    };
+
+    await docRef.update(updates);
+    return { id, ...doc.data(), ...updates };
+  }
+
+  static async delete(id) {
+    const docRef = collections.specialists.doc(id);
+    const doc = await docRef.get();
+    if (!doc.exists) throw new Error('Specialist not found');
+
+    await docRef.delete();
+    return { id, ...doc.data() };
+  }
+
+  static async findAvailable(clinicId, date, time) {
+    const dayOfWeek = new Date(date).toLocaleDateString('en-US', { weekday: 'lowercase' });
+    
+    const snapshot = await collections.specialists
+      .where('clinicId', '==', clinicId)
+      .where(`availability.${dayOfWeek}.available`, '==', true)
+      .get();
+
+    return snapshot.docs
+      .map(doc => ({ id: doc.id, ...doc.data() }))
+      .filter(specialist => {
+        const schedule = specialist.availability.find(a => a.day === dayOfWeek);
+        if (!schedule) return false;
+        return time >= schedule.startTime && time <= schedule.endTime;
+      });
+  }
+}
+
+module.exports = Specialist;

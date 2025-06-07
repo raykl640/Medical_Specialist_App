@@ -1,25 +1,94 @@
-const mongoose = require('mongoose');
+const { collections, addTimestamps } = require('../config/database');
 
-const userSchema = new mongoose.Schema({
-  uid: { type: String, required: true, unique: true },
-  email: { type: String, required: true },
-  userType: { type: String, enum: ['patient', 'admin'], required: true },
-  firstName: { type: String, required: true },
-  lastName: { type: String, required: true },
-  phoneNumber: String,
-  emergencyContacts: [{
-    name: String,
-    relationship: String,
-    phoneNumber: String
-  }],
-  knownAllergies: [String],
-  createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now }
-});
+class User {
+  static async create(data) {
+    const userData = {
+      uid: data.uid,
+      email: data.email,
+      userType: data.userType,
+      firstName: data.firstName,
+      lastName: data.lastName,
+      phoneNumber: data.phoneNumber || '',
+      emergencyContacts: data.emergencyContacts || [],
+      knownAllergies: data.knownAllergies || []
+    };
 
-userSchema.pre('save', function(next) {
-  this.updatedAt = new Date();
-  next();
-});
+    const docRef = collections.users.doc(userData.uid);
+    await docRef.set(addTimestamps(userData));
+    return { id: docRef.id, ...userData };
+  }
 
-module.exports = mongoose.model('User', userSchema);
+  static async findById(id) {
+    const doc = await collections.users.doc(id).get();
+    if (!doc.exists) return null;
+    return { id: doc.id, ...doc.data() };
+  }
+
+  static async findByEmail(email) {
+    const snapshot = await collections.users
+      .where('email', '==', email)
+      .limit(1)
+      .get();
+    
+    if (snapshot.empty) return null;
+    const doc = snapshot.docs[0];
+    return { id: doc.id, ...doc.data() };
+  }
+
+  static async update(id, data) {
+    const docRef = collections.users.doc(id);
+    const doc = await docRef.get();
+    if (!doc.exists) throw new Error('User not found');
+
+    const updates = {
+      ...data,
+      updatedAt: new Date().toISOString()
+    };
+
+    await docRef.update(updates);
+    return { id, ...doc.data(), ...updates };
+  }
+
+  static async delete(id) {
+    const docRef = collections.users.doc(id);
+    const doc = await docRef.get();
+    if (!doc.exists) throw new Error('User not found');
+
+    await docRef.delete();
+    return { id, ...doc.data() };
+  }
+
+  static async addEmergencyContact(id, contact) {
+    const docRef = collections.users.doc(id);
+    const doc = await docRef.get();
+    if (!doc.exists) throw new Error('User not found');
+
+    const userData = doc.data();
+    const emergencyContacts = [...(userData.emergencyContacts || []), contact];
+
+    await docRef.update({ 
+      emergencyContacts,
+      updatedAt: new Date().toISOString()
+    });
+
+    return { id, ...userData, emergencyContacts };
+  }
+
+  static async addAllergy(id, allergy) {
+    const docRef = collections.users.doc(id);
+    const doc = await docRef.get();
+    if (!doc.exists) throw new Error('User not found');
+
+    const userData = doc.data();
+    const knownAllergies = [...new Set([...(userData.knownAllergies || []), allergy])];
+
+    await docRef.update({ 
+      knownAllergies,
+      updatedAt: new Date().toISOString()
+    });
+
+    return { id, ...userData, knownAllergies };
+  }
+}
+
+module.exports = User;
