@@ -55,21 +55,27 @@ const utils = {
 // Firebase Firestore operations (Direct DB access)
 const clinicService = {
   // Add clinic directly to Firestore
-  async addClinic(clinicData) {
-    try {
-      const docRef = await addDoc(collection(db, CONFIG.collections.clinics), {
-        ...clinicData,
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp()
-      });
-      
-      console.log('✅ Clinic added with ID:', docRef.id);
-      return { success: true, id: docRef.id };
-    } catch (error) {
-      console.error('❌ Error adding clinic:', error);
-      throw new Error(`Failed to add clinic: ${error.message}`);
-    }
-  },
+ async addClinic(clinicData) {
+  try {
+    // Generate clinic_Id
+    const timestamp = Date.now().toString(36);
+    const randomStr = Math.random().toString(36).substring(2, 8);
+    const clinic_Id = `CLINIC_${timestamp}_${randomStr}`.toUpperCase();
+    
+    const docRef = await addDoc(collection(db, CONFIG.collections.clinics), {
+      ...clinicData,
+      clinic_Id: clinic_Id,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp()
+    });
+    
+    console.log('✅ Clinic added with ID:', docRef.id, 'clinic_Id:', clinic_Id);
+    return { success: true, id: docRef.id, clinic_Id: clinic_Id };
+  } catch (error) {
+    console.error('❌ Error adding clinic:', error);
+    throw new Error(`Failed to add clinic: ${error.message}`);
+  }
+},
 
   // Get all clinics from Firestore
   async getClinics() {
@@ -166,35 +172,37 @@ const functionsService = {
 // UI Management
 const ui = {
   displayClinics(clinics) {
-    const clinicsList = document.getElementById('clinicsList');
+  const clinicsList = document.getElementById('clinicsList');
+  
+  if (!clinics || clinics.length === 0) {
+    clinicsList.innerHTML = '<div class="loading">No clinics found. Add your first clinic above! 🏥</div>';
+    return;
+  }
+  
+  clinicsList.innerHTML = clinics.map(clinic => {
+    const escapedName = utils.escapeHtml(clinic.clinicName || clinic.name);
+    const escapedLocation = utils.escapeHtml(clinic.location);
+    const clinicId = clinic.id || clinic.clinicId;
+    const clinic_Id = clinic.clinic_Id || 'N/A';
     
-    if (!clinics || clinics.length === 0) {
-      clinicsList.innerHTML = '<div class="loading">No clinics found. Add your first clinic above! 🏥</div>';
-      return;
-    }
-    
-    clinicsList.innerHTML = clinics.map(clinic => {
-      const escapedName = utils.escapeHtml(clinic.clinicName || clinic.name);
-      const escapedLocation = utils.escapeHtml(clinic.location);
-      const clinicId = clinic.id || clinic.clinicId;
-      
-      return `
-        <div class="clinic-card">
-          <h3>🏥 ${escapedName}</h3>
-          <p>📍 <strong>Location:</strong> ${escapedLocation}</p>
-          <p>🕒 <strong>Created:</strong> ${clinic.createdAt ? new Date(clinic.createdAt.seconds * 1000).toLocaleDateString() : 'N/A'}</p>
-          <div class="clinic-actions">
-            <button class="edit-btn" onclick="window.clinicManager.editClinic('${clinicId}', '${escapedName.replace(/'/g, '\\\')}', '${escapedLocation.replace(/'/g, '\\\'')}')">
-              ✏️ Edit
-            </button>
-            <button class="delete-btn" onclick="window.clinicManager.removeClinic('${clinicId}')">
-              🗑️ Delete
-            </button>
-          </div>
+    return `
+      <div class="clinic-card">
+        <h3>🏥 ${escapedName}</h3>
+        <p>🆔 <strong>Clinic ID:</strong> ${clinic_Id}</p>
+        <p>📍 <strong>Location:</strong> ${escapedLocation}</p>
+        <p>🕒 <strong>Created:</strong> ${clinic.createdAt ? new Date(clinic.createdAt.seconds * 1000).toLocaleDateString() : 'N/A'}</p>
+        <div class="clinic-actions">
+          <button class="edit-btn" onclick="window.clinicManager.editClinic('${clinicId}', '${escapedName.replace(/'/g, '\\\')}', '${escapedLocation.replace(/'/g, '\\\'')}')">
+            ✏️ Edit
+          </button>
+          <button class="delete-btn" onclick="window.clinicManager.removeClinic('${clinicId}')">
+            🗑️ Delete
+          </button>
         </div>
-      `;
-    }).join('');
-  },
+      </div>
+    `;
+  }).join('');
+},
 
   updateUserInfo(user) {
     const userInfo = document.getElementById('userInfo');
