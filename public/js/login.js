@@ -43,7 +43,7 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
         messageEl.textContent = "Login successful! Redirecting...";
 
         // Redirecting based on user identity
-        const adminUID = "EfXc6UE9hehyoQbvC22lAy4zJpV2";
+        const adminUID = "mkDXWQzZzMd52KhaQ3r0aqthT8E2";
         const adminEmail = "raylukorito@gmail.com";
 
         setTimeout(() => {
