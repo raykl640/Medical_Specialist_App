@@ -14,20 +14,22 @@ const firebaseConfig = {
   measurementId: "G-ECMD5067CE"
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-// Register button handler
 document.getElementById("registerBtn").addEventListener("click", async () => {
-  // Get values from form
+  const registerBtn = document.getElementById("registerBtn");
+
+  registerBtn.disabled = true;
+  registerBtn.textContent = "Registering...";
+
   const firstName = document.getElementById("firstName").value.trim();
   const otherNames = document.getElementById("otherNames").value.trim();
   const dob = document.getElementById("dob").value;
   const phone = "+254" + document.getElementById("phone").value.trim();
   const email = document.getElementById("email").value.trim();
-  const address = document.getElementById("homeAdress").value.trim();
+  const address = document.getElementById("homeAddress").value.trim();
   const gender = document.querySelector('input[name="sex"]:checked')?.value;
 
   const ecFirstName = document.getElementById("ecFirstName").value.trim();
@@ -38,14 +40,31 @@ document.getElementById("registerBtn").addEventListener("click", async () => {
   const password = document.getElementById("password").value;
   const confirmPassword = document.getElementById("confirmPassword").value;
 
+  //validating email using emailRegex
+  function isValidEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  }
+
+
   // Validate
   if (!firstName || !dob || !phone || !email || !password || !confirmPassword) {
     alert("Please fill in all required fields.");
+    registerBtn.disabled = false;
+    registerBtn.textContent = "Register";
     return;
+  }
+
+  if(!isValidEmail(email)) {
+    alert("Please enter a valid email address.");
+    registerBtn.disabled = false;
+    registerBtn.textContent = "Register";
   }
 
   if (password !== confirmPassword) {
     alert("Passwords do not match.");
+    registerBtn.disabled = false;
+    registerBtn.textContent = "Register";
     return;
   }
 
@@ -76,11 +95,13 @@ document.getElementById("registerBtn").addEventListener("click", async () => {
       createdAt: new Date().toISOString(),
     });
 
-    // Optional: redirect to login page
     window.location.href = "login.html";
 
   } catch (error) {
     console.error("Registration error:", error);
     alert(error.message);
+  } finally {
+    registerBtn.disabled = false;
+    registerBtn.textContent = "Register";
   }
 });
