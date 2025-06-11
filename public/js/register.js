@@ -1,9 +1,7 @@
-// Import Firebase modules
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, sendEmailVerification } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-// Firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyBWkXxtI9514_YD6H4kQ6IgltPoSSf7W80",
   authDomain: "medical-specialist-app-d3a46.firebaseapp.com",
@@ -18,9 +16,9 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
+
 document.getElementById("registerBtn").addEventListener("click", async () => {
   const registerBtn = document.getElementById("registerBtn");
-
   registerBtn.disabled = true;
   registerBtn.textContent = "Registering...";
 
