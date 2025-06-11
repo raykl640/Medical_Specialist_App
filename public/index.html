@@ -1,89 +1,641 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Welcome to Firebase Hosting</title>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Dashboard</title>
+    
+    <script type="module">
+        // Import Firebase modules (same version as login page)
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBWkXxtI9514_YD6H4kQ6IgltPoSSf7W80",
+            authDomain: "medical-specialist-app-d3a46.firebaseapp.com",
+            projectId: "medical-specialist-app-d3a46",
+            storageBucket: "medical-specialist-app-d3a46.appspot.com",
+            messagingSenderId: "990201081362",
+            appId: "1:990201081362:web:273dbe33edbbee6f2bb2cb",
+            measurementId: "G-ECMD5067CE"
+        };
+        
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        
+        // Make auth available globally for other functions
+        window.firebaseAuth = auth;
+        window.firebaseSignOut = signOut;
+    </script>
 
-    <!-- update the version number as needed -->
-    <script defer src="/__/firebase/11.9.0/firebase-app-compat.js"></script>
-    <!-- include only the Firebase features as you need -->
-    <script defer src="/__/firebase/11.9.0/firebase-auth-compat.js"></script>
-    <script defer src="/__/firebase/11.9.0/firebase-database-compat.js"></script>
-    <script defer src="/__/firebase/11.9.0/firebase-firestore-compat.js"></script>
-    <script defer src="/__/firebase/11.9.0/firebase-functions-compat.js"></script>
-    <script defer src="/__/firebase/11.9.0/firebase-messaging-compat.js"></script>
-    <script defer src="/__/firebase/11.9.0/firebase-storage-compat.js"></script>
-    <script defer src="/__/firebase/11.9.0/firebase-analytics-compat.js"></script>
-    <script defer src="/__/firebase/11.9.0/firebase-remote-config-compat.js"></script>
-    <script defer src="/__/firebase/11.9.0/firebase-performance-compat.js"></script>
-    <!-- 
-      initialize the SDK after all desired features are loaded, set useEmulator to false
-      to avoid connecting the SDK to running emulators.
-    -->
-    <script defer src="/__/firebase/init.js?useEmulator=true"></script>
+<style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #FFFFFF;
+        }
+        
+        /* Loading screen */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #FFFFFF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+        
+        .loading-spinner {
+            border: 4px solid #E3F2FD;
+            border-top: 4px solid #1E88E5;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 2s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Hide main content initially */
+        .main-app {
+            display: none;
+        }
+        
+        /* Title Bar */
+        .title-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background-color: #FFFFFF;
+            border-bottom: 1px solid #DDDDDD;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 1000;
+        }
+        .hamburger-menu {
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+            padding: 5px;
+        }
+        .hamburger-line {
+            width: 25px;
+            height: 3px;
+            background-color: #444444;
+            margin: 2px 0;
+            transition: 0.3s;
+        }
+        .notifications {
+            font-size: 20px;
+            cursor: pointer;
+        }
+        .notification-icon {
+            padding: 5px;
+        }
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            left: -250px;
+            top: 60px;
+            width: 250px;
+            height: calc(100vh - 60px);
+            background-color: #FFFFFF;
+            border-right: 1px solid #DDDDDD;
+            transition: left 0.3s ease;
+            z-index: 999;
+            overflow-y: auto;
+            padding: 20px 0;
+        }
+        .sidebar.open {
+            left: 0;
+        }
+        .logo {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+        .logo-circle {
+            width: 60px;
+            height: 60px;
+            border: 3px solid #1E88E5;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            background-color: #E3F2FD;
+        }
+        .profile-picture {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            background: linear-gradient(135deg, #1E88E5 0%, #1565C0 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #FFFFFF;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .nav-section {
+            margin-bottom: 30px;
+            padding: 0 20px;
+        }
+        .nav-section h3 {
+            color: #444444;
+            font-size: 14px;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .nav-section ul {
+            list-style: none;
+        }
+        .nav-section li {
+            margin-bottom: 8px;
+        }
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+            text-decoration: none;
+            color: #444444;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        .nav-link:hover {
+            background-color: #E3F2FD;
+            color: #1565C0;
+        }
+        .nav-link.active {
+            background-color: #E3F2FD;
+            color: #1E88E5;
+        }
+        .nav-link .icon {
+            margin-right: 10px;
+            font-size: 16px;
+        }
+        .nav-bottom {
+            position: absolute;
+            bottom: 20px;
+            width: 100%;
+            padding: 0 20px;
+        }
+        /* Main Content */
+        .main-content {
+            margin-top: 60px;
+            padding: 20px;
+            transition: margin-left 0.3s ease;
+        }
+        .main-content.shifted {
+            margin-left: 250px;
+        }
+        /* Welcome Content */
+        .welcome-section {
+            background: #FFFFFF;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .welcome-section h1 {
+            color: #444444;
+            margin-bottom: 10px;
+        }
+        .welcome-section p {
+            color: #444444;
+            line-height: 1.6;
+        }
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main-content.shifted {
+                margin-left: 0;
+            }
+           
+            .sidebar.open {
+                box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            }
+        }
+        /* Overlay for mobile */
+        .overlay {
+            position: fixed;
+            top: 60px;
+            left: 0;
+            width: 100%;
+            height: calc(100vh - 60px);
+            background-color: rgba(0,0,0,0.5);
+            z-index: 998;
+            display: none;
+        }
+        .overlay.show {
+            display: block;
+        }
+        * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
 
-    <style media="screen">
-      body { background: #ECEFF1; color: rgba(0,0,0,0.87); font-family: Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; }
-      #message { background: white; max-width: 360px; margin: 100px auto 16px; padding: 32px 24px; border-radius: 3px; }
-      #message h2 { color: #ffa100; font-weight: bold; font-size: 16px; margin: 0 0 8px; }
-      #message h1 { font-size: 22px; font-weight: 300; color: rgba(0,0,0,0.6); margin: 0 0 16px;}
-      #message p { line-height: 140%; margin: 16px 0 24px; font-size: 14px; }
-      #message a { display: block; text-align: center; background: #039be5; text-transform: uppercase; text-decoration: none; color: white; padding: 16px; border-radius: 4px; }
-      #message, #message a { box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24); }
-      #load { color: rgba(0,0,0,0.4); text-align: center; font-size: 13px; }
-      @media (max-width: 600px) {
-        body, #message { margin-top: 0; background: white; box-shadow: none; }
-        body { border-top: 16px solid #ffa100; }
+    body {
+      background: linear-gradient(to right, #E3F2FD, #FFFFFF);
+      color: #444444;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 40px 20px;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 2.8rem;
+      margin-bottom: 1rem;
+      color: #1E88E5;
+    }
+
+    p.intro {
+      font-size: 1.2rem;
+      max-width: 700px;
+      margin-bottom: 2.5rem;
+      color: #444444;
+    }
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+      max-width: 1000px;
+      width: 100%;
+    }
+
+    .feature {
+      background-color: #FFFFFF;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      padding: 25px;
+      transition: transform 0.2s ease-in-out;
+    }
+
+    .feature:hover {
+      transform: translateY(-5px);
+    }
+
+    .feature h3 {
+      margin-bottom: 10px;
+      color: #1565C0;
+    }
+
+    .feature p {
+      font-size: 0.95rem;
+      color: #444444;
+    }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 2rem;
       }
+
+      .features {
+        grid-template-columns: 1fr;
+      }
+    }
+
     </style>
-  </head>
-  <body>
-    <div id="message">
-      <h2>Welcome</h2>
-      <h1>Firebase Hosting Setup Complete</h1>
-      <p>You're seeing this because you've successfully setup Firebase Hosting. Now it's time to go build something extraordinary!</p>
-      <a target="_blank" href="https://firebase.google.com/docs/hosting/">Open Hosting Documentation</a>
+
+</head>
+<body>
+    <!-- Loading Screen -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-spinner"></div>
     </div>
-    <p id="load">Firebase SDK Loading&hellip;</p>
+
+    <!-- Main App Content -->
+    <div class="main-app" id="mainApp">
+        <!-- Title Bar -->
+        <div class="title-bar">
+            <div class="hamburger-menu" onclick="toggleSidebar()">
+                <div class="hamburger-line"></div>
+                <div class="hamburger-line"></div>
+                <div class="hamburger-line"></div>
+            </div>
+            <div class="notifications">
+                <span class="notification-icon">🔔</span>
+            </div>
+        </div>
+        
+        <!-- Overlay for mobile -->
+        <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+        
+        <!-- Navigation Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <div class="logo">
+                <div class="logo-circle">
+                    <div class="profile-picture" id="userInitial">
+                        U
+                    </div>
+                </div>
+            </div>
+            <div class="nav-section">
+                <h3>Dashboard</h3>
+                <ul>
+                    <li><a href="patientDashboard.html" class="nav-link active" onclick="loadPage('dashboard')"><span class="icon">🏠</span> Home</a></li>
+                    <li><a href="#" class="nav-link" onclick="loadPage('appointments')"><span class="icon">📅</span> My Appointments</a></li>
+                    <li><a href="clinics.html" class="nav-link" onclick="loadPage('clinics')"><span class="icon">🏥</span> Clinics</a></li>
+                    <li><a href="#" class="nav-link" onclick="loadPage('health-resources')"><span class="icon">📚</span> Health Resources</a></li>
+                </ul>
+            </div>
+            <div class="nav-section">
+                <h3>Medical</h3>
+                <ul>
+                    <li><a href="patientDashboard.html" class="nav-link" onclick="loadPage('medical-history')"><span class="icon">📋</span> Medical History</a></li>
+                    <li><a href="#" class="nav-link" onclick="loadPage('lab-tests')"><span class="icon">🧪</span> Lab Tests</a></li>
+                    <li><a href="#" class="nav-link" onclick="loadPage('radiology')"><span class="icon">💎</span> Radiology</a></li>
+                    <li><a href="#" class="nav-link" onclick="loadPage('prescriptions')"><span class="icon">💊</span> Prescriptions</a></li>
+                </ul>
+            </div>
+            <div class="nav-section nav-bottom">
+                <ul>
+                    <li><a href="#" class="nav-link" onclick="loadPage('profile')"><span class="icon">👤</span> Profile</a></li>
+                    <li><a href="#" class="nav-link" onclick="logout()"><span class="icon">🚪</span> Log Out</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Main Content Area -->
+        <div class="main-content" id="mainContent">
+            <div id="page-content">
+                <div class="welcome-section">
+                    <h1>Welcome to Your Medical Dashboard</h1>
+                    <p>Access all your medical information, appointments, and health resources in one convenient location. Use the navigation menu to explore different sections of your healthcare portal.</p>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script>
-      document.addEventListener('DOMContentLoaded', function() {
-        const loadEl = document.querySelector('#load');
-        // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
-        // // The Firebase SDK is initialized and available here!
-        //
-        // firebase.auth().onAuthStateChanged(user => { });
-        // firebase.database().ref('/path/to/ref').on('value', snapshot => { });
-        // firebase.firestore().doc('/foo/bar').get().then(() => { });
-        // firebase.functions().httpsCallable('yourFunction')().then(() => { });
-        // firebase.messaging().requestPermission().then(() => { });
-        // firebase.storage().ref('/path/to/ref').getDownloadURL().then(() => { });
-        // firebase.analytics(); // call to activate
-        // firebase.analytics().logEvent('tutorial_completed');
-        // firebase.performance(); // call to activate
-        //
-        // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
+        // Wait for Firebase to be loaded before checking auth
+        window.addEventListener('load', function() {
+            if (window.firebaseAuth) {
+                // Import onAuthStateChanged dynamically
+                import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js')
+                    .then(({ onAuthStateChanged }) => {
+                        // Check authentication state when page loads
+                        onAuthStateChanged(window.firebaseAuth, function(user) {
+                            // Skip auth state change if we're in the middle of logging out
+                            if (isLoggingOut) return;
+                            
+                            const loadingScreen = document.getElementById('loadingScreen');
+                            const mainApp = document.getElementById('mainApp');
+                            
+                            if (user) {
+                                // User is signed in - show main app
+                                console.log('User is authenticated:', user.email);
+                                loadAuthenticatedContent(user);
+                                
+                                // Hide loading screen and show main app
+                                loadingScreen.style.display = 'none';
+                                mainApp.style.display = 'block';
+                            } else {
+                                // No user - redirect to login (only if not already logging out)
+                                if (!isLoggingOut) {
+                                    console.log('User not authenticated, redirecting to login');
+                                    try {
+                                        window.location.replace('./login.html');
+                                    } catch (e) {
+                                        console.log('Replace failed, trying href');
+                                        window.location.href = './login.html';
+                                    }
+                                }
+                            }
+                        });
+                    });
+            }
+        });
 
-        try {
-          let app = firebase.app();
-          let features = [
-            'auth', 
-            'database', 
-            'firestore',
-            'functions',
-            'messaging', 
-            'storage', 
-            'analytics', 
-            'remoteConfig',
-            'performance',
-          ].filter(feature => typeof app[feature] === 'function');
-          loadEl.textContent = `Firebase SDK loaded with ${features.join(', ')}`;
-        } catch (e) {
-          console.error(e);
-          loadEl.textContent = 'Error loading the Firebase SDK, check the console.';
+        function loadAuthenticatedContent(user) {
+            // Update user initial in profile picture
+            const userInitial = document.getElementById('userInitial');
+            if (user.displayName) {
+                userInitial.textContent = user.displayName.charAt(0).toUpperCase();
+            } else if (user.email) {
+                userInitial.textContent = user.email.charAt(0).toUpperCase();
+            }
+            
+            // You can add more user-specific content loading here
+            console.log('Loading authenticated content for:', user.email);
         }
-      });
+        
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('mainContent');
+            const overlay = document.getElementById('overlay');
+            
+            sidebar.classList.toggle('open');
+            
+            // On desktop, shift main content; on mobile, show overlay
+            if (window.innerWidth > 768) {
+                mainContent.classList.toggle('shifted');
+            } else {
+                overlay.classList.toggle('show');
+            }
+        }
+        
+        function closeSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('mainContent');
+            const overlay = document.getElementById('overlay');
+            
+            sidebar.classList.remove('open');
+            mainContent.classList.remove('shifted');
+            overlay.classList.remove('show');
+        }
+        
+        function loadPage(page) {
+            // Remove active class from all nav links
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+            });
+            
+            // Add active class to clicked link
+            event.target.closest('.nav-link').classList.add('active');
+            
+            // Simple page content switching
+            const pageContent = document.getElementById('page-content');
+            const pages = {
+                'dashboard': `
+                    
+  <h1>Welcome to MedConnect</h1>
+  <p class="intro">
+    Your trusted platform to find medical specialists, access personal health records, and explore health education resources — all in one secure place.
+  </p>
+
+  <div class="features">
+    <div class="feature">
+      <h3>🩺 Find Specialists</h3>
+      <p>Search for top-rated medical specialists by name, expertise, or location.</p>
+    </div>
+
+    <div class="feature">
+      <h3>📄 View Medical Records</h3>
+      <p>Access and review your personal medical history securely and instantly.</p>
+    </div>
+
+    <div class="feature">
+      <h3>📚 Health Resources</h3>
+      <p>Read trusted articles, guides, and tips to better manage your health.</p>
+    </div>
+
+    <div class="feature">
+      <h3>🔐 Secure Login</h3>
+      <p>Protected access through secure Firebase Authentication.</p>
+    </div>
+  </div>
+                `,
+                'appointments': `
+                    <div class="welcome-section">
+                        <h1>My Appointments</h1>
+                        <p>View and manage your upcoming medical appointments.</p>
+                    </div>
+                `,
+                'clinics': `
+                    <div class="welcome-section">
+                        <h1>Clinics</h1>
+                        <p>Find and connect with medical clinics in your area.</p>
+                    </div>
+                `,
+                'health-resources': `
+                    <div class="welcome-section">
+                        <h1>Health Resources</h1>
+                        <p>Access educational materials and health information.</p>
+                    </div>
+                `,
+                'medical-history': `
+                    <div class="welcome-section">
+                        <h1>Medical History</h1>
+                        <p>Review your complete medical history and records.</p>
+                    </div>
+                `,
+                'lab-tests': `
+                    <div class="welcome-section">
+                        <h1>Lab Tests</h1>
+                        <p>View your laboratory test results and reports.</p>
+                    </div>
+                `,
+                'radiology': `
+                    <div class="welcome-section">
+                        <h1>Radiology</h1>
+                        <p>Access your radiology images and reports.</p>
+                    </div>
+                `,
+                'prescriptions': `
+                    <div class="welcome-section">
+                        <h1>Prescriptions</h1>
+                        <p>Manage your current medications and prescriptions.</p>
+                    </div>
+                `,
+                'profile': `
+                    <div class="welcome-section">
+                        <h1>Profile</h1>
+                        <p>Update your personal information and account settings.</p>
+                    </div>
+                `
+            };
+            
+            pageContent.innerHTML = pages[page] || pages['dashboard'];
+            
+            // Close sidebar on mobile after navigation
+            if (window.innerWidth <= 768) {
+                closeSidebar();
+            }
+        }
+        
+        let isLoggingOut = false; // Prevent multiple logout attempts
+        
+        function logout() {
+            if (isLoggingOut) return; // Prevent multiple logout attempts
+            
+            if (confirm('Are you sure you want to log out?')) {
+                isLoggingOut = true;
+                
+                // Show loading state
+                const loadingScreen = document.getElementById('loadingScreen');
+                const mainApp = document.getElementById('mainApp');
+                loadingScreen.style.display = 'flex';
+                mainApp.style.display = 'none';
+                
+                if (window.firebaseAuth && window.firebaseSignOut) {
+                    window.firebaseSignOut(window.firebaseAuth)
+                        .then(() => {
+                            console.log('User logged out successfully');
+                            console.log('Current URL:', window.location.href);
+                            console.log('Attempting to redirect to login...');
+                            // Try multiple redirect approaches
+                            try {
+                                window.location.replace('./login.html');
+                            } catch (e) {
+                                console.log('Replace failed, trying href');
+                                window.location.href = './login.html';
+                            }
+                        })
+                        .catch((error) => {
+                            console.error('Logout error:', error);
+                            isLoggingOut = false;
+                            // Hide loading screen on error
+                            loadingScreen.style.display = 'none';
+                            mainApp.style.display = 'block';
+                            alert('Error during logout. Please try again.');
+                        });
+                } else {
+                    console.error('Firebase auth not available');
+                    isLoggingOut = false;
+                    loadingScreen.style.display = 'none';
+                    mainApp.style.display = 'block';
+                    alert('Error: Authentication not available');
+                }
+            }
+        }
+        
+        // Handle window resize
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 768) {
+                document.getElementById('overlay').classList.remove('show');
+            } else {
+                document.getElementById('mainContent').classList.remove('shifted');
+            }
+        });
+        
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(event) {
+            const sidebar = document.getElementById('sidebar');
+            const hamburger = document.querySelector('.hamburger-menu');
+            
+            if (window.innerWidth <= 768 && 
+                sidebar.classList.contains('open') && 
+                !sidebar.contains(event.target) && 
+                !hamburger.contains(event.target)) {
+                closeSidebar();
+            }
+        });
     </script>
-  </body>
+</body>
 </html>

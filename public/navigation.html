@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<styles>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Navigation Component</title>
+    <link rel="stylesheet" href="styles.css">
+
+</head>
+<body>
+    <!-- Title Bar -->
+    <div class="title-bar">
+        <div class="hamburger-menu">
+            <div class="hamburger-line"></div>
+            <div class="hamburger-line"></div>
+            <div class="hamburger-line"></div>
+        </div>
+        <div class="notifications">
+            <span class="notification-icon">🔔</span>
+        </div>
+    </div>
+    
+    <!-- Overlay for mobile -->
+    <div class="overlay" id="overlay"></div>
+    
+    <!-- Navigation Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="logo">
+            <div class="logo-circle">
+                <div class="profile-picture" id="userInitial">
+                    U
+                </div>
+            </div>
+        </div>
+        <div class="nav-section">
+            <h3>Dashboard</h3>
+            <ul>
+                <li><a href="dashboard.html" class="nav-link"><span class="icon">🏠</span> Home</a></li>
+                <li><a href="appointments.html" class="nav-link"><span class="icon">📅</span> My Appointments</a></li>
+                <li><a href="clinics.html" class="nav-link"><span class="icon">🏥</span> Clinics</a></li>
+                <li><a href="health-resources.html" class="nav-link"><span class="icon">📚</span> Health Resources</a></li>
+            </ul>
+        </div>
+        <div class="nav-section">
+            <h3>Medical</h3>
+            <ul>
+                <li><a href="medical-history.html" class="nav-link"><span class="icon">📋</span> Medical History</a></li>
+                <li><a href="lab-tests.html" class="nav-link"><span class="icon">🧪</span> Lab Tests</a></li>
+                <li><a href="radiology.html" class="nav-link"><span class="icon">💎</span> Radiology</a></li>
+                <li><a href="prescriptions.html" class="nav-link"><span class="icon">💊</span> Prescriptions</a></li>
+            </ul>
+        </div>
+        <div class="nav-section nav-bottom">
+            <ul>
+                <li><a href="profile.html" class="nav-link"><span class="icon">👤</span> Profile</a></li>
+                <li><a href="#" class="nav-link" id="logout-link"><span class="icon">🚪</span> Log Out</a></li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
