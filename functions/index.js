@@ -29,6 +29,12 @@ async function validateAuth(req) {
   }
 }
 
+function generateClinicId() {
+  const timestamp = Date.now().toString();
+  const random = Math.random().toString(36).substring(2, 8).toUpperCase();
+  return `CLINIC_${timestamp}_${random}`;
+}
+
 // Helper function to handle errors
 function handleError(res, error, defaultMessage = 'Internal server error') {
   console.error('Function error:', error);
@@ -70,6 +76,7 @@ function validateClinicData(data, isUpdate = false) {
  * POST /createClinic
  * Body: { clinicName: string, location: string }
  */
+// Modified createClinic function
 exports.createClinic = functions.https.onRequest((req, res) => {
   cors(req, res, async () => {
     try {
@@ -87,9 +94,13 @@ exports.createClinic = functions.https.onRequest((req, res) => {
       // Validate and sanitize input data
       const validatedData = validateClinicData(req.body);
       
+      // Generate custom clinic ID
+      const customClinicId = generateClinicId();
+      
       // Create clinic document
       const clinicData = {
         ...validatedData,
+        clinic_Id: customClinicId, // Custom clinic ID field
         createdBy: decodedToken.uid,
         createdAt: admin.firestore.FieldValue.serverTimestamp(),
         updatedAt: admin.firestore.FieldValue.serverTimestamp(),
@@ -98,14 +109,16 @@ exports.createClinic = functions.https.onRequest((req, res) => {
       
       const clinicRef = await db.collection("clinics").add(clinicData);
       
-      console.log(`✅ Clinic created: ${clinicRef.id} by user: ${decodedToken.email}`);
+      console.log(`✅ Clinic created: ${clinicRef.id} with clinic_Id: ${customClinicId} by user: ${decodedToken.email}`);
       
       res.json({
         success: true,
-        clinicId: clinicRef.id,
+        clinicId: clinicRef.id, // Firestore document ID
+        clinic_Id: customClinicId, // Custom clinic ID
         message: "Clinic created successfully",
         data: {
           clinicId: clinicRef.id,
+          clinic_Id: customClinicId,
           clinicName: validatedData.clinicName,
           location: validatedData.location
         }

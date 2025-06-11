@@ -76,19 +76,27 @@
         box-shadow: 0 0 0 4px rgba(30, 136, 229, 0.15);
     }
 
-    button {
-        background: #1E88E5;
-        color: #FFFFFF;
-        padding: 14px 28px;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-        font-size: 15px;
-        font-weight: 600;
-        transition: all 0.3s ease;
-        text-transform: uppercase;
-        letter-spacing: 0.6px;
-    }
+   button {
+    background: #1E88E5;
+    color: #FFFFFF;
+    padding: 14px 18px; /* Match input vertical padding */
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px; /* Match input font size */
+    align-self: flex-start; /* Align the button to the left with the inputs */
+    margin-top: 30px; /* Add some space above the button */
+    width: auto; /* Let the button size according to its content */
+    min-width: 150px;
+    box-sizing: border-box;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    height: 48px; /* Optional: enforce fixed height */
+
+
+}
 
     button:hover {
         background: #1565C0;
@@ -233,10 +241,7 @@
 </head>
 <body>
     <div id="navbar-container"></div>
-    <div class="user-info" id="userInfo" style="display: none;">
-        <span id="userEmail"></span>
-        <button class="logout-btn" onclick="logout()">Logout</button>
-    </div>
+    
 
     <div class="container">
         <h1>🏥 Clinic Management</h1>
@@ -330,24 +335,30 @@
 
         // Firebase Firestore operations
         const clinicService = {
-            async addClinic(clinicData) {
-                try {
-                    const docRef = await addDoc(collection(db, 'clinics'), {
-                        ...clinicData,
-                        createdAt: serverTimestamp(),
-                        updatedAt: serverTimestamp()
-                    });
-                    
-                    console.log('✅ Clinic added with ID:', docRef.id);
-                    return { success: true, id: docRef.id };
-                } catch (error) {
-                    console.error('❌ Error adding clinic:', error);
-                    throw new Error(`Failed to add clinic: ${error.message}`);
-                }
-            },
-
-            async getClinics() {
-                try {
+                      async addClinic(clinicData) {
+            try {
+              // Generate clinic_Id
+              const timestamp = Date.now().toString(36);
+              const randomStr = Math.random().toString(36).substring(2, 8);
+              const clinic_Id = `CLINIC_${timestamp}_${randomStr}`.toUpperCase();
+              
+              const docRef = await addDoc(collection(db, 'clinics'), {
+                ...clinicData,
+                clinic_Id: clinic_Id,
+                createdAt: serverTimestamp(),
+                updatedAt: serverTimestamp()
+              });
+              
+              console.log('✅ Clinic added with ID:', docRef.id, 'clinic_Id:', clinic_Id);
+              return { success: true, id: docRef.id, clinic_Id: clinic_Id };
+            } catch (error) {
+              console.error('❌ Error adding clinic:', error);
+              throw new Error(`Failed to add clinic: ${error.message}`);
+            }
+            },             
+            
+                      async getClinics() {
+                          try {
                     const q = query(
                         collection(db, 'clinics'), 
                         orderBy('createdAt', 'desc')
@@ -403,40 +414,42 @@
 
         // UI Management
         const ui = {
-            displayClinics(clinics) {
-                const clinicsList = document.getElementById('clinicsList');
-                
-                if (!clinics || clinics.length === 0) {
-                    clinicsList.innerHTML = '<div class="loading">No clinics found. Add your first clinic above! 🏥</div>';
-                    return;
-                }
-                
-                clinicsList.innerHTML = clinics.map(clinic => {
-                    const clinicName = utils.escapeHtml(clinic.clinicName || clinic.name);
-                    const location = utils.escapeHtml(clinic.location);
-                    const clinicId = clinic.id || clinic.clinicId;
-                    
-                    // Properly escape quotes for onclick attributes
-                    const escapedNameForJs = (clinic.clinicName || clinic.name || '').replace(/'/g, "\\'").replace(/"/g, '\\"');
-                    const escapedLocationForJs = (clinic.location || '').replace(/'/g, "\\'").replace(/"/g, '\\"');
-                    
-                    return `
-                        <div class="clinic-card">
-                            <h3>🏥 ${clinicName}</h3>
-                            <p>📍 <strong>Location:</strong> ${location}</p>
-                            <p>🕒 <strong>Created:</strong> ${clinic.createdAt && clinic.createdAt.seconds ? new Date(clinic.createdAt.seconds * 1000).toLocaleDateString() : 'N/A'}</p>
-                            <div class="clinic-actions">
-                                <button class="edit-btn" onclick="editClinic('${clinicId}', '${escapedNameForJs}', '${escapedLocationForJs}')">
-                                    ✏️ Edit
-                                </button>
-                                <button class="delete-btn" onclick="removeClinic('${clinicId}')">
-                                    🗑️ Delete
-                                </button>
-                            </div>
-                        </div>
-                    `;
-                }).join('');
-            },
+           displayClinics(clinics) {
+  const clinicsList = document.getElementById('clinicsList');
+  
+  if (!clinics || clinics.length === 0) {
+    clinicsList.innerHTML = '<div class="loading">No clinics found. Add your first clinic above! 🏥</div>';
+    return;
+  }
+  
+  clinicsList.innerHTML = clinics.map(clinic => {
+    const clinicName = utils.escapeHtml(clinic.clinicName || clinic.name);
+    const location = utils.escapeHtml(clinic.location);
+    const clinicId = clinic.id || clinic.clinicId;
+    const clinic_Id = clinic.clinic_Id || 'N/A';
+    
+    // Properly escape quotes for onclick attributes
+    const escapedNameForJs = (clinic.clinicName || clinic.name || '').replace(/'/g, "\\'").replace(/"/g, '\\"');
+    const escapedLocationForJs = (clinic.location || '').replace(/'/g, "\\'").replace(/"/g, '\\"');
+    
+    return `
+      <div class="clinic-card">
+        <h3>🏥 ${clinicName}</h3>
+        <p>🆔 <strong>Clinic ID:</strong> ${clinic_Id}</p>
+        <p>📍 <strong>Location:</strong> ${location}</p>
+        <p>🕒 <strong>Created:</strong> ${clinic.createdAt && clinic.createdAt.seconds ? new Date(clinic.createdAt.seconds * 1000).toLocaleDateString() : 'N/A'}</p>
+        <div class="clinic-actions">
+          <button class="edit-btn" onclick="editClinic('${clinicId}', '${escapedNameForJs}', '${escapedLocationForJs}')">
+            ✏️ Edit
+          </button>
+          <button class="delete-btn" onclick="removeClinic('${clinicId}')">
+            🗑️ Delete
+          </button>
+        </div>
+      </div>
+    `;
+  }).join('');
+},
 
             updateUserInfo(user) {
                 const userInfo = document.getElementById('userInfo');
@@ -595,16 +608,7 @@
                 }
             }
 
-            async logout() {
-                try {
-                    await signOut(auth);
-                    utils.showMessage('Logged out successfully! 👋', 'success');
-                    window.location.href = 'login.html';
-                } catch (error) {
-                    console.error('Logout error:', error);
-                    utils.showMessage('Error logging out. Please try again.', 'error');
-                }
-            }
+    
         }
 
         // Initialize the clinic manager
