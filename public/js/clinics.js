@@ -11,7 +11,7 @@ import {
   serverTimestamp,
   updateDoc
 } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
-import { auth, db } from '../firebase-config.js';
+import { auth, db } from './firebase-config.js';
 
 // Configuration
 const CONFIG = {
@@ -251,7 +251,7 @@ class ClinicManager {
       } else {
         console.log('❌ User not authenticated');
         if (window.location.pathname !== '/login.html') {
-          window.location.href = 'login.html';
+          window.location.href = 'public/login.html';
         }
       }
     });
@@ -353,7 +353,7 @@ class ClinicManager {
     try {
       await signOut(auth);
       utils.showMessage('Logged out successfully! 👋', 'success');
-      window.location.href = 'login.html';
+      window.location.href = 'public/login.html';
     } catch (error) {
       console.error('Logout error:', error);
       utils.showMessage('Error logging out. Please try again.', 'error');

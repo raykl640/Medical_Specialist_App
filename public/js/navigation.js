@@ -1,7 +1,8 @@
-// navigation.js
+// navigation.js - FIXED VERSION
 class NavigationManager {
     constructor() {
         this.isLoggingOut = false;
+        this.eventListenersAttached = false; // PREVENT DUPLICATE LISTENERS
         this.init();
     }
 
@@ -13,7 +14,7 @@ class NavigationManager {
 
     async loadNavigationHTML() {
         try {
-            const response = await fetch('navigation.html');
+            const response = await fetch('public/navigation.html');
             console.log('Fetch status:', response.status);
             const html = await response.text();
             console.log('Fetched HTML:', html);
@@ -65,11 +66,21 @@ class NavigationManager {
     }
 
     setupEventListeners() {
+        // PREVENT DUPLICATE EVENT LISTENERS
+        if (this.eventListenersAttached) {
+            console.log('Event listeners already attached, skipping...');
+            return;
+        }
+
         // Wait a moment for DOM elements to be ready, then set up listeners
         setTimeout(() => {
             const hamburger = document.querySelector('.hamburger-menu');
             if (hamburger) {
-                hamburger.addEventListener('click', () => this.toggleSidebar());
+                // REMOVE ANY EXISTING LISTENERS FIRST
+                hamburger.removeEventListener('click', this.handleHamburgerClick);
+                // ADD THE LISTENER WITH BOUND CONTEXT
+                this.handleHamburgerClick = this.handleHamburgerClick.bind(this);
+                hamburger.addEventListener('click', this.handleHamburgerClick);
                 console.log('Hamburger menu listener attached');
             } else {
                 console.log('Hamburger menu not found');
@@ -77,22 +88,21 @@ class NavigationManager {
 
             const overlay = document.getElementById('overlay');
             if (overlay) {
-                overlay.addEventListener('click', () => this.closeSidebar());
+                overlay.removeEventListener('click', this.handleOverlayClick);
+                this.handleOverlayClick = this.handleOverlayClick.bind(this);
+                overlay.addEventListener('click', this.handleOverlayClick);
             }
 
             const logoutLink = document.getElementById('logout-link');
             if (logoutLink) {
-                logoutLink.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    this.logout();
-                });
+                logoutLink.removeEventListener('click', this.handleLogoutClick);
+                this.handleLogoutClick = this.handleLogoutClick.bind(this);
+                logoutLink.addEventListener('click', this.handleLogoutClick);
             }
-        }, 100);
 
-        // Make functions globally available (for legacy code if needed)
-        window.toggleSidebar = () => this.toggleSidebar();
-        window.closeSidebar = () => this.closeSidebar();
-        window.logout = () => this.logout();
+            // Mark listeners as attached
+            this.eventListenersAttached = true;
+        }, 100);
 
         // Handle window resize
         window.addEventListener('resize', () => {
@@ -117,6 +127,26 @@ class NavigationManager {
                 this.closeSidebar();
             }
         });
+    }
+
+    // SEPARATE HANDLER METHODS TO PREVENT CONFLICTS
+    handleHamburgerClick(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log('Hamburger clicked - single handler');
+        this.toggleSidebar();
+    }
+
+    handleOverlayClick(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.closeSidebar();
+    }
+
+    handleLogoutClick(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.logout();
     }
 
     async initializeFirebaseAuth() {
@@ -181,7 +211,7 @@ class NavigationManager {
                         try {
                             window.location.replace('./login.html');
                         } catch (e) {
-                            window.location.href = './login.html';
+                            window.location.href = 'public/login.html';
                         }
                     }
                 }
@@ -211,7 +241,7 @@ class NavigationManager {
 
     setActiveNavLink() {
         // Get current page name
-        const currentPage = window.location.pathname.split('/').pop() || 'dashboard.html';
+        const currentPage = window.location.pathname.split('/').pop() || 'patientDashboard.html';
         
         // Remove active class from all nav links
         document.querySelectorAll('.nav-link').forEach(link => {
@@ -234,10 +264,13 @@ class NavigationManager {
         const overlay = document.getElementById('overlay');
         
         if (sidebar) {
+            const wasOpen = sidebar.classList.contains('open');
             sidebar.classList.toggle('open');
             console.log('Sidebar toggled, open:', sidebar.classList.contains('open'));
+            console.log('Was open before toggle:', wasOpen);
         } else {
             console.log('Sidebar element not found');
+            return;
         }
         
         // On desktop, shift main content; on mobile, show overlay
@@ -298,11 +331,14 @@ class NavigationManager {
     }
 }
 
-// Initialize navigation when DOM is loaded
-document.addEventListener('DOMContentLoaded', () => {
-    console.log("DOM loaded, initializing NavigationManager");
-    new NavigationManager();
-});
+// PREVENT MULTIPLE INSTANCES
+if (!window.navigationManager) {
+    // Initialize navigation when DOM is loaded
+    document.addEventListener('DOMContentLoaded', () => {
+        console.log("DOM loaded, initializing NavigationManager");
+        window.navigationManager = new NavigationManager();
+    });
+}
 
 // Export for module use
 export default NavigationManager;

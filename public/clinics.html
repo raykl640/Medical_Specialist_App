@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Clinic Management - Medical Specialist App</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="css/styles.css">
 <style>
     body {
         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -507,7 +507,7 @@
                         console.log('❌ User not authenticated');
                         // Redirect to login if not on login page
                         if (!window.location.pathname.includes('login')) {
-                            window.location.href = 'login.html';
+                            window.location.href = '/public/login.html';
                         }
                     }
                 });
@@ -629,6 +629,6 @@
 
         console.log('🚀 Clinic management system ready!');
     </script>
-    <script type="module" src="navigation.js"></script>
+    <script type="module" src="js/navigation.js"></script>
 </body>
 </html>

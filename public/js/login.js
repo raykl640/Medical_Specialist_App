@@ -48,9 +48,9 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
 
         setTimeout(() => {
             if (user.uid === adminUID || user.email === adminEmail) {
-                window.location.href = "adminDashboard.html";
+                window.location.href = "public/adminDashboard.html";
             } else {
-                window.location.href = "index.html";
+                window.location.href = "public/index.html";
             }
         }, 1500);
 

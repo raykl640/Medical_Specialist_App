@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
-<styles>
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Navigation Component</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="css/styles.css">
 
 </head>
 <body>
@@ -35,27 +35,27 @@
         <div class="nav-section">
             <h3>Dashboard</h3>
             <ul>
-                <li><a href="dashboard.html" class="nav-link"><span class="icon">🏠</span> Home</a></li>
-                <li><a href="appointments.html" class="nav-link"><span class="icon">📅</span> My Appointments</a></li>
+                <li><a href="patientDashboard.html" class="nav-link"><span class="icon">🏠</span> Home</a></li>
                 <li><a href="clinics.html" class="nav-link"><span class="icon">🏥</span> Clinics</a></li>
-                <li><a href="health-resources.html" class="nav-link"><span class="icon">📚</span> Health Resources</a></li>
+                <li><a href="health-dashboard.html" class="nav-link"><span class="icon">📊</span> Health Dashboard</a></li>
             </ul>
         </div>
         <div class="nav-section">
-            <h3>Medical</h3>
+            <h3>Account</h3>
             <ul>
-                <li><a href="medical-history.html" class="nav-link"><span class="icon">📋</span> Medical History</a></li>
-                <li><a href="lab-tests.html" class="nav-link"><span class="icon">🧪</span> Lab Tests</a></li>
-                <li><a href="radiology.html" class="nav-link"><span class="icon">💎</span> Radiology</a></li>
-                <li><a href="prescriptions.html" class="nav-link"><span class="icon">💊</span> Prescriptions</a></li>
+                <li><a href="index.html" class="nav-link"><span class="icon">🏠</span> Main Page</a></li>
+                <li><a href="login.html" class="nav-link"><span class="icon">🔑</span> Login</a></li>
+                <li><a href="register.html" class="nav-link"><span class="icon">📝</span> Register</a></li>
+                <li><a href="resetPassword.html" class="nav-link"><span class="icon">🔒</span> Reset Password</a></li>
             </ul>
         </div>
         <div class="nav-section nav-bottom">
             <ul>
-                <li><a href="profile.html" class="nav-link"><span class="icon">👤</span> Profile</a></li>
                 <li><a href="#" class="nav-link" id="logout-link"><span class="icon">🚪</span> Log Out</a></li>
             </ul>
         </div>
     </div>
+
+    <script type="module" src="js/navigation.js"></script>
 </body>
 </html>

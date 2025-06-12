@@ -28,7 +28,7 @@ resetForm.addEventListener("submit", async (e) => {
   message.className = "success";
 
   setTimeout(() => {
-    window.location.href = "login.html"; // Change to your actual login page URL
+    window.location.href = "js/login.html"; // Change to your actual login page URL
   }, 3000); // 3 seconds delay
 } catch (error) {
   message.textContent = error.message;

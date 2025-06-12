@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import {getAuth,createUserWithEmailAndPassword,sendEmailVerification} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import {getFirestore,doc,setDoc} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { createUserWithEmailAndPassword, getAuth, sendEmailVerification } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { doc, getFirestore, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBWkXxtI9514_YD6H4kQ6IgltPoSSf7W80",
@@ -87,7 +87,7 @@ document.getElementById("registerBtn").addEventListener("click", async () => {
       createdAt: new Date().toISOString(),
     });
 
-    window.location.href = "login.html";
+    window.location.href = "public/login.html";
 
   } catch (error) {
     let friendlyMessage = "";

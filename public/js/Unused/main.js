@@ -1,6 +1,6 @@
 // js/main.js
 import { Router, PageTemplates } from './router.js';
-import { authManager } from './auth.js';
+import { authManager } from '../auth.js';
 
 class App {
     constructor() {
