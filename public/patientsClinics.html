@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Available Clinics - Medical Specialist App</title>
+    <link rel="stylesheet" href="css/styles.css" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: #FFFFFF;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .filters {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .filter-group label {
+            font-weight: 600;
+            color: #444;
+            font-size: 14px;
+        }
+
+        .filter-group select, .filter-group input {
+            padding: 8px 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            background: white;
+        }
+
+        .filter-group select:focus, .filter-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .clinics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .clinic-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .clinic-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+            border-color: #667eea;
+        }
+
+        .clinic-card h3 {
+            color: #333;
+            font-size: 1.4em;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .clinic-card .location {
+            color: #666;
+            font-size: 1em;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .specialist-count {
+            background: #667eea;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+
+        .view-details-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            font-weight: 600;
+        }
+
+        .view-details-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            overflow-y: auto;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 2% auto;
+            padding: 0;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 900px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            font-size: 1.8em;
+            font-weight: 300;
+        }
+
+        .close {
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: opacity 0.3s ease;
+        }
+
+        .close:hover {
+            opacity: 0.7;
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .clinic-info {
+            background: #f8f9ff;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        .clinic-info h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .clinic-info p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        .specialists-section h3 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.4em;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .specialist-card {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .specialist-card:hover {
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            border-color: #667eea;
+        }
+
+        .specialist-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .specialist-info h4 {
+            color: #333;
+            font-size: 1.2em;
+            margin-bottom: 5px;
+        }
+
+        .specialist-info .specialty {
+            color: #667eea;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+
+        .availability-section {
+            margin-top: 15px;
+        }
+
+        .availability-section h5 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1em;
+        }
+
+        .time-slots {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .time-slot {
+            background: #e8f2ff;
+            color: #667eea;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            border: 1px solid #667eea;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .time-slot:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .time-slot.booked {
+            background: #ffebee;
+            color: #e53935;
+            border-color: #e53935;
+            cursor: not-allowed;
+        }
+
+        .time-slot.booked:hover {
+            background: #ffebee;
+            color: #e53935;
+        }
+
+        .no-availability {
+            color: #999;
+            font-style: italic;
+            padding: 10px;
+            background: #f5f5f5;
+            border-radius: 5px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 50px;
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .error {
+            background: #ffebee;
+            color: #e53935;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #e53935;
+        }
+
+        .no-clinics {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+
+        .no-clinics h3 {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            color: #999;
+        }
+
+        .book-appointment-btn {
+            background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .book-appointment-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 0 10px;
+                border-radius: 15px;
+            }
+
+            .header {
+                padding: 30px 20px;
+            }
+
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .clinics-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .filters {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .filter-group {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .modal-content {
+                width: 95%;
+                margin: 5% auto;
+            }
+
+            .modal-header {
+                padding: 20px;
+            }
+
+            .modal-body {
+                padding: 20px;
+            }
+
+            .specialist-header {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+     <div id="navbar-container"></div>
+
+    <div class="container">
+        <div class="header">
+            <h1>🏥 Available Clinics</h1>
+            <p>Browse through clinics and find the right specialist. Click on the cards to see more details or schedule an appointment.</p>
+        </div>
+
+        <div class="content">
+            <div class="filters">
+                <div class="filter-group">
+                    <label for="locationFilter">📍 Location:</label>
+                    <select id="locationFilter">
+                        <option value="">All Locations</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="specialtyFilter">⚕️ Specialty:</label>
+                    <select id="specialtyFilter">
+                        <option value="">All Specialties</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label for="searchFilter">🔍 Search:</label>
+                    <input type="text" id="searchFilter" placeholder="Search clinics...">
+                </div>
+            </div>
+
+            <div id="clinicsContainer">
+                <div class="loading">Loading available clinics...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Clinic Details Modal -->
+    <div id="clinicModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalClinicName">Clinic Details</h2>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="clinic-info">
+                    <h3>📍 Clinic Information</h3>
+                    <p><strong>Location:</strong> <span id="modalClinicLocation"></span></p>
+                    <p><strong>Clinic ID:</strong> <span id="modalClinicId"></span></p>
+                </div>
+                
+                <div class="specialists-section">
+                    <h3>👨‍⚕️ Available Specialists</h3>
+                    <div id="specialistsList">
+                        <div class="loading">Loading specialists...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="module" src="js/navigation.js"></script>
+
+    <script type="module">
+        // Firebase configuration
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
+        import {
+            getFirestore,
+            collection,
+            getDocs,
+            query,
+            where,
+            orderBy
+        } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
+        
+        const firebaseConfig = {
+            apiKey: "AIzaSyBWkXxtI9514_YD6H4kQ6IgltPoSSf7W80",
+            authDomain: "medical-specialist-app-d3a46.firebaseapp.com",
+            projectId: "medical-specialist-app-d3a46",
+            storageBucket: "medical-specialist-app-d3a46.appspot.com",
+            messagingSenderId: "990201081362",
+            appId: "1:990201081362:web:273dbe33edbbee6f2bb2cb",
+            measurementId: "G-ECMD5067CE"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // Global variables
+        let allClinics = [];
+        let allSpecialists = [];
+        let filteredClinics = [];
+
+        // Utility functions
+        const utils = {
+            escapeHtml: (text) => {
+                if (!text) return '';
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            },
+
+            formatDate: (timestamp) => {
+                if (!timestamp) return 'N/A';
+                if (timestamp.seconds) {
+                    return new Date(timestamp.seconds * 1000).toLocaleDateString();
+                }
+                return new Date(timestamp).toLocaleDateString();
+            },
+
+            formatTime: (timestamp) => {
+                if (!timestamp) return 'N/A';
+                if (timestamp.seconds) {
+                    return new Date(timestamp.seconds * 1000).toLocaleTimeString([], {
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                }
+                return new Date(timestamp).toLocaleTimeString([], {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            },
+
+            showError: (message) => {
+                const container = document.getElementById('clinicsContainer');
+                container.innerHTML = `<div class="error">⚠️ ${message}</div>`;
+            }
+        };
+
+  // 🔧 FIXED DATA SERVICE FUNCTIONS
+const dataService = {
+    async getClinics() {
+        try {
+            console.log('🔄 Fetching clinics...');
+            
+            let q = query(
+                collection(db, 'clinics'),
+                orderBy('createdAt', 'desc')
+            );
+            
+            let querySnapshot = await getDocs(q);
+            let clinics = [];
+            
+            querySnapshot.forEach((doc) => {
+                const data = doc.data();
+                // Only include active clinics if isActive field exists, otherwise include all
+                if (data.isActive === undefined || data.isActive === true) {
+                    clinics.push({
+                        id: doc.id,
+                        ...data
+                    });
+                }
+            });
+            
+            // If no clinics found with createdAt ordering, try without ordering
+            if (clinics.length === 0) {
+                console.log('⚠️ No clinics found with ordering, trying without...');
+                querySnapshot = await getDocs(collection(db, 'clinics'));
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    if (data.isActive === undefined || data.isActive === true) {
+                        clinics.push({
+                            id: doc.id,
+                            ...data
+                        });
+                    }
+                });
+            }
+            
+            console.log('✅ Fetched clinics:', clinics.length, clinics);
+            return clinics;
+        } catch (error) {
+            console.error('❌ Error getting clinics:', error);
+            
+            // Try a simpler query as fallback
+            try {
+                console.log('🔄 Trying simple clinic query...');
+                const querySnapshot = await getDocs(collection(db, 'clinics'));
+                const clinics = [];
+                
+                querySnapshot.forEach((doc) => {
+                    clinics.push({
+                        id: doc.id,
+                        ...doc.data()
+                    });
+                });
+                
+                console.log('✅ Fallback query successful:', clinics.length);
+                return clinics;
+            } catch (fallbackError) {
+                console.error('❌ Fallback query failed:', fallbackError);
+                throw new Error(`Failed to get clinics: ${error.message}`);
+            }
+        }
+    },
+
+    async getSpecialists() {
+        try {
+            console.log('🔄 Fetching specialists...');
+            const specialistsRef = collection(db, 'specialists');
+            console.log('📁 Specialists collection reference:', specialistsRef);
+            
+            const querySnapshot = await getDocs(specialistsRef);
+            console.log('📄 Query snapshot:', querySnapshot);
+            
+            const specialists = [];
+            querySnapshot.forEach((doc) => {
+                const data = doc.data();
+                console.log('📝 Specialist document:', { id: doc.id, data });
+                
+                // 🔧 FIX: Handle the leading space in name field and normalize field names
+                const normalizedData = {
+                    id: doc.id,
+                    specialistId: data.specialistId || data.specialist_id || doc.id,
+                    name: (data.name || data[' name'] || '').trim(), // Handle " name" field with leading space
+                    specialty: data.specialty || data.speciality || 'General Practice',
+                    clinicId: data.clinicId || data.clinic_Id || data.clinic_id || data.clinicID, // Multiple possible clinic ID fields
+                    availability: data.availability || [],
+                    isActive: data.isActive !== false, // Default to true if not specified
+                    ...data // Keep all other fields
+                };
+                
+                console.log('🔧 Normalized specialist:', normalizedData);
+                specialists.push(normalizedData);
+            });
+            
+            console.log('✅ Fetched specialists:', specialists.length, specialists);
+            return specialists;
+        } catch (error) {
+            console.error('❌ Error getting specialists:', error);
+            utils.showError(`Failed to load specialists: ${error.message}`);
+            return [];
+        }
+    },
+
+    // 🔧 FIXED: More robust clinic-specialist matching
+    getSpecialistsByClinic(clinicFirebaseId) {
+        console.log('🔍 Looking for specialists for clinic Firebase ID:', clinicFirebaseId);
+        console.log('🔍 All specialists:', allSpecialists);
+        
+        const matchingSpecialists = allSpecialists.filter(specialist => {
+            // Try multiple possible clinic ID field combinations and trim any whitespace
+            const specialistClinicId = (specialist.clinicId || 
+                                     specialist.clinic_Id || 
+                                     specialist.clinic_id || 
+                                     specialist.clinicID || '').trim();
+            
+            console.log('🔗 Comparing clinic IDs:', { 
+                clinicFirebaseId, 
+                specialistClinicId, 
+                specialistName: specialist.name,
+                fullSpecialist: specialist 
+            });
+            
+            // Compare trimmed IDs
+            return specialistClinicId === clinicFirebaseId;
+        });
+        
+        console.log(`✅ Found ${matchingSpecialists.length} specialists for clinic ${clinicFirebaseId}:`, matchingSpecialists);
+        return matchingSpecialists;
+    }
+};
+  // 🎨 FIXED UI RENDERING FUNCTIONS
+const ui = {
+    renderClinics(clinics) {
+        const container = document.getElementById('clinicsContainer');
+        
+        if (!clinics || clinics.length === 0) {
+            container.innerHTML = `
+                <div class="no-clinics">
+                    <h3>🏥 No clinics available</h3>
+                    <p>There are currently no clinics matching your criteria.</p>
+                </div>
+            `;
+            return;
+        }
+
+        const clinicsGrid = document.createElement('div');
+        clinicsGrid.className = 'clinics-grid';
+        
+        clinics.forEach(clinic => {
+            // 🔧 CRITICAL FIX: Use Firebase document ID for matching specialists
+            const clinicFirebaseId = clinic.id; // This is the Firebase document ID
+            const specialistCount = dataService.getSpecialistsByClinic(clinicFirebaseId).length;
+            
+            console.log('🏥 Rendering clinic:', {
+                name: clinic.clinicName || clinic.name,
+                firebaseId: clinicFirebaseId,
+                clinic_Id: clinic.clinic_Id,
+                specialistCount
+            });
+            
+            const clinicCard = document.createElement('div');
+            clinicCard.className = 'clinic-card';
+            clinicCard.onclick = () => this.openClinicModal(clinic);
+            
+            clinicCard.innerHTML = `
+                <h3>🏥 ${utils.escapeHtml(clinic.clinicName || clinic.name || 'Unknown Clinic')}</h3>
+                <div class="location">📍 ${utils.escapeHtml(clinic.location || 'Location not specified')}</div>
+                <div class="specialist-count">
+                    👨‍⚕️ ${specialistCount} ${specialistCount === 1 ? 'Specialist' : 'Specialists'}
+                </div>
+                <button class="view-details-btn" onclick="event.stopPropagation()">
+                    View Details & Book Appointment
+                </button>
+            `;
+            
+            clinicsGrid.appendChild(clinicCard);
+        });
+        
+        container.innerHTML = '';
+        container.appendChild(clinicsGrid);
+    },
+
+    openClinicModal(clinic) {
+        const modal = document.getElementById('clinicModal');
+        const modalClinicName = document.getElementById('modalClinicName');
+        const modalClinicLocation = document.getElementById('modalClinicLocation');
+        const modalClinicId = document.getElementById('modalClinicId');
+        const specialistsList = document.getElementById('specialistsList');
+        
+        modalClinicName.textContent = clinic.clinicName || clinic.name || 'Unknown Clinic';
+        modalClinicLocation.textContent = clinic.location || 'Location not specified';
+        
+        // 🔧 CRITICAL FIX: Use Firebase document ID for matching
+        const clinicFirebaseId = clinic.id; // This is the Firebase document ID
+        modalClinicId.textContent = clinicFirebaseId;
+        
+        console.log('🔍 Opening modal for clinic Firebase ID:', clinicFirebaseId);
+        console.log('🔍 Clinic data:', clinic);
+        
+        // Load specialists for this clinic using Firebase document ID
+        const clinicSpecialists = dataService.getSpecialistsByClinic(clinicFirebaseId);
+        console.log('👨‍⚕️ Specialists for modal:', clinicSpecialists);
+        
+        this.renderSpecialists(clinicSpecialists, specialistsList);
+        
+        modal.style.display = 'block';
+    },
+
+    renderSpecialists(specialists, container) {
+        console.log('🎨 Rendering specialists:', specialists);
+        
+        if (!specialists || specialists.length === 0) {
+            container.innerHTML = `
+                <div class="no-availability">
+                    ❌ No specialists available at this clinic currently.
+                    <br><small>Please check if the clinic_Id in specialists matches the clinic's Firebase document ID.</small>
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = '';
+        
+        specialists.forEach(specialist => {
+            console.log('👨‍⚕️ Rendering specialist:', specialist);
+            
+            const specialistCard = document.createElement('div');
+            specialistCard.className = 'specialist-card';
+            
+            specialistCard.innerHTML = `
+                <div class="specialist-header">
+                    <div class="specialist-info">
+                        <h4>👨‍⚕️ ${utils.escapeHtml(specialist.name || 'Dr. Unknown')}</h4>
+                        <div class="specialty">🩺 ${utils.escapeHtml(specialist.specialty || 'General Practice')}</div>
+                        <div style="font-size: 0.8em; color: #666; margin-top: 5px;">
+                            Specialist ID: ${specialist.specialistId || specialist.id}
+                        </div>
+                        <div style="font-size: 0.8em; color: #666; margin-top: 2px;">
+                            Clinic ID: ${specialist.clinicId || specialist.clinic_Id || 'Not specified'}
+                        </div>
+                    </div>
+                </div>
+                <div class="availability-section">
+                    <h5>🕒 Available Time Slots:</h5>
+                    <div class="time-slots">
+                        ${this.renderTimeSlots(specialist.availability)}
+                    </div>
+                </div>
+                <button class="book-appointment-btn" onclick="bookAppointment('${specialist.id}', '${specialist.name}')">
+                    📅 Book Appointment
+                </button>
+            `;
+            
+            container.appendChild(specialistCard);
+        });
+    },
+
+    renderTimeSlots(availability) {
+        console.log('🕐 Rendering time slots:', availability);
+        
+        if (!availability || !Array.isArray(availability) || availability.length === 0) {
+            return `
+                <div class="no-availability">
+                    📅 No available time slots configured
+                    <br><small>Please contact the clinic directly</small>
+                </div>
+            `;
+        }
+
+        return availability.map((slot, index) => {
+            let timeStr = 'Time Slot';
+            let isBooked = false;
+            
+            // Handle different slot formats
+            if (typeof slot === 'string') {
+                timeStr = slot;
+            } else if (slot && typeof slot === 'object') {
+                if (slot.time) {
+                    timeStr = utils.formatTime(slot.time);
+                } else if (slot.startTime) {
+                    timeStr = utils.formatTime(slot.startTime);
+                } else {
+                    timeStr = utils.formatTime(slot);
+                }
+                isBooked = slot.booked || slot.isBooked || false;
+            } else {
+                timeStr = `Slot ${index + 1}`;
+            }
+            
+            return `
+                <div class="time-slot ${isBooked ? 'booked' : ''}" 
+                     onclick="${isBooked ? '' : `selectTimeSlot('${timeStr}')`}">
+                    ${timeStr} ${isBooked ? '(Booked)' : ''}
+                </div>
+            `;
+        }).join('');
+    },
+
+    setupFilters() {
+        // Get unique locations from clinics
+        const locations = [...new Set(allClinics.map(clinic => clinic.location).filter(Boolean))];
+        const locationFilter = document.getElementById('locationFilter');
+        locationFilter.innerHTML = '<option value="">All Locations</option>';
+        locations.forEach(location => {
+            const option = document.createElement('option');
+            option.value = location;
+            option.textContent = location;
+            locationFilter.appendChild(option);
+        });
+
+        // Get unique specialties from specialists  
+        const specialties = [...new Set(allSpecialists.map(specialist => specialist.specialty).filter(Boolean))];
+        const specialtyFilter = document.getElementById('specialtyFilter');
+        specialtyFilter.innerHTML = '<option value="">All Specialties</option>';
+        specialties.forEach(specialty => {
+            const option = document.createElement('option');
+            option.value = specialty;
+            option.textContent = specialty;
+            specialtyFilter.appendChild(option);
+        });
+
+        console.log('🔧 Filters setup:', { locations, specialties });
+
+        // Add event listeners
+        document.getElementById('locationFilter').addEventListener('change', this.applyFilters.bind(this));
+        document.getElementById('specialtyFilter').addEventListener('change', this.applyFilters.bind(this));
+        document.getElementById('searchFilter').addEventListener('input', this.applyFilters.bind(this));
+    },
+
+    applyFilters() {
+        const locationFilter = document.getElementById('locationFilter').value;
+        const specialtyFilter = document.getElementById('specialtyFilter').value;
+        const searchFilter = document.getElementById('searchFilter').value.toLowerCase();
+
+        console.log('🔍 Applying filters:', { locationFilter, specialtyFilter, searchFilter });
+
+        filteredClinics = allClinics.filter(clinic => {
+            // Location filter
+            if (locationFilter && clinic.location !== locationFilter) {
+                return false;
+            }
+
+            // Specialty filter - 🔧 FIX: Use Firebase document ID
+            if (specialtyFilter) {
+                const clinicFirebaseId = clinic.id; // Use Firebase document ID
+                const clinicSpecialists = dataService.getSpecialistsByClinic(clinicFirebaseId);
+                const hasSpecialty = clinicSpecialists.some(specialist => 
+                    specialist.specialty === specialtyFilter
+                );
+                if (!hasSpecialty) {
+                    return false;
+                }
+            }
+
+            // Search filter
+            if (searchFilter) {
+                const searchText = `${clinic.clinicName || clinic.name || ''} ${clinic.location || ''}`.toLowerCase();
+                if (!searchText.includes(searchFilter)) {
+                    return false;
+                }
+            }
+
+            return true;
+        });
+
+        console.log('✅ Filtered clinics:', filteredClinics.length);
+        this.renderClinics(filteredClinics);
+    }
+};
+
+        // Global functions for onclick events
+        window.bookAppointment = (specialistId, specialistName) => {
+            alert(`Booking appointment with Dr. ${specialistName}.\n\nThis feature will be implemented in the next phase.`);
+        };
+
+        window.selectTimeSlot = (timeSlot) => {
+            alert(`Selected time slot: ${timeSlot}\n\nAppointment booking will be implemented in the next phase.`);
+        };
+
+        // Modal functionality
+        document.addEventListener('DOMContentLoaded', () => {
+            const modal = document.getElementById('clinicModal');
+            const closeBtn = document.querySelector('.close');
+
+            closeBtn.onclick = () => {
+                modal.style.display = 'none';
+            };
+
+            window.onclick = (event) => {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            };
+        });
+
+        // Initialize the application - renamed to avoid conflict
+        async function startApp() {
+            try {
+                console.log('🚀 Starting application...');
+                
+                // Load clinics and specialists
+                allClinics = await dataService.getClinics();
+                allSpecialists = await dataService.getSpecialists();
+                
+                filteredClinics = [...allClinics];
+                
+                // Setup UI
+                ui.setupFilters();
+                ui.renderClinics(filteredClinics);
+                
+                console.log('✅ Patient clinics page initialized successfully!');
+                console.log('📊 Data loaded:', { clinics: allClinics.length, specialists: allSpecialists.length });
+            } catch (error) {
+                console.error('❌ Failed to initialize app:', error);
+                utils.showError('Failed to load clinics. Please refresh the page.');
+            }
+        }
+
+        // Start the application
+        startApp();
+    </script>
+
+
+</body>
+</html>

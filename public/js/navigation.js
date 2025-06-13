@@ -14,7 +14,7 @@ class NavigationManager {
 
     async loadNavigationHTML() {
         try {
-            const response = await fetch('public/navigation.html');
+            const response = await fetch('./navigation.html');
             console.log('Fetch status:', response.status);
             const html = await response.text();
             console.log('Fetched HTML:', html);
