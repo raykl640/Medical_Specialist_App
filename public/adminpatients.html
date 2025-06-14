@@ -17,7 +17,6 @@
 
     body {
       background: linear-gradient(to right, #E3F2FD, #FFFFFF);
-      color: #444444;
       min-height: 100vh;
     }
 
@@ -44,20 +43,14 @@
       animation: spin 2s linear infinite;
     }
 
-    @keyframes spin {
-      0% {
-        transform: rotate(0deg);
-      }
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
 
-      100% {
-        transform: rotate(360deg);
-      }
-    }
-
-    /* Hide main content initially */
-    .main-app {
-      display: none;
-    }
+.main-app {
+  display: none;
+}
 
     /* Title Bar */
     .title-bar {
@@ -198,12 +191,7 @@
       width: 100%;
       padding: 0 20px;
     }
-
-    .main-content {
-      padding: 80px 20px 20px 270px;
-      /* leaves space for sidebar + topbar */
-    }
-
+    /*Main content */
     h2 {
       margin-bottom: 20px;
     }
@@ -241,12 +229,33 @@
       background-color: #1E88E5;
       color: white;
     }
+
+    .overlay {
+    position: fixed;
+    top: 60px;
+    left: 0;
+    width: 100%;
+    height: calc(100vh - 60px);
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 998;
+    display: none;
+  }
+
+  .overlay.show {
+    display: block;
+  }
+
+    @media (max-width: 768px) {
+      .sidebar.open ~ .table-content {
+        margin-left: 0;
+      }
+    }
   </style>
 </head>
 
 <body>
   <div id="navbar-container"></div>
-  <div class="main-app main-content">
+  <div class="table-content">
     <h2>Patients</h2>
 
     <div class="controls">
