@@ -94,7 +94,7 @@
     z-index: 1000;
     overflow-y: auto;
     padding-top: 80px;
-    padding-bottom: 100px;
+    padding-bottom: 30px;
     box-shadow: 2px 0 10px rgba(0,0,0,0.1);
     display: flex;
     flex-direction: column;
@@ -144,17 +144,13 @@
     flex-shrink: 0;
 }
 
-/* Bottom navigation section */
-.nav-bottom {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 280px;
-    background-color: #FFFFFF;
-    padding: 20px;
-    border-top: 1px solid #DDDDDD;
-    margin-bottom: 0;
-    z-index: 1001;
+/* Account section - integrated into main navigation */
+.nav-section.account-section {
+    margin-top: auto;
+    margin-bottom: 20px;
+    padding: 0 20px;
+    border-top: 1px solid #EEEEEE;
+    padding-top: 20px;
 }
 
 .nav-section h3 {
@@ -223,8 +219,7 @@
 .nav-main {
     flex: 1;
     overflow-y: auto;
-    padding-bottom: 120px; /* Space for bottom nav */
-    margin-bottom: 80px; /* Additional space to prevent overlap */
+    padding-bottom: 20px;
 }
 
 /* Main Content - FIXED MARGIN AND TRANSITIONS */
@@ -263,19 +258,11 @@
         width: 280px;
         left: -280px;
     }
-    
-    .nav-bottom {
-        width: 280px;
-    }
 
     .nav-link {
         padding: 14px 12px;
         font-size: 15px;
         min-height: 48px;
-    }
-
-    .nav-bottom {
-        width: 280px;
     }
 }
 
@@ -287,11 +274,6 @@
     .sidebar {
         width: calc(100vw - 40px);
         left: calc(-100vw + 40px);
-        max-width: 320px;
-    }
-
-    .nav-bottom {
-        width: calc(100vw - 40px);
         max-width: 320px;
     }
 
@@ -323,11 +305,6 @@
     /* Ensure content doesn't overflow */
     .content {
         padding: 15px;
-    }
-
-    .nav-bottom {
-        width: calc(100vw - 40px);
-        max-width: 320px;
     }
 }
 
