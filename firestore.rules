@@ -51,7 +51,7 @@ service cloud.firestore {
     }
     
     // Clinics collection rules
-    match /clinics/{clinicId} {
+match /clinics/{clinicId} {
       // Allow read for all authenticated users
       allow read: if isAuthenticated();
       
@@ -59,7 +59,7 @@ service cloud.firestore {
       allow write: if isAuthenticated() && 
                      isValidClinic() && 
                      request.auth.token.admin == true;
-    }
+}
 
     // Appointments collection rules
     match /appointments/{appointmentId} {

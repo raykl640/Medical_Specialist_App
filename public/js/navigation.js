@@ -59,7 +59,7 @@ class NavigationManager {
                 
                 document.body.appendChild(mainContentDiv);
             }
-
+            
             // Check localStorage for sidebar state
             const sidebarState = localStorage.getItem('sidebarOpen');
             if (sidebarState === 'true') {
