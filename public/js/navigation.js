@@ -201,7 +201,7 @@ class NavigationManager {
                         try {
                             window.location.replace('./login.html');
                         } catch (e) {
-                            window.location.href = 'public/login.html';
+                            window.location.href = '/login.html';
                         }
                     }
                 }
