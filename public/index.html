@@ -1,254 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Medical Dashboard</title>
-    
-    <script type="module">
-        // Import Firebase modules (same version as login page)
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-        
-        // Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyBWkXxtI9514_YD6H4kQ6IgltPoSSf7W80",
-            authDomain: "medical-specialist-app-d3a46.firebaseapp.com",
-            projectId: "medical-specialist-app-d3a46",
-            storageBucket: "medical-specialist-app-d3a46.appspot.com",
-            messagingSenderId: "990201081362",
-            appId: "1:990201081362:web:273dbe33edbbee6f2bb2cb",
-            measurementId: "G-ECMD5067CE"
-        };
-        
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        
-        // Make auth available globally for other functions
-        window.firebaseAuth = auth;
-        window.firebaseSignOut = signOut;
-    </script>
-
-<style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #FFFFFF;
-        }
-        
-        /* Loading screen */
-        .loading-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #FFFFFF;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-        }
-        
-        .loading-spinner {
-            border: 4px solid #E3F2FD;
-            border-top: 4px solid #1E88E5;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 2s linear infinite;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        /* Hide main content initially */
-        .main-app {
-            display: none;
-        }
-        
-        /* Title Bar */
-        .title-bar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 60px;
-            background-color: #FFFFFF;
-            border-bottom: 1px solid #DDDDDD;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 20px;
-            z-index: 1000;
-        }
-        .hamburger-menu {
-            display: flex;
-            flex-direction: column;
-            cursor: pointer;
-            padding: 5px;
-        }
-        .hamburger-line {
-            width: 25px;
-            height: 3px;
-            background-color: #444444;
-            margin: 2px 0;
-            transition: 0.3s;
-        }
-        .notifications {
-            font-size: 20px;
-            cursor: pointer;
-        }
-        .notification-icon {
-            padding: 5px;
-        }
-        /* Sidebar */
-        .sidebar {
-            position: fixed;
-            left: -250px;
-            top: 60px;
-            width: 250px;
-            height: calc(100vh - 60px);
-            background-color: #FFFFFF;
-            border-right: 1px solid #DDDDDD;
-            transition: left 0.3s ease;
-            z-index: 999;
-            overflow-y: auto;
-            padding: 20px 0;
-        }
-        .sidebar.open {
-            left: 0;
-        }
-        .logo {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 30px;
-        }
-        .logo-circle {
-            width: 60px;
-            height: 60px;
-            border: 3px solid #1E88E5;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            background-color: #E3F2FD;
-        }
-        .profile-picture {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            object-fit: cover;
-            background: linear-gradient(135deg, #1E88E5 0%, #1565C0 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #FFFFFF;
-            font-size: 24px;
-            font-weight: bold;
-        }
-        .nav-section {
-            margin-bottom: 30px;
-            padding: 0 20px;
-        }
-        .nav-section h3 {
-            color: #444444;
-            font-size: 14px;
-            margin-bottom: 15px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        .nav-section ul {
-            list-style: none;
-        }
-        .nav-section li {
-            margin-bottom: 8px;
-        }
-        .nav-link {
-            display: flex;
-            align-items: center;
-            padding: 10px 15px;
-            text-decoration: none;
-            color: #444444;
-            border-radius: 5px;
-            transition: background-color 0.3s;
-        }
-        .nav-link:hover {
-            background-color: #E3F2FD;
-            color: #1565C0;
-        }
-        .nav-link.active {
-            background-color: #E3F2FD;
-            color: #1E88E5;
-        }
-        .nav-link .icon {
-            margin-right: 10px;
-            font-size: 16px;
-        }
-        .nav-bottom {
-            position: absolute;
-            bottom: 20px;
-            width: 100%;
-            padding: 0 20px;
-        }
-        /* Main Content */
-        .main-content {
-            margin-top: 60px;
-            padding: 20px;
-            transition: margin-left 0.3s ease;
-        }
-        .main-content.shifted {
-            margin-left: 250px;
-        }
-        /* Welcome Content */
-        .welcome-section {
-            background: #FFFFFF;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-        }
-        .welcome-section h1 {
-            color: #444444;
-            margin-bottom: 10px;
-        }
-        .welcome-section p {
-            color: #444444;
-            line-height: 1.6;
-        }
-        /* Responsive */
-        @media (max-width: 768px) {
-            .main-content.shifted {
-                margin-left: 0;
-            }
-           
-            .sidebar.open {
-                box-shadow: 2px 0 5px rgba(0,0,0,0.1);
-            }
-        }
-        /* Overlay for mobile */
-        .overlay {
-            position: fixed;
-            top: 60px;
-            left: 0;
-            width: 100%;
-            height: calc(100vh - 60px);
-            background-color: rgba(0,0,0,0.5);
-            z-index: 998;
-            display: none;
-        }
-        .overlay.show {
-            display: block;
-        }
-        * {
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Welcome to MedConnect</title>
+  <link rel="stylesheet" href="css/styles.css" />
+   
+  <style>
+    * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
@@ -256,8 +15,8 @@
     }
 
     body {
-      background: linear-gradient(to right, #E3F2FD, #FFFFFF);
-      color: #444444;
+      background: linear-gradient(to right, #e0f7fa, #ffffff);
+      color: #333;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -270,14 +29,14 @@
     h1 {
       font-size: 2.8rem;
       margin-bottom: 1rem;
-      color: #1E88E5;
+      color: #00796b;
     }
 
     p.intro {
       font-size: 1.2rem;
       max-width: 700px;
       margin-bottom: 2.5rem;
-      color: #444444;
+      color: #555;
     }
 
     .features {
@@ -289,7 +48,7 @@
     }
 
     .feature {
-      background-color: #FFFFFF;
+      background-color: #ffffff;
       border-radius: 10px;
       box-shadow: 0 4px 10px rgba(0,0,0,0.1);
       padding: 25px;
@@ -302,12 +61,12 @@
 
     .feature h3 {
       margin-bottom: 10px;
-      color: #1565C0;
+      color: #00695c;
     }
 
     .feature p {
       font-size: 0.95rem;
-      color: #444444;
+      color: #666;
     }
 
     @media (max-width: 600px) {
@@ -319,171 +78,11 @@
         grid-template-columns: 1fr;
       }
     }
-
-    </style>
-
+  </style>
 </head>
 <body>
-    <!-- Loading Screen -->
-    <div class="loading-screen" id="loadingScreen">
-        <div class="loading-spinner"></div>
-    </div>
+    <div id="navbar-container"></div>
 
-    <!-- Main App Content -->
-    <div class="main-app" id="mainApp">
-        <!-- Title Bar -->
-        <div class="title-bar">
-            <div class="hamburger-menu" onclick="toggleSidebar()">
-                <div class="hamburger-line"></div>
-                <div class="hamburger-line"></div>
-                <div class="hamburger-line"></div>
-            </div>
-            <div class="notifications">
-                <span class="notification-icon">🔔</span>
-            </div>
-        </div>
-        
-        <!-- Overlay for mobile -->
-        <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
-        
-        <!-- Navigation Sidebar -->
-        <div class="sidebar" id="sidebar">
-            <div class="logo">
-                <div class="logo-circle">
-                    <div class="profile-picture" id="userInitial">
-                        U
-                    </div>
-                </div>
-            </div>
-            <div class="nav-section">
-                <h3>Dashboard</h3>
-                <ul>
-                    <li><a href="patientDashboard.html" class="nav-link active" onclick="loadPage('dashboard')"><span class="icon">🏠</span> Home</a></li>
-                    <li><a href="appointments.html" class="nav-link" onclick="loadPage('appointments')"><span class="icon">📅</span> My Appointments</a></li>
-                    <li><a href="clinics.html" class="nav-link" onclick="loadPage('clinics')"><span class="icon">🏥</span> Clinics</a></li>
-                    <li><a href="healthResources.html" class="nav-link" onclick="loadPage('health-resources')"><span class="icon">📚</span> Health Resources</a></li>
-                </ul>
-            </div>
-            <div class="nav-section">
-                <h3>Medical</h3>
-                <ul>
-                    <li><a href="medicalHistory.html" class="nav-link" onclick="loadPage('medical-history')"><span class="icon">📋</span> Medical History</a></li>
-                    <li><a href="labTests.html" class="nav-link" onclick="loadPage('lab-tests')"><span class="icon">🧪</span> Lab Tests</a></li>
-                    <li><a href="radiology.html" class="nav-link" onclick="loadPage('radiology')"><span class="icon">💎</span> Radiology</a></li>
-                    <li><a href="prescriptions.html" class="nav-link" onclick="loadPage('prescriptions')"><span class="icon">💊</span> Prescriptions</a></li>
-                </ul>
-            </div>
-            <div class="nav-section nav-bottom">
-                <ul>
-                    <li><a href="profile.html" class="nav-link" onclick="loadPage('profile')"><span class="icon">👤</span> Profile</a></li>
-                    <li><a href="#" class="nav-link" onclick="logout()"><span class="icon">🚪</span> Log Out</a></li>
-                </ul>
-            </div>
-        </div>
-        
-        <!-- Main Content Area -->
-        <div class="main-content" id="mainContent">
-            <div id="page-content">
-                <div class="welcome-section">
-                    <h1>Welcome to Your Medical Dashboard</h1>
-                    <p>Access all your medical information, appointments, and health resources in one convenient location. Use the navigation menu to explore different sections of your healthcare portal.</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // Wait for Firebase to be loaded before checking auth
-        window.addEventListener('load', function() {
-            if (window.firebaseAuth) {
-                // Import onAuthStateChanged dynamically
-                import('https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js')
-                    .then(({ onAuthStateChanged }) => {
-                        // Check authentication state when page loads
-                        onAuthStateChanged(window.firebaseAuth, function(user) {
-                            // Skip auth state change if we're in the middle of logging out
-                            if (isLoggingOut) return;
-                            
-                            const loadingScreen = document.getElementById('loadingScreen');
-                            const mainApp = document.getElementById('mainApp');
-                            
-                            if (user) {
-                                // User is signed in - show main app
-                                console.log('User is authenticated:', user.email);
-                                loadAuthenticatedContent(user);
-                                
-                                // Hide loading screen and show main app
-                                loadingScreen.style.display = 'none';
-                                mainApp.style.display = 'block';
-                            } else {
-                                // No user - redirect to login (only if not already logging out)
-                                if (!isLoggingOut) {
-                                    console.log('User not authenticated, redirecting to login');
-                                    try {
-                                        window.location.replace('./login.html');
-                                    } catch (e) {
-                                        console.log('Replace failed, trying href');
-                                        window.location.href = './login.html';
-                                    }
-                                }
-                            }
-                        });
-                    });
-            }
-        });
-
-        function loadAuthenticatedContent(user) {
-            // Update user initial in profile picture
-            const userInitial = document.getElementById('userInitial');
-            if (user.displayName) {
-                userInitial.textContent = user.displayName.charAt(0).toUpperCase();
-            } else if (user.email) {
-                userInitial.textContent = user.email.charAt(0).toUpperCase();
-            }
-            
-            // You can add more user-specific content loading here
-            console.log('Loading authenticated content for:', user.email);
-        }
-        
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const mainContent = document.getElementById('mainContent');
-            const overlay = document.getElementById('overlay');
-            
-            sidebar.classList.toggle('open');
-            
-            // On desktop, shift main content; on mobile, show overlay
-            if (window.innerWidth > 768) {
-                mainContent.classList.toggle('shifted');
-            } else {
-                overlay.classList.toggle('show');
-            }
-        }
-        
-        function closeSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            const mainContent = document.getElementById('mainContent');
-            const overlay = document.getElementById('overlay');
-            
-            sidebar.classList.remove('open');
-            mainContent.classList.remove('shifted');
-            overlay.classList.remove('show');
-        }
-        
-        function loadPage(page) {
-            // Remove active class from all nav links
-            document.querySelectorAll('.nav-link').forEach(link => {
-                link.classList.remove('active');
-            });
-            
-            // Add active class to clicked link
-            event.target.closest('.nav-link').classList.add('active');
-            
-            // Simple page content switching
-            const pageContent = document.getElementById('page-content');
-            const pages = {
-                'dashboard': `
-                    
   <h1>Welcome to MedConnect</h1>
   <p class="intro">
     Your trusted platform to find medical specialists, access personal health records, and explore health education resources — all in one secure place.
@@ -510,132 +109,8 @@
       <p>Protected access through secure Firebase Authentication.</p>
     </div>
   </div>
-                `,
-                'appointments': `
-                    <div class="welcome-section">
-                        <h1>My Appointments</h1>
-                        <p>View and manage your upcoming medical appointments.</p>
-                    </div>
-                `,
-                'clinics': `
-                    <div class="welcome-section">
-                        <h1>Clinics</h1>
-                        <p>Find and connect with medical clinics in your area.</p>
-                    </div>
-                `,
-                'health-resources': `
-                    <div class="welcome-section">
-                        <h1>Health Resources</h1>
-                        <p>Access educational materials and health information.</p>
-                    </div>
-                `,
-                'medical-history': `
-                    <div class="welcome-section">
-                        <h1>Medical History</h1>
-                        <p>Review your complete medical history and records.</p>
-                    </div>
-                `,
-                'lab-tests': `
-                    <div class="welcome-section">
-                        <h1>Lab Tests</h1>
-                        <p>View your laboratory test results and reports.</p>
-                    </div>
-                `,
-                'radiology': `
-                    <div class="welcome-section">
-                        <h1>Radiology</h1>
-                        <p>Access your radiology images and reports.</p>
-                    </div>
-                `,
-                'prescriptions': `
-                    <div class="welcome-section">
-                        <h1>Prescriptions</h1>
-                        <p>Manage your current medications and prescriptions.</p>
-                    </div>
-                `,
-                'profile': `
-                    <div class="welcome-section">
-                        <h1>Profile</h1>
-                        <p>Update your personal information and account settings.</p>
-                    </div>
-                `
-            };
-            
-            pageContent.innerHTML = pages[page] || pages['dashboard'];
-            
-            // Close sidebar on mobile after navigation
-            if (window.innerWidth <= 768) {
-                closeSidebar();
-            }
-        }
-        
-        let isLoggingOut = false; // Prevent multiple logout attempts
-        
-        function logout() {
-            if (isLoggingOut) return; // Prevent multiple logout attempts
-            
-            if (confirm('Are you sure you want to log out?')) {
-                isLoggingOut = true;
-                
-                // Show loading state
-                const loadingScreen = document.getElementById('loadingScreen');
-                const mainApp = document.getElementById('mainApp');
-                loadingScreen.style.display = 'flex';
-                mainApp.style.display = 'none';
-                
-                if (window.firebaseAuth && window.firebaseSignOut) {
-                    window.firebaseSignOut(window.firebaseAuth)
-                        .then(() => {
-                            console.log('User logged out successfully');
-                            console.log('Current URL:', window.location.href);
-                            console.log('Attempting to redirect to login...');
-                            // Try multiple redirect approaches
-                            try {
-                                window.location.replace('./login.html');
-                            } catch (e) {
-                                console.log('Replace failed, trying href');
-                                window.location.href = './login.html';
-                            }
-                        })
-                        .catch((error) => {
-                            console.error('Logout error:', error);
-                            isLoggingOut = false;
-                            // Hide loading screen on error
-                            loadingScreen.style.display = 'none';
-                            mainApp.style.display = 'block';
-                            alert('Error during logout. Please try again.');
-                        });
-                } else {
-                    console.error('Firebase auth not available');
-                    isLoggingOut = false;
-                    loadingScreen.style.display = 'none';
-                    mainApp.style.display = 'block';
-                    alert('Error: Authentication not available');
-                }
-            }
-        }
-        
-        // Handle window resize
-        window.addEventListener('resize', function() {
-            if (window.innerWidth > 768) {
-                document.getElementById('overlay').classList.remove('show');
-            } else {
-                document.getElementById('mainContent').classList.remove('shifted');
-            }
-        });
-        
-        // Close sidebar when clicking outside on mobile
-        document.addEventListener('click', function(event) {
-            const sidebar = document.getElementById('sidebar');
-            const hamburger = document.querySelector('.hamburger-menu');
-            
-            if (window.innerWidth <= 768 && 
-                sidebar.classList.contains('open') && 
-                !sidebar.contains(event.target) && 
-                !hamburger.contains(event.target)) {
-                closeSidebar();
-            }
-        });
-    </script>
+
+ <script type="module" src="js/navigation.js"></script>
+
 </body>
 </html>

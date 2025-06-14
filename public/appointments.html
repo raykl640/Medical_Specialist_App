@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Appointments - Medical Specialist App</title>
+    <link rel="stylesheet" href="css/styles.css" />
+    <link rel="stylesheet" href="css/appointments.css" />
+</head>
+<body>
+    <div id="navbar-container"></div>
+
+    <div class="container">
+        <div class="header">
+            <h1>📅 My Appointments</h1>
+            <p>Manage your medical appointments, schedule new ones, and view your appointment history.</p>
+        </div>
+
+        <div class="content">
+            <!-- Book New Appointment Button -->
+            <button class="book-new-btn" onclick="showBookingModal()">
+                ➕ Book New Appointment
+            </button>
+
+            <!-- Upcoming Appointments -->
+            <div class="section">
+                <h2>Upcoming Appointments</h2>
+                <div id="upcomingAppointments">
+                    <div class="loading">Loading upcoming appointments...</div>
+                </div>
+            </div>
+
+            <!-- Past Appointments -->
+            <div class="section">
+                <h2>📋 Past Appointments</h2>
+                <div id="pastAppointments">
+                    <div class="loading">Loading appointment history...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Booking Modal -->
+    <div id="bookingModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📅 Book New Appointment</h2>
+                <span class="close" onclick="closeBookingModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="bookingForm">
+                    <div class="form-group">
+                        <label for="clinicSelect">🏥 Select Clinic:</label>
+                        <select id="clinicSelect" required>
+                            <option value="">Choose a clinic...</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="specialistSelect">👨‍⚕️ Select Specialist:</label>
+                        <select id="specialistSelect" required disabled>
+                            <option value="">First select a clinic...</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="appointmentDate">📅 Appointment Date:</label>
+                        <input type="date" id="appointmentDate" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>🕒 Available Time Slots:</label>
+                        <div id="timeSlots" class="time-slots-grid">
+                            <div class="time-slot unavailable">Select date first</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="appointmentReason">📝 Reason for Visit:</label>
+                        <textarea id="appointmentReason" rows="3" placeholder="Describe your symptoms or reason for the appointment..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="patientNotes">📋 Additional Notes (Optional):</label>
+                        <textarea id="patientNotes" rows="2" placeholder="Any additional information you'd like to share..."></textarea>
+                    </div>
+
+                    <button type="submit" class="submit-btn">
+                        ✅ Book Appointment
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reschedule Modal -->
+    <div id="rescheduleModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📅 Reschedule Appointment</h2>
+                <span class="close" onclick="closeRescheduleModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="rescheduleForm">
+                    <div id="currentAppointmentInfo" class="appointment-card">
+                        <!-- Current appointment details will be loaded here -->
+                    </div>
+
+                    <div class="form-group">
+                        <label for="newAppointmentDate">📅 New Appointment Date:</label>
+                        <input type="date" id="newAppointmentDate" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>🕒 Available Time Slots:</label>
+                        <div id="rescheduleTimeSlots" class="time-slots-grid">
+                            <div class="time-slot unavailable">Select date first</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="rescheduleReason">📝 Reason for Rescheduling:</label>
+                        <textarea id="rescheduleReason" rows="3" placeholder="Why are you rescheduling this appointment?"></textarea>
+                    </div>
+
+                    <button type="submit" class="submit-btn">
+                        ✅ Confirm Reschedule
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="js/navigation.js"></script>
+    <script type="module" src="js/appointments.js"></script>
+</body>
+</html>

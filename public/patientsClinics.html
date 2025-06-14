@@ -14,7 +14,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(to right, #e0f7fa, #ffffff);
             min-height: 100vh;
             padding: 20px;
         }
@@ -924,7 +924,13 @@ const ui = {
 
         // Global functions for onclick events
         window.bookAppointment = (specialistId, specialistName) => {
-            alert(`Booking appointment with Dr. ${specialistName}.\n\nThis feature will be implemented in the next phase.`);
+            // Store the selected specialist info in sessionStorage
+            sessionStorage.setItem('selectedSpecialist', JSON.stringify({
+                id: specialistId,
+                name: specialistName
+            }));
+            // Redirect to appointments page
+            window.location.href = 'appointments.html';
         };
 
         window.selectTimeSlot = (timeSlot) => {

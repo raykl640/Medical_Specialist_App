@@ -50,7 +50,7 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
             if (user.uid === adminUID || user.email === adminEmail) {
                 window.location.href = "adminDashboard.html";
             } else {
-                window.location.href = "patientDashboard.html";
+                window.location.href = "index.html";
             }
         }, 1500);
 

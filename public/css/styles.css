@@ -52,7 +52,7 @@
     align-items: center;
     justify-content: space-between;
     padding: 0 20px;
-    z-index: 1001; /* INCREASED Z-INDEX */
+    z-index: 1001;
 }
 
 .hamburger-menu {
@@ -60,6 +60,7 @@
     flex-direction: column;
     cursor: pointer;
     padding: 5px;
+    z-index: 1002;
 }
 
 .hamburger-line {
@@ -73,6 +74,7 @@
 .notifications {
     font-size: 20px;
     cursor: pointer;
+    z-index: 1002;
 }
 
 .notification-icon {
@@ -82,22 +84,24 @@
 /* Sidebar - FIXED POSITIONING AND Z-INDEX */
 .sidebar {
     position: fixed;
-    left: -280px; /* Start hidden */
-    top: 0; /* CHANGED FROM 60px TO 0 */
+    left: -280px;
+    top: 0;
     width: 280px;
-    height: 100vh; /* CHANGED FROM calc(100vh - 60px) TO 100vh */
+    height: 100vh;
     background-color: #FFFFFF;
     border-right: 1px solid #DDDDDD;
     transition: left 0.3s ease;
-    z-index: 1000; /* FIXED Z-INDEX */
+    z-index: 1000;
     overflow-y: auto;
-    padding-top: 80px; /* ADD PADDING TO ACCOUNT FOR TITLE BAR */
-    padding-bottom: 20px;
-    box-shadow: 2px 0 10px rgba(0,0,0,0.1); /* ADD SHADOW FOR BETTER VISIBILITY */
+    padding-top: 80px;
+    padding-bottom: 100px;
+    box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
 }
 
 .sidebar.open {
-    left: 0; /* Show sidebar */
+    left: 0;
 }
 
 .logo {
@@ -133,9 +137,24 @@
     font-weight: bold;
 }
 
+/* Main navigation sections */
 .nav-section {
     margin-bottom: 25px;
     padding: 0 20px;
+    flex-shrink: 0;
+}
+
+/* Bottom navigation section */
+.nav-section.nav-bottom {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 280px;
+    background-color: #FFFFFF;
+    padding: 20px;
+    border-top: 1px solid #DDDDDD;
+    margin-bottom: 0;
+    z-index: 1001;
 }
 
 .nav-section h3 {
@@ -150,10 +169,12 @@
 
 .nav-section ul {
     list-style: none;
+    margin: 0;
+    padding: 0;
 }
 
 .nav-section li {
-    margin-bottom: 4px;
+    margin-bottom: 8px;
 }
 
 .nav-link {
@@ -168,6 +189,7 @@
     line-height: 1.4;
     min-height: 44px;
     word-wrap: break-word;
+    white-space: normal;
 }
 
 .nav-link:hover {
@@ -192,16 +214,9 @@
 
 .nav-link .text {
     flex: 1;
-    white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-}
-
-.nav-bottom {
-    position: absolute;
-    bottom: 20px;
-    width: calc(100% - 40px);
-    left: 20px;
+    white-space: normal;
 }
 
 /* Main Content - FIXED MARGIN AND TRANSITIONS */
@@ -211,12 +226,15 @@
     transition: margin-left 0.3s ease;
     min-height: calc(100vh - 60px);
     background-color: #f5f5f5;
+    width: 100%;
+    overflow-x: hidden;
 }
 
 /* DESKTOP BEHAVIOR - SHIFT CONTENT */
 @media (min-width: 769px) {
     .main-content.shifted {
         margin-left: 280px;
+        width: calc(100% - 280px);
     }
     
     /* Hide overlay on desktop */
@@ -228,29 +246,22 @@
 /* MOBILE BEHAVIOR - SHOW OVERLAY, DON'T SHIFT CONTENT */
 @media (max-width: 768px) {
     .main-content.shifted {
-        margin-left: 0; /* Don't shift on mobile */
+        margin-left: 0;
     }
     
     .sidebar {
         width: 280px;
         left: -280px;
-        box-shadow: 2px 0 15px rgba(0,0,0,0.2);
     }
     
-    .nav-section {
-        margin-bottom: 20px;
-        padding: 0 15px;
+    .nav-section.nav-bottom {
+        width: 280px;
     }
 
     .nav-link {
         padding: 14px 12px;
         font-size: 15px;
         min-height: 48px;
-    }
-
-    .nav-link .icon {
-        margin-right: 10px;
-        font-size: 18px;
     }
 }
 
@@ -265,27 +276,15 @@
         max-width: 320px;
     }
 
-    .nav-section {
-        padding: 0 12px;
-        margin-bottom: 18px;
-    }
-
-    .nav-section h3 {
-        font-size: 11px;
-        margin-bottom: 10px;
+    .nav-section.nav-bottom {
+        width: calc(100vw - 40px);
+        max-width: 320px;
     }
 
     .nav-link {
         padding: 16px 10px;
         font-size: 14px;
         min-height: 50px;
-        border-radius: 6px;
-    }
-
-    .nav-link .icon {
-        margin-right: 8px;
-        font-size: 16px;
-        width: 18px;
     }
 
     .logo {
@@ -301,17 +300,27 @@
     .profile-picture {
         font-size: 20px;
     }
+
+    /* Adjust container padding for mobile */
+    .container {
+        padding: 10px;
+    }
+
+    /* Ensure content doesn't overflow */
+    .content {
+        padding: 15px;
+    }
 }
 
 /* Overlay for mobile - FIXED POSITIONING AND BEHAVIOR */
 .overlay {
     position: fixed;
-    top: 0; /* CHANGED FROM 60px TO 0 */
+    top: 0;
     left: 0;
     width: 100%;
-    height: 100vh; /* CHANGED FROM calc(100vh - 60px) TO 100vh */
+    height: 100vh;
     background-color: rgba(0,0,0,0.5);
-    z-index: 999; /* BELOW SIDEBAR BUT ABOVE CONTENT */
+    z-index: 999;
     display: none;
     opacity: 0;
     transition: opacity 0.3s ease;
@@ -365,6 +374,62 @@
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+
+/* Ensure content is properly contained */
+.content {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+    transition: all 0.3s ease;
+}
+
+/* Fix for modal positioning */
+.modal {
+    padding: 20px;
+}
+
+.modal-content {
+    max-width: 95%;
+    margin: 20px auto;
+}
+
+/* Ensure buttons and interactive elements are properly sized */
+button, 
+.action-btn,
+.view-details-btn,
+.book-new-btn {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+
+/* Fix for grid layouts */
+.clinics-grid,
+.appointment-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    width: 100%;
+}
+
+/* Ensure forms are responsive */
+form {
+    width: 100%;
+    max-width: 100%;
+}
+
+.form-group {
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+input, select, textarea {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
 }
 
 h1, h2 {
