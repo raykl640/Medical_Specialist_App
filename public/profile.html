@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Welcome to MedConnect</title>
+    <link rel="stylesheet" href="css/styles.css" />
+
+    <style>
+        /* main content */
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f5f9ff;
+            color: #333;
+        }
+
+        .main {
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 20px;
+            position: relative;
+        }
+
+        #editBtn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #0077cc;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .profile-info {
+            margin-top: 60px;
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+        }
+
+        .personal {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .avatar {
+            width: 100px;
+            height: 100px;
+            background: #ccc;
+            border-radius: 50%;
+            margin-bottom: 20px;
+        }
+
+        .personal ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .personal li {
+            margin-bottom: 10px;
+        }
+
+        .emergency,
+        .allergies {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .allergies ul {
+            padding-left: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="navbar-container"></div>
+
+    <h2>Profile</h2>
+    <button id="editBtn">✏️ Edit Profile</button>
+
+    <section class="profile-info">
+        <div class="personal">
+            <div class="logo">
+                <div class="logo-circle">
+                    <div class="profile-picture" id="userInitial">U</div>
+                </div>
+            </div>
+            <div class="personal-info">
+                <ul>
+                <li><strong>Full Name:</strong> <span id="fullName"></span></li>
+                <li><strong>Date of Birth:</strong> <span id="dob"></span></li>
+                <li><strong>Sex:</strong> <span id="sex"></span></li>
+                <li><strong>National ID:</strong> <span id="nid"></span></li>
+                <li><strong>Phone:</strong> <span id="phone"></span></li>
+                <li><strong>Email:</strong> <span id="email"></span></li>
+                <li><strong>Home Address:</strong> <span id="address"></span></li>
+            </ul>
+            </div>
+            
+        </div>
+
+        <div class="emergency">
+            <h3>Emergency Contact</h3>
+            <p><strong>Full Name:</strong> <span id="emgName"></span></p>
+            <p><strong>Phone:</strong> <span id="emgPhone"></span></p>
+        </div>
+
+        <div class="allergies">
+            <h3>Known Allergies</h3>
+            <ul id="allergyList"></ul>
+        </div>
+    </section>
+
+    <script type="module" src="js/navigation.js"></script>
+    <script src="./js/index.js"></script>
+    <script type="module" src="js/patient/profile.js"></script>
+</body>
+
+</html>
