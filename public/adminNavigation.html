@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Navigation Component</title>
+    <link rel="stylesheet" href="css/styles.css">
+
+</head>
+<body>
+    <!-- Title Bar -->
+    <div class="title-bar">
+        <div class="hamburger-menu">
+            <div class="hamburger-line"></div>
+            <div class="hamburger-line"></div>
+            <div class="hamburger-line"></div>
+        </div>
+        <div class="notifications">
+            <span class="notification-icon">🔔</span>
+        </div>
+    </div>
+    
+    <!-- Overlay for mobile -->
+    <div class="overlay" id="overlay"></div>
+    
+    <!-- Navigation Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="logo">
+            <div class="logo-circle">
+                 <div class="profile-picture" id="userInitial">
+                        U
+                </div>
+            </div>
+        </div>
+        <div class="nav-section">
+             <ul>
+                <li><a href="adminIndex.html" class="nav-link active" onclick="loadPage('dashboard')"><span class="icon">🏠</span>Dashboard</a></li>
+                    <li><a href="adminpatients.html" class="nav-link" onclick="loadPage('appointments')"><span class="icon">👤</span>Patients</a></li>
+                    <li><a href="adminClinics.html" class="nav-link" onclick="loadPage('clinics')"><span class="icon">🏥</span>Clinics</a></li>
+                    <li><a href="adminAppointments.html" class="nav-link" onclick="loadPage('health-resources')"><span class="icon">📅</span>Appointments</a></li>
+                    <li><a href="systemLogs.html" class="nav-link" onclick="loadPage('health-resources')"><span class="icon">⚙️</span>System logs</a></li>
+                    <li><a href="reports.html" class="nav-link" onclick="loadPage('health-resources')"><span class="icon">📁</span>Reports</a></li>
+                    <li><a href="adminHealthResources.html" class="nav-link" onclick="loadPage('health-resources')"><span class="icon">📚</span>Health Resources</a></li>
+                </ul>
+        </div>
+        <div class="nav-section nav-bottom">
+            <ul>
+                <li><a href="#" class="nav-link" onclick="logout()"><span class="icon">⏻</span> Log Out</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <script type="module" src="js/admin/adminNavigation.js"></script>
+</body>
+</html>
