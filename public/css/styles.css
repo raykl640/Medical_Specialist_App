@@ -226,7 +226,6 @@
     padding: 20px;
     transition: margin-left 0.3s ease;
     min-height: calc(100vh - 60px);
-    background-color: #f5f5f5;
     width: 100%;
     overflow-x: hidden;
     background: linear-gradient(to right, #E3F2FD, #FFFFFF);
