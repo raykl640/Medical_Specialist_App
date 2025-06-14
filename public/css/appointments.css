@@ -1,5 +1,4 @@
-
-        * {
+ * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
@@ -616,4 +615,3 @@
                 grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
             }
         }
-    
