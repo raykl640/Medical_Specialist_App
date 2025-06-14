@@ -1,25 +1,87 @@
 rules_version = '2';
+
 service cloud.firestore {
   match /databases/{database}/documents {
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+    
+    function isValidAppointment() {
+      let appointment = request.resource.data;
+      return appointment.size() >= 10 && // Ensure all required fields are present
+             appointment.patientId is string &&
+             appointment.patientEmail is string &&
+             appointment.clinicId is string &&
+             appointment.clinicName is string &&
+             appointment.specialistId is string &&
+             appointment.specialistName is string &&
+             appointment.specialty is string &&
+             appointment.date is timestamp &&
+             appointment.time is string &&
+             appointment.status in ['confirmed', 'cancelled', 'completed'] &&
+             appointment.createdAt is timestamp &&
+             appointment.updatedAt is timestamp;
+    }
+    
+    function isValidClinic() {
+      let clinic = request.resource.data;
+      return clinic.size() >= 3 && // Ensure required fields are present
+             clinic.clinicName is string &&
+             clinic.location is string &&
+             clinic.isActive is bool;
+    }
+    
+    function isValidSpecialist() {
+      let specialist = request.resource.data;
+      return specialist.size() >= 4 && // Ensure required fields are present
+             specialist.name is string &&
+             specialist.specialty is string &&
+             specialist.clinicId is string &&
+             specialist.isActive is bool;
+    }
+
     // Users can read and write their own user document
     match /users/{userId} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
     }
     
-
-match /clinics/{clinicId} {
-  allow read, write: if request.auth != null;
-}
-
-    // Appointments collection
-    match /appointments/{appointmentId} {
-      allow read, write: if request.auth != null && 
-        (request.auth.uid == resource.data.patientId || 
-         request.auth.uid == resource.data.doctorId ||
-         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin');
+    // Clinics collection rules
+    match /clinics/{clinicId} {
+      // Allow read for all authenticated users
+      allow read: if isAuthenticated();
       
-      allow create: if request.auth != null && 
-        request.auth.uid == request.resource.data.patientId;
+      // Allow write only for admin users (you can modify this based on your admin check)
+      allow write: if isAuthenticated() && 
+                     isValidClinic() && 
+                     request.auth.token.admin == true;
+    }
+
+    // Appointments collection rules
+    match /appointments/{appointmentId} {
+      // Allow read if user is authenticated and is the owner of the appointment
+      allow read: if isAuthenticated() && 
+                    (resource.data.patientId == request.auth.uid || 
+                     resource.data.specialistId == request.auth.uid);
+      
+      // Allow create if user is authenticated and data is valid
+      allow create: if isAuthenticated() && 
+                      isValidAppointment() && 
+                      request.resource.data.patientId == request.auth.uid;
+      
+      // Allow update if user is authenticated, is the owner, and data is valid
+      allow update: if isAuthenticated() && 
+                      resource.data.patientId == request.auth.uid && 
+                      isValidAppointment() &&
+                      request.resource.data.patientId == request.auth.uid;
+      
+      // Allow delete if user is authenticated and is the owner
+      allow delete: if isAuthenticated() && 
+                      resource.data.patientId == request.auth.uid;
     }
     
     // Medical records - only accessible by the patient and their doctors
@@ -50,6 +112,22 @@ match /clinics/{clinicId} {
       allow read: if true;
       allow write: if request.auth != null && 
         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // Specialists collection rules
+    match /specialists/{specialistId} {
+      // Allow read for all authenticated users
+      allow read: if isAuthenticated();
+      
+      // Allow write only for admin users
+      allow write: if isAuthenticated() && 
+                     isValidSpecialist() && 
+                     request.auth.token.admin == true;
+    }
+
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
     }
   }
 }

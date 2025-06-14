@@ -59,6 +59,12 @@ class NavigationManager {
                 
                 document.body.appendChild(mainContentDiv);
             }
+
+            // Check localStorage for sidebar state
+            const sidebarState = localStorage.getItem('sidebarOpen');
+            if (sidebarState === 'true') {
+                this.openSidebar();
+            }
             
         } catch (error) {
             console.error('Error loading navigation:', error);
@@ -109,22 +115,6 @@ class NavigationManager {
             if (window.innerWidth > 768) {
                 const overlay = document.getElementById('overlay');
                 if (overlay) overlay.classList.remove('show');
-            } else {
-                const mainContent = document.getElementById('mainContent');
-                if (mainContent) mainContent.classList.remove('shifted');
-            }
-        });
-
-        // Close sidebar when clicking outside on mobile
-        document.addEventListener('click', (event) => {
-            const sidebar = document.getElementById('sidebar');
-            const hamburger = document.querySelector('.hamburger-menu');
-            
-            if (window.innerWidth <= 768 && 
-                sidebar && sidebar.classList.contains('open') && 
-                !sidebar.contains(event.target) && 
-                hamburger && !hamburger.contains(event.target)) {
-                this.closeSidebar();
             }
         });
     }
@@ -268,6 +258,9 @@ class NavigationManager {
             sidebar.classList.toggle('open');
             console.log('Sidebar toggled, open:', sidebar.classList.contains('open'));
             console.log('Was open before toggle:', wasOpen);
+
+            // Store sidebar state in localStorage
+            localStorage.setItem('sidebarOpen', sidebar.classList.contains('open'));
         } else {
             console.log('Sidebar element not found');
             return;
@@ -281,6 +274,16 @@ class NavigationManager {
         }
     }
 
+    openSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.getElementById('mainContent');
+        const overlay = document.getElementById('overlay');
+        
+        if (sidebar) sidebar.classList.add('open');
+        if (mainContent && window.innerWidth > 768) mainContent.classList.add('shifted');
+        if (overlay && window.innerWidth <= 768) overlay.classList.add('show');
+    }
+
     closeSidebar() {
         const sidebar = document.getElementById('sidebar');
         const mainContent = document.getElementById('mainContent');
@@ -289,6 +292,9 @@ class NavigationManager {
         if (sidebar) sidebar.classList.remove('open');
         if (mainContent) mainContent.classList.remove('shifted');
         if (overlay) overlay.classList.remove('show');
+
+        // Update localStorage
+        localStorage.setItem('sidebarOpen', 'false');
     }
 
     async logout() {
