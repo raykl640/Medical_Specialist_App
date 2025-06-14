@@ -90,6 +90,20 @@ const utils = {
 
     generateId: () => {
         return Date.now().toString(36) + Math.random().toString(36).substr(2);
+    },
+
+    // New utility to parse time strings (e.g., "03:00 PM")
+    parseTime: (timeString) => {
+        if (!timeString) return { hours: 0, minutes: 0 };
+        const [time, ampm] = timeString.split(' ');
+        let [hours, minutes] = time.split(':').map(Number);
+
+        if (ampm && ampm.toLowerCase() === 'pm' && hours < 12) {
+            hours += 12;
+        } else if (ampm && ampm.toLowerCase() === 'am' && hours === 12) {
+            hours = 0; // 12 AM is 00 hours
+        }
+        return { hours, minutes };
     }
 };
 
@@ -259,6 +273,63 @@ const dataService = {
             console.error('Error cancelling appointment:', error);
             throw error;
         }
+    },
+
+    async updateAppointmentStatus(appointmentId, newStatus) {
+        try {
+            const appointmentRef = doc(db, 'appointments', appointmentId);
+            await updateDoc(appointmentRef, {
+                status: newStatus,
+                updatedAt: Timestamp.now()
+            });
+            console.log(`Appointment ${appointmentId} status updated to ${newStatus}`);
+            return true;
+        } catch (error) {
+            console.error(`Error updating appointment ${appointmentId} status to ${newStatus}:`, error);
+            throw error;
+        }
+    },
+
+    async checkAndUpdateAppointmentStatuses() {
+        console.log('Checking for past confirmed appointments to update status...');
+        const now = new Date();
+        console.log('Current Date/Time (Now):', now.toLocaleString());
+
+        const updates = userAppointments.map(async (apt) => {
+            // Only process if status is confirmed
+            if (apt.status !== 'confirmed') {
+                return;
+            }
+            
+            // Combine date and time into a single Date object for accurate comparison
+            const datePart = apt.date.toISOString().split('T')[0];
+            const [year, month, day] = datePart.split('-').map(Number);
+            
+            const { hours, minutes } = utils.parseTime(apt.time);
+
+            const appointmentDateTime = new Date(year, month - 1, day, hours, minutes);
+
+            console.log('Comparing:', {
+                appointmentId: apt.id,
+                appointmentDateTime: appointmentDateTime.toLocaleString(),
+                now: now.toLocaleString(),
+                isPast: appointmentDateTime < now,
+                status: apt.status
+            });
+
+            if (appointmentDateTime < now) {
+                console.log(`Appointment ${apt.id} is past due and confirmed. Updating to completed.`);
+                try {
+                    await dataService.updateAppointmentStatus(apt.id, 'completed');
+                    apt.status = 'completed'; // Update local state immediately
+                    apt.updatedAt = new Date(); // Update local timestamp
+                } catch (error) {
+                    console.error(`Failed to update status for appointment ${apt.id}:`, error);
+                }
+            }
+        });
+        await Promise.all(updates);
+        console.log('Finished checking and updating appointment statuses.');
     }
 };
 
@@ -269,11 +340,54 @@ const ui = {
 
         try {
             userAppointments = await dataService.getUserAppointments(currentUser.uid);
+            await this.checkAndUpdateAppointmentStatuses();
             this.renderAppointments();
         } catch (error) {
             console.error('Error loading appointments:', error);
             utils.showMessage('Failed to load appointments', 'error');
         }
+    },
+
+    async checkAndUpdateAppointmentStatuses() {
+        console.log('Checking for past confirmed appointments to update status...');
+        const now = new Date();
+        console.log('Current Date/Time (Now):', now.toLocaleString());
+
+        const updates = userAppointments.map(async (apt) => {
+            // Only process if status is confirmed
+            if (apt.status !== 'confirmed') {
+                return;
+            }
+            
+            // Combine date and time into a single Date object for accurate comparison
+            const datePart = apt.date.toISOString().split('T')[0];
+            const [year, month, day] = datePart.split('-').map(Number);
+            
+            const { hours, minutes } = utils.parseTime(apt.time);
+
+            const appointmentDateTime = new Date(year, month - 1, day, hours, minutes);
+
+            console.log('Comparing:', {
+                appointmentId: apt.id,
+                appointmentDateTime: appointmentDateTime.toLocaleString(),
+                now: now.toLocaleString(),
+                isPast: appointmentDateTime < now,
+                status: apt.status
+            });
+
+            if (appointmentDateTime < now) {
+                console.log(`Appointment ${apt.id} is past due and confirmed. Updating to completed.`);
+                try {
+                    await dataService.updateAppointmentStatus(apt.id, 'completed');
+                    apt.status = 'completed'; // Update local state immediately
+                    apt.updatedAt = new Date(); // Update local timestamp
+                } catch (error) {
+                    console.error(`Failed to update status for appointment ${apt.id}:`, error);
+                }
+            }
+        });
+        await Promise.all(updates);
+        console.log('Finished checking and updating appointment statuses.');
     },
 
     renderAppointments() {
