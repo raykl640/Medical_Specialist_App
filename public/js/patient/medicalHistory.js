@@ -196,9 +196,9 @@ function rendermedicalHistory(data, viewMode) {
 
     if (data.length === 0) {
         if (viewMode === "card") {
-            cardContainer.innerHTML = `<p>No matching medical Histories found found.</p>`;
+            cardContainer.innerHTML = `<p>Loading...</p>`;
         } else {
-            patientTbody.innerHTML = `<tr><td colspan="6">No matching medical Histories found found.</td></tr>`;
+            patientTbody.innerHTML = `<tr><td colspan="6">Loading...</td></tr>`;
         }
         return;
     }

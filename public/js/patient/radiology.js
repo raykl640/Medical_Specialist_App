@@ -189,7 +189,7 @@ function renderradiologyTests(data, viewMode) {
     if (viewMode === "card") {
       cardContainer.innerHTML = `<p>No matching radiology tests found.</p>`;
     } else {
-      patientTbody.innerHTML = `<tr><td colspan="6">No matching radiology tests found.</td></tr>`;
+      patientTbody.innerHTML = `<tr><td colspan="6">Loading...</td></tr>`;
     }
     return;
   }

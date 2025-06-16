@@ -7,10 +7,15 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(to right, #e0f7fa, #ffffff);
             min-height: 100vh;
             padding: 20px;
-        }
+         background: #aad0f0;
+  transition: opacity 0.3s ease;
+}
+
+body.fade-out {
+  opacity: 0;
+}
 
         .container {
             max-width: 1400px;

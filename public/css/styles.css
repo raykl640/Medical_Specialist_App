@@ -5,9 +5,16 @@
     box-sizing: border-box;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
+
 body {
-    background: #aad0f0;
+   background: #aad0f0;
+  transition: opacity 0.3s ease;
 }
+
+body.fade-out {
+  opacity: 0;
+}
+
 
 /* Loading screen */
 .loading-screen {

@@ -1,9 +1,15 @@
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #E3F2FD;
+    
     margin: 0;
     padding: 0;
     color: #444;
+     background: #aad0f0;
+  transition: opacity 0.3s ease;
+}
+
+body.fade-out {
+  opacity: 0;
 }
 
 .container {

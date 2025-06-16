@@ -117,6 +117,18 @@ class NavigationManager {
                 if (overlay) overlay.classList.remove('show');
             }
         });
+
+        document.querySelectorAll("a").forEach(link => {
+            link.addEventListener("click", function (e) {
+                if (link.hostname === window.location.hostname) {
+                    e.preventDefault();
+                    document.body.classList.add("fade-out");
+                    setTimeout(() => {
+                        window.location.href = link.href;
+                    }, 300);
+                }
+            });
+        });
     }
 
     // SEPARATE HANDLER METHODS TO PREVENT CONFLICTS
@@ -348,3 +360,39 @@ if (!window.navigationManager) {
 
 // Export for module use
 export default NavigationManager;
+
+window.addEventListener("DOMContentLoaded", () => {
+  fetch("/components/navbar.html")
+    .then(res => res.text())
+    .then(html => {
+      const navbarContainer = document.getElementById("navbar-container");
+      if (navbarContainer) {
+        navbarContainer.innerHTML = html;
+
+        // Add active class to current nav link
+        const currentPath = window.location.pathname.split('/').pop();
+        const navLinks = document.querySelectorAll(".navbar-list a");
+
+        navLinks.forEach(link => {
+          if (link.getAttribute("href") === currentPath) {
+            link.classList.add("active");
+          } else {
+            link.classList.remove("active");
+          }
+        });
+      }
+      document.body.classList.remove("preload"); // Show the page
+    });
+});
+
+document.querySelectorAll("a").forEach(link => {
+  link.addEventListener("click", function (e) {
+    if (link.hostname === window.location.hostname) {
+      e.preventDefault();
+      document.body.classList.add("fade-out");
+      setTimeout(() => {
+        window.location.href = link.href;
+      }, 300);
+    }
+  });
+});

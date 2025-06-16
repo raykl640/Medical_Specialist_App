@@ -150,7 +150,7 @@ function filterAndSort() {
 function rendermedications(data) {
     patientTbody.innerHTML = '';
     if (data.length === 0) {
-        patientTbody.innerHTML = `<tr><td colspan="6">You have no medications.</td></tr>`;
+        patientTbody.innerHTML = `<tr><td colspan="6">Loading...</td></tr>`;
         return;
     }
 

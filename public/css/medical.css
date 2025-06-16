@@ -1,3 +1,16 @@
+body {
+     background: #aad0f0;
+  transition: opacity 0.3s ease;
+}
+
+body.fade-out {
+  opacity: 0;
+}
+
+body.preload {
+    visibility: hidden;
+}
+
 .table-content {
     padding: 2rem;
 }
@@ -171,4 +184,10 @@ button:hover {
     background: #4facfe;
     color: white;
     border-color: #4facfe;
+}
+
+/* Active navigation link style */
+.navbar-list li a.active {
+    color: #007bff; /* Example: blue, matching hover */
+    font-weight: bold; /* Example: bold, to make it stand out */
 }

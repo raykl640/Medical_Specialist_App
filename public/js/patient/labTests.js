@@ -205,9 +205,9 @@ function renderLabTests(data, viewMode) {
 
   if (data.length === 0) {
     if (viewMode === "card") {
-      cardContainer.innerHTML = `<p>No matching lab tests found.</p>`;
+      cardContainer.innerHTML = `<p>Loading...</p>`;
     } else {
-      patientTbody.innerHTML = `<tr><td colspan="6">No matching lab tests found.</td></tr>`;
+      patientTbody.innerHTML = `<tr><td colspan="6">Loading...</td></tr>`;
     }
     return;
   }
