@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Welcome to MedConnect</title>
+    <link rel="stylesheet" href="css/styles.css" />
+
+    <style>
+        /* main content */
+    </style>
+</head>
+
+<body>
+    <div id="navbar-container"></div>
+    <div class="table-content">
+        <h2>Medications</h2>
+        <h4>Browse through your medications by clinic or specialist.</h4>
+        <div class="controls">
+            <input type="text" id="filterInput" placeholder="Search......" />
+            <select id="sortSelect">
+                <option value="">Sort By</option>
+                <option value="">Medication</option>
+                <option value="email">Date Prescribed</option>
+                <option value="clinic">Clinic (A-Z)</option>
+                <option value="specialist">Specialist (A-Z)</option>
+            </select>
+            <select id="clinicFilter">
+                <option value="">All Clinics</option>
+            </select>
+
+            <select id="specialistFilter">
+                <option value="">All Specialists</option>
+            </select>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Medicine</th>
+                    <th>Dosage</th>
+                    <th>Frequency</th>
+                    <th>Duration</th>
+                    <th>Prescribed on</th>
+                    <th>Clinic</th>
+                    <th>Specialist</th>
+                </tr>
+            </thead>
+            <tbody id="patientTbody">
+                <!-- Populated by JS -->
+            </tbody>
+        </table>
+    </div>
+
+
+    <script type="module" src="js/navigation.js"></script>
+    <script type="module" src="js/patient/medications.js"></script>
+</body>
+
+</html>
