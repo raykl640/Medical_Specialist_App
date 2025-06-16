@@ -27,16 +27,16 @@
 <body>
     <div id="navbar-container"></div>
     <div class="table-content">
-        <h2>Lab Tests</h2>
-        <h4>Browse your lab Tests by clinic or test Name. Click 'view Record' to see more details.</h4>
+        <h2>Medical History</h2>
+        <h4>Browse your Medical History by clinic or Specialty. Click 'view Record' to see more details.</h4>
             <div class="controls">
                 <input type="text" id="filterInput" placeholder="Search......" />
                 <select id="sortSelect">
                     <option value="">Sort By</option>
-                    <option value="">Test Name</option>
-                    <option value="email">Test Date</option>
+                    <option value="email">Visit Date</option>
                     <option value="clinic">Clinic (A-Z)</option>
                     <option value="specialist">Specialist (A-Z)</option>
+                    <option value="specialty">Specialty (A-Z)</option>
                 </select>
                 <select id="clinicFilter">
                     <option value="">All Clinics</option>
@@ -44,6 +44,9 @@
 
                 <select id="specialistFilter">
                     <option value="">All Specialists</option>
+                </select>
+                <select id="specialtyFilter">
+                    <option value="">All Specialties</option>
                 </select>
             </div>
             <div id="viewToggle" style="margin-bottom: 10px;">
@@ -54,11 +57,11 @@
         <table>
             <thead>
                 <tr>
-                    <th>Test Name</th>
-                    <th>Test Date</th>
+                    <th>Visit Date</th>
                     <th>Clinic Name</th>
-                    <th>Specialist</th>
-                    <th>Result</th>
+                    <th>Specialist Name</th>
+                    <th>Specialty</th>
+                    <th>Diagnosis Summary</th>
                     <th>View full Record</th>
                 </tr>
             </thead>
@@ -68,11 +71,13 @@
         </table>
         <div id="cardContainer" class="card-grid" style="display: none;"></div>
         <div id="paginationContainer"></div>
+
+
     </div>
 
 
     <script type="module" src="js/navigation.js"></script>
-    <script type="module" src="js/patient/labTests.js"></script>
+    <script type="module" src="js/patient/medicalHistory.js"></script>
     <script type="module" src="js/patient/viewToggleAndPagination.js"></script>
 </body>
 

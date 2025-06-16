@@ -2,10 +2,11 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Welcome to MedConnect</title>
-    <link rel="stylesheet" href="css/styles.css" />
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/medical.css">
 
     <style>
         /* main content */
@@ -18,7 +19,7 @@
         <h2>Medications</h2>
         <h4>Browse through your medications by clinic or specialist.</h4>
         <div class="controls">
-            <input type="text" id="filterInput" placeholder="Search......" />
+            <input type="text" id="filterInput" placeholder="Search......">
             <select id="sortSelect">
                 <option value="">Sort By</option>
                 <option value="">Medication</option>
@@ -33,6 +34,10 @@
             <select id="specialistFilter">
                 <option value="">All Specialists</option>
             </select>
+        </div>
+        <div id="viewToggle" style="margin-bottom: 10px;">
+            <button data-view="table">Table View</button>
+            <button data-view="cards">Card View</button>
         </div>
         <table>
             <thead>
@@ -50,11 +55,14 @@
                 <!-- Populated by JS -->
             </tbody>
         </table>
+        <div id="cardContainer" class="card-grid" style="display: none;"></div>
+        <div id="paginationContainer"></div>
     </div>
 
 
     <script type="module" src="js/navigation.js"></script>
     <script type="module" src="js/patient/medications.js"></script>
+    <script type="module" src="js/patient/viewToggleAndPagination.js"></script>
 </body>
 
 </html>

@@ -2,10 +2,11 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Welcome to MedConnect</title>
-    <link rel="stylesheet" href="css/styles.css" />
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/medical.css">
 
     <style>
         /* main content */
@@ -34,6 +35,10 @@
                 <option value="">All Specialists</option>
             </select>
         </div>
+        <div id="viewToggle" style="margin-bottom: 10px;">
+                <button data-view="table">Table View</button>
+                <button data-view="cards">Card View</button>
+            </div>
         <table>
             <thead>
                 <tr>
@@ -49,11 +54,14 @@
                 <!-- Populated by JS -->
             </tbody>
         </table>
+        <div id="cardContainer" class="card-grid" style="display: none;"></div>
+        <div id="paginationContainer"></div>
     </div>
 
 
     <script type="module" src="js/navigation.js"></script>
     <script type="module" src="js/patient/radiology.js"></script>
+    <script type="module" src="js/patient/viewToggleAndPagination.js"></script>
 </body>
 
 </html>
