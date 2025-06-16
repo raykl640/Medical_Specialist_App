@@ -62,16 +62,27 @@ modal.innerHTML = `
 document.body.appendChild(modal);
 
 // View toggle setup
-let currentViewMode = "card";
+let currentViewMode = "table";
 
 const getViewMode = setupViewToggle("viewToggle", (newMode) => {
     currentViewMode = newMode;
-    const paginated = paginate(filteredResults, currentPage, itemsPerPage);
+    // Reset to first page when changing views
+    currentPage = 1;
+    const paginated = paginate(filteredResults, itemsPerPage, currentPage);
     rendermedicalHistory(paginated, currentViewMode);
+    
+    // Update pagination controls
+    setupPaginationControls(
+        "paginationContainer",
+        filteredResults.length,
+        itemsPerPage,
+        (newPage) => {
+            currentPage = newPage;
+            const newPaginated = paginate(filteredResults, itemsPerPage, currentPage);
+            rendermedicalHistory(newPaginated, currentViewMode);
+        }
+    );
 }, currentViewMode);
-
-
-
 
 onAuthStateChanged(auth, user => {
     if (!user) return;
@@ -159,9 +170,10 @@ function filterAndSort() {
     }
 
     filteredResults = filtered;
+    currentPage = 1; // Reset to first page when filtering
 
     const paginated = paginate(filteredResults, itemsPerPage, currentPage);
-    rendermedicalHistory(paginated, getViewMode());
+    rendermedicalHistory(paginated, currentViewMode);
 
     setupPaginationControls(
         "paginationContainer",
@@ -170,10 +182,9 @@ function filterAndSort() {
         (newPage) => {
             currentPage = newPage;
             const newPaginated = paginate(filteredResults, itemsPerPage, currentPage);
-            rendermedicalHistory(newPaginated, getViewMode());
+            rendermedicalHistory(newPaginated, currentViewMode);
         }
     );
-
 }
 
 function rendermedicalHistory(data, viewMode) {
@@ -229,7 +240,6 @@ function rendermedicalHistory(data, viewMode) {
         });
     }
 }
-
 
 window.showDetails = (encoded) => {
     const hist = JSON.parse(decodeURIComponent(encoded));

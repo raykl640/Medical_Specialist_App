@@ -35,7 +35,6 @@
 }
 
 
-#viewToggle button:hover,
 #viewToggle button.active {
     background: white;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -139,16 +138,13 @@ tbody tr:hover {
 }
 
 button {
-    display: inline-block;
-    background: linear-gradient(135deg, #4facfe, #00f2fe);
-    color: white;
-    border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 8px;
-    margin-top: 1rem;
-    font-size: 0.85rem;
-    cursor: pointer;
-    transition: 0.2s ease;
+    padding: 8px 16px;
+            border: none;
+            background: transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
 }
 
 button:hover {

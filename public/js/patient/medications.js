@@ -12,6 +12,17 @@ import {
     getAuth,
     onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {
+  setupViewToggle,
+  setupPaginationControls,
+  paginate
+} from "./viewToggleAndPagination.js";
+
+let filteredResults = [];
+let currentPage = 1;
+const itemsPerPage = 5;
+let currentView = "table";
+
 import { firebaseConfig } from "../firebase-config.js";
 
 const app = initializeApp(firebaseConfig);
@@ -23,9 +34,17 @@ const sortSelect = document.getElementById("sortSelect");
 const clinicFilter = document.getElementById("clinicFilter");
 const specialistFilter = document.getElementById("specialistFilter");
 const patientTbody = document.getElementById("patientTbody");
-
+const cardContainer = document.getElementById("cardContainer");
+const tableContainer = document.querySelector("table");
 
 let medications = [];
+
+// Setup view toggle once, outside of the auth state change
+const viewToggleGetter = setupViewToggle("viewToggle", (view) => {
+    console.log("Switching to view:", view);
+  currentView = view;
+  renderFilteredData(); // rerender when toggling view
+}, "table"); // Set default view to table
 
 onAuthStateChanged(auth, user => {
     if (!user) return;
@@ -37,7 +56,7 @@ onAuthStateChanged(auth, user => {
         if (snapshot.empty) {
             medications = [];
             populateFilters(medications);
-            filterAndSort();
+            renderFilteredData(); // Changed from filterAndSort() to renderFilteredData()
             return;
         }
 
@@ -76,7 +95,7 @@ onAuthStateChanged(auth, user => {
         medications = await Promise.all(promises);
         console.log("Medications:", medications); // Debug
         populateFilters(medications);
-        filterAndSort();
+        renderFilteredData(); // Changed from filterAndSort() to renderFilteredData()
     });
 });
 
@@ -96,37 +115,36 @@ function populateFilters(data) {
 }
 
 function filterAndSort() {
-    const search = filterInput.value.toLowerCase();
-    const clinicVal = clinicFilter.value;
-    const specialistVal = specialistFilter.value;
-    const sortVal = sortSelect.value;
+  const search = filterInput.value.toLowerCase();
+  const clinicVal = clinicFilter.value;
+  const specialistVal = specialistFilter.value;
+  const sortVal = sortSelect.value;
 
-    console.log({ search, clinicVal, specialistVal }); // Debug
+  let filtered = [...medications];
 
-    let filtered = [...medications];
+  if (search) {
+    filtered = filtered.filter(m =>
+      (m.medicineName || '').toLowerCase().includes(search) ||
+      (m.clinicName || '').toLowerCase().includes(search) ||
+      (m.specialistName || '').toLowerCase().includes(search)
+    );
+  }
 
-    if (search) {
-        filtered = filtered.filter(m =>
-            (m.medicineName || '').toLowerCase().includes(search) ||
-            (m.clinicName || '').toLowerCase().includes(search) ||
-            (m.specialistName || '').toLowerCase().includes(search)
-        );
-    }
+  if (clinicVal) filtered = filtered.filter(m => m.clinicName === clinicVal);
+  if (specialistVal) filtered = filtered.filter(m => m.specialistName === specialistVal);
 
-    if (clinicVal) filtered = filtered.filter(m => m.clinicName === clinicVal);
-    if (specialistVal) filtered = filtered.filter(m => m.specialistName === specialistVal);
-
-     if (sortVal === "email") {
-    filtered.sort((a, b) => (b.testDate?.toDate?.() - a.testDate?.toDate?.()));
+  // Sorting
+  if (sortVal === "email") {
+    filtered.sort((a, b) => (b.datePrescribed?.toDate?.() || 0) - (a.datePrescribed?.toDate?.() || 0));
   } else if (sortVal === "clinic") {
     filtered.sort((a, b) => (a.clinicName || '').localeCompare(b.clinicName || ''));
   } else if (sortVal === "specialist") {
     filtered.sort((a, b) => (a.specialistName || '').localeCompare(b.specialistName || ''));
   } else {
-    filtered.sort((a, b) => (a.type || '').localeCompare(b.type || ''));
+    filtered.sort((a, b) => (a.medicineName || '').localeCompare(b.medicineName || ''));
   }
 
-    rendermedications(filtered);
+  return filtered;
 }
 
 function rendermedications(data) {
@@ -154,7 +172,87 @@ function rendermedications(data) {
     });
 }
 
-filterInput.addEventListener("input", filterAndSort);
-sortSelect.addEventListener("change", filterAndSort);
-clinicFilter.addEventListener("change", filterAndSort);
-specialistFilter.addEventListener("change", filterAndSort);
+function renderFilteredData() {
+  const search = filterInput.value.toLowerCase();
+  const clinicVal = clinicFilter.value;
+  const specialistVal = specialistFilter.value;
+  const sortVal = sortSelect.value;
+
+  let filtered = [...medications];
+
+  if (search) {
+    filtered = filtered.filter(m =>
+      (m.medicineName || '').toLowerCase().includes(search) ||
+      (m.clinicName || '').toLowerCase().includes(search) ||
+      (m.specialistName || '').toLowerCase().includes(search)
+    );
+  }
+
+  if (clinicVal) filtered = filtered.filter(m => m.clinicName === clinicVal);
+  if (specialistVal) filtered = filtered.filter(m => m.specialistName === specialistVal);
+
+  // Sorting
+  if (sortVal === "email") {
+    filtered.sort((a, b) => (b.datePrescribed?.toDate?.() || 0) - (a.datePrescribed?.toDate?.() || 0));
+  } else if (sortVal === "clinic") {
+    filtered.sort((a, b) => (a.clinicName || '').localeCompare(b.clinicName || ''));
+  } else if (sortVal === "specialist") {
+    filtered.sort((a, b) => (a.specialistName || '').localeCompare(b.specialistName || ''));
+  } else {
+    filtered.sort((a, b) => (a.medicineName || '').localeCompare(b.medicineName || ''));
+  }
+
+  // Reset pagination if needed
+  if (currentPage > Math.ceil(filtered.length / itemsPerPage)) currentPage = 1;
+
+  const paginatedData = paginate(filtered, itemsPerPage, currentPage);
+
+  // Render based on view
+  if (currentView === "card") {
+    renderCards(paginatedData);
+    if (tableContainer) tableContainer.style.display = "none";
+    if (cardContainer) cardContainer.style.display = "grid";
+  } else {
+    rendermedications(paginatedData);
+    if (tableContainer) tableContainer.style.display = "table";
+    if (cardContainer) cardContainer.style.display = "none";
+  }
+
+  setupPaginationControls("paginationContainer", filtered.length, itemsPerPage, (page) => {
+    currentPage = page;
+    renderFilteredData(); // re-render on page change
+  });
+}
+
+function renderCards(data) {
+  const container = document.getElementById("cardContainer");
+  if (!container) return;
+  
+  container.innerHTML = "";
+
+  if (data.length === 0) {
+    container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 20px;">You have no medications.</div>`;
+    return;
+  }
+
+  data.forEach(medicine => {
+    const date = medicine.datePrescribed?.toDate?.().toLocaleDateString() || "N/A";
+    const card = document.createElement("div");
+    card.className = "card";
+    card.innerHTML = `
+      <h3>${medicine.medicineName || ''}</h3>
+      <p><strong>Dosage:</strong> ${medicine.dosage || ''}</p>
+      <p><strong>Frequency:</strong> ${medicine.frequency || ''}</p>
+      <p><strong>Duration:</strong> ${medicine.duration || ''}</p>
+      <p><strong>Prescribed on:</strong> ${date}</p>
+      <p><strong>Clinic:</strong> ${medicine.clinicName || ''}</p>
+      <p><strong>Specialist:</strong> ${medicine.specialistName || ''}</p>
+    `;
+    container.appendChild(card);
+  });
+}
+
+filterInput.addEventListener("input", renderFilteredData);
+sortSelect.addEventListener("change", renderFilteredData);
+clinicFilter.addEventListener("change", renderFilteredData);
+specialistFilter.addEventListener("change", renderFilteredData);

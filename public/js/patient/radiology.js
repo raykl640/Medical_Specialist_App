@@ -13,6 +13,11 @@ import {
   onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { firebaseConfig } from "../firebase-config.js";
+import {
+  setupViewToggle,
+  paginate,
+  setupPaginationControls
+} from "./viewToggleAndPagination.js";
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
@@ -23,6 +28,14 @@ const sortSelect = document.getElementById("sortSelect");
 const clinicFilter = document.getElementById("clinicFilter");
 const specialistFilter = document.getElementById("specialistFilter");
 const patientTbody = document.getElementById("patientTbody");
+const cardContainer = document.getElementById("cardContainer");
+const paginationContainer = document.getElementById("paginationContainer");
+
+let radiologyTests = [];
+let filteredResults = [];
+let currentPage = 1;
+const itemsPerPage = 5;
+let currentViewMode = "table";
 
 // Create modal
 const modal = document.createElement("div");
@@ -41,25 +54,28 @@ modal.style.cssText = `
 `;
 modal.innerHTML = `
   <div style="background: white; padding: 20px; border-radius: 10px; max-width: 500px; width: 90%;">
-    <h3 id="modalTitle">Lab Test Details</h3>
+    <h3 id="modalTitle">Radiology Test Details</h3>
     <pre id="modalBody" style="white-space: pre-wrap;"></pre>
     <button onclick="document.getElementById('modal').style.display='none'">Close</button>
   </div>
 `;
 document.body.appendChild(modal);
 
-let radiologyTests = [];
+// Setup view toggle
+const getViewMode = setupViewToggle("viewToggle", (newMode) => {
+  currentViewMode = newMode;
+  const paginated = paginate(filteredResults, itemsPerPage, currentPage);
+  renderradiologyTests(paginated, currentViewMode);
+}, currentViewMode);
 
 onAuthStateChanged(auth, user => {
   if (!user) return;
-  console.log("Logged in user UID:", user.uid); // Debug
 
   const q = query(collection(db, "radiologyTests"), where("patientId", "==", user.uid));
   onSnapshot(q, async snapshot => {
-    console.log("Snapshot size:", snapshot.size); // Debug
     if (snapshot.empty) {
       radiologyTests = [];
-      populateFilters(radiologyTests);
+      populateFilters([]);
       filterAndSort();
       return;
     }
@@ -97,7 +113,6 @@ onAuthStateChanged(auth, user => {
     });
 
     radiologyTests = await Promise.all(promises);
-    console.log("Lab Tests:", radiologyTests); // Debug
     populateFilters(radiologyTests);
     filterAndSort();
   });
@@ -124,8 +139,6 @@ function filterAndSort() {
   const specialistVal = specialistFilter.value;
   const sortVal = sortSelect.value;
 
-  console.log({ search, clinicVal, specialistVal }); // Debug
-
   let filtered = [...radiologyTests];
 
   if (search) {
@@ -149,31 +162,74 @@ function filterAndSort() {
     filtered.sort((a, b) => (a.type || '').localeCompare(b.type || ''));
   }
 
-  renderradiologyTests(filtered);
+  filteredResults = filtered;
+  currentPage = 1; // Reset to first page when filtering
+
+  const paginated = paginate(filteredResults, itemsPerPage, currentPage);
+  renderradiologyTests(paginated, getViewMode());
+
+  setupPaginationControls(
+    "paginationContainer",
+    filteredResults.length,
+    itemsPerPage,
+    (newPage) => {
+      currentPage = newPage;
+      const newPaginated = paginate(filteredResults, itemsPerPage, currentPage);
+      renderradiologyTests(newPaginated, getViewMode());
+    }
+  );
 }
 
-function renderradiologyTests(data) {
+function renderradiologyTests(data, viewMode) {
+  // Clear both containers
   patientTbody.innerHTML = '';
+  cardContainer.innerHTML = '';
+
   if (data.length === 0) {
-    patientTbody.innerHTML = `<tr><td colspan="6">No matching lab tests found.</td></tr>`;
+    if (viewMode === "card") {
+      cardContainer.innerHTML = `<p>No matching radiology tests found.</p>`;
+    } else {
+      patientTbody.innerHTML = `<tr><td colspan="6">No matching radiology tests found.</td></tr>`;
+    }
     return;
   }
 
-  data.forEach(test => {
-    const tr = document.createElement("tr");
-    const testDate = test.testDate?.toDate?.().toLocaleDateString() || "N/A";
+  if (viewMode === "card") {
+    cardContainer.style.display = "grid";
+    patientTbody.parentElement.style.display = "none";
 
-    tr.innerHTML = `
-      <td>${test.type || ''}</td>
-      <td>${testDate}</td>
-      <td>${test.clinicName || ''}</td>
-      <td>${test.specialistName || ''}</td>
-      <td>${test.report}</td>
-      <td><button onclick="showDetails('${encodeURIComponent(JSON.stringify(test))}')">View Record</button></td>
-    `;
+    data.forEach(test => {
+      const testDate = test.testDate?.toDate?.().toLocaleDateString() || "N/A";
+      const card = document.createElement("div");
+      card.className = "card";
+      card.innerHTML = `
+        <h4><strong>Test Type:</strong> ${test.type || ''}</h4>
+        <p><strong>Date Conducted:</strong> ${testDate}</p>
+        <p><strong>Clinic:</strong> ${test.clinicName || ''}</p>
+        <p><strong>Specialist:</strong> ${test.specialistName || ''}</p>
+        <p><strong>Result:</strong> ${test.report || ''}</p>
+        <button onclick="showDetails('${encodeURIComponent(JSON.stringify(test))}')">View Full Record</button>
+      `;
+      cardContainer.appendChild(card);
+    });
+  } else {
+    cardContainer.style.display = "none";
+    patientTbody.parentElement.style.display = "table";
 
-    patientTbody.appendChild(tr);
-  });
+    data.forEach(test => {
+      const testDate = test.testDate?.toDate?.().toLocaleDateString() || "N/A";
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${test.type || ''}</td>
+        <td>${testDate}</td>
+        <td>${test.clinicName || ''}</td>
+        <td>${test.specialistName || ''}</td>
+        <td>${test.report || ''}</td>
+        <td><button onclick="showDetails('${encodeURIComponent(JSON.stringify(test))}')">View Record</button></td>
+      `;
+      patientTbody.appendChild(tr);
+    });
+  }
 }
 
 window.showDetails = (encoded) => {
@@ -185,7 +241,6 @@ window.showDetails = (encoded) => {
   details += `Clinic: ${test.clinicName}\n`;
   details += `Specialist: ${test.specialistName}\n`;
   details += `Result: ${test.report}\n`;
-  
 
   document.getElementById("modalBody").textContent = details;
   document.getElementById("modal").style.display = "flex";

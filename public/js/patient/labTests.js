@@ -62,16 +62,27 @@ modal.innerHTML = `
 document.body.appendChild(modal);
 
 // View toggle setup
-let currentViewMode = "card";
+let currentViewMode = "table";
 
 const getViewMode = setupViewToggle("viewToggle", (newMode) => {
-  currentViewMode = newMode;
-  const paginated = paginate(filteredResults, currentPage, itemsPerPage);
-  renderLabTests(paginated, currentViewMode);
+    currentViewMode = newMode;
+    // Reset to first page when changing views
+    currentPage = 1;
+    const paginated = paginate(filteredResults, itemsPerPage, currentPage);
+    renderLabTests(paginated, currentViewMode);
+    
+    // Update pagination controls
+    setupPaginationControls(
+        "paginationContainer",
+        filteredResults.length,
+        itemsPerPage,
+        (newPage) => {
+            currentPage = newPage;
+            const newPaginated = paginate(filteredResults, itemsPerPage, currentPage);
+            renderLabTests(newPaginated, currentViewMode);
+        }
+    );
 }, currentViewMode);
-
-
-
 
 onAuthStateChanged(auth, user => {
   if (!user) return;
@@ -139,50 +150,50 @@ function populateFilters(data) {
 }
 
 function filterAndSort() {
-  const search = filterInput.value.toLowerCase();
-  const clinicVal = clinicFilter.value;
-  const specialistVal = specialistFilter.value;
-  const sortVal = sortSelect.value;
+    const search = filterInput.value.toLowerCase();
+    const clinicVal = clinicFilter.value;
+    const specialistVal = specialistFilter.value;
+    const sortVal = sortSelect.value;
 
-  let filtered = [...labTests];
+    let filtered = [...labTests];
 
-  if (search) {
-    filtered = filtered.filter(t =>
-      (t.testName || '').toLowerCase().includes(search) ||
-      (t.clinicName || '').toLowerCase().includes(search) ||
-      (t.specialistName || '').toLowerCase().includes(search)
-    );
-  }
-
-  if (clinicVal) filtered = filtered.filter(t => t.clinicName === clinicVal);
-  if (specialistVal) filtered = filtered.filter(t => t.specialistName === specialistVal);
-
-  if (sortVal === "email") {
-    filtered.sort((a, b) => (b.testDate?.toDate?.() - a.testDate?.toDate?.()));
-  } else if (sortVal === "clinic") {
-    filtered.sort((a, b) => (a.clinicName || '').localeCompare(b.clinicName || ''));
-  } else if (sortVal === "specialist") {
-    filtered.sort((a, b) => (a.specialistName || '').localeCompare(b.specialistName || ''));
-  } else {
-    filtered.sort((a, b) => (a.testName || '').localeCompare(b.testName || ''));
-  }
-
-  filteredResults = filtered;
-
-  const paginated = paginate(filteredResults, itemsPerPage, currentPage);
-  renderLabTests(paginated, getViewMode());
-
-  setupPaginationControls(
-    "paginationContainer",
-    filteredResults.length,
-    itemsPerPage,
-    (newPage) => {
-      currentPage = newPage;
-      const newPaginated = paginate(filteredResults, itemsPerPage, currentPage);
-      renderLabTests(newPaginated, getViewMode());
+    if (search) {
+        filtered = filtered.filter(t =>
+            (t.testName || '').toLowerCase().includes(search) ||
+            (t.clinicName || '').toLowerCase().includes(search) ||
+            (t.specialistName || '').toLowerCase().includes(search)
+        );
     }
-  );
 
+    if (clinicVal) filtered = filtered.filter(t => t.clinicName === clinicVal);
+    if (specialistVal) filtered = filtered.filter(t => t.specialistName === specialistVal);
+
+    if (sortVal === "email") {
+        filtered.sort((a, b) => (b.testDate?.toDate?.() - a.testDate?.toDate?.()));
+    } else if (sortVal === "clinic") {
+        filtered.sort((a, b) => (a.clinicName || '').localeCompare(b.clinicName || ''));
+    } else if (sortVal === "specialist") {
+        filtered.sort((a, b) => (a.specialistName || '').localeCompare(b.specialistName || ''));
+    } else {
+        filtered.sort((a, b) => (a.testName || '').localeCompare(b.testName || ''));
+    }
+
+    filteredResults = filtered;
+    currentPage = 1; // Reset to first page when filtering
+
+    const paginated = paginate(filteredResults, itemsPerPage, currentPage);
+    renderLabTests(paginated, currentViewMode);
+
+    setupPaginationControls(
+        "paginationContainer",
+        filteredResults.length,
+        itemsPerPage,
+        (newPage) => {
+            currentPage = newPage;
+            const newPaginated = paginate(filteredResults, itemsPerPage, currentPage);
+            renderLabTests(newPaginated, currentViewMode);
+        }
+    );
 }
 
 function renderLabTests(data, viewMode) {
@@ -238,7 +249,6 @@ function renderLabTests(data, viewMode) {
     });
   }
 }
-
 
 window.showDetails = (encoded) => {
   const test = JSON.parse(decodeURIComponent(encoded));

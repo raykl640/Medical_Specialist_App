@@ -10,6 +10,18 @@
 
     <style>
         /* main content */
+         .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+        }
+
+        .card {
+            border: 1px solid #ccc;
+            padding: 16px;
+            background: white;
+            border-radius: 8px;
+        }
     </style>
 </head>
 
@@ -36,7 +48,7 @@
             </select>
         </div>
         <div id="viewToggle" style="margin-bottom: 10px;">
-            <button data-view="table">Table View</button>
+            <button data-view="table" class="active">Table View</button>
             <button data-view="cards">Card View</button>
         </div>
         <table>
