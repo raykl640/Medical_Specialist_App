@@ -46,7 +46,7 @@ modal.style.cssText = `
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 117, 200, 0.7);
+  background: rgba(18, 18, 18, 0.21);
   display: none;
   align-items: center;
   justify-content: center;
