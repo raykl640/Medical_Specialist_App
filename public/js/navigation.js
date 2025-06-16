@@ -362,7 +362,7 @@ if (!window.navigationManager) {
 export default NavigationManager;
 
 window.addEventListener("DOMContentLoaded", () => {
-  fetch("/components/navbar.html")
+  fetch("/public/navigation.html")
     .then(res => res.text())
     .then(html => {
       const navbarContainer = document.getElementById("navbar-container");
