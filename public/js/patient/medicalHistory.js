@@ -212,7 +212,7 @@ function rendermedicalHistory(data, viewMode) {
             const card = document.createElement("div");
             card.className = "card";
             card.innerHTML = `
-        <h4>><strong>Visit Date:</strong> ${date}</h4>
+        <h4><strong>Visit Date:</strong> ${date}</h4>
         <p><strong>Clinic:</strong> ${hist.clinicName || ''}</p>
         <p><strong>Specialist:</strong> ${hist.specialistName || ''}</p>
         <p><strong>Specialty:</strong> ${hist.specialistType || ''}</p>
