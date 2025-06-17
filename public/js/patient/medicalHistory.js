@@ -215,7 +215,7 @@ function rendermedicalHistory(data, viewMode) {
         <h4>><strong>Visit Date:</strong> ${date}</h4>
         <p><strong>Clinic:</strong> ${hist.clinicName || ''}</p>
         <p><strong>Specialist:</strong> ${hist.specialistName || ''}</p>
-        <p><strong>Specialty:</strong> ${hist.specialty || ''}</p>
+        <p><strong>Specialty:</strong> ${hist.specialistType || ''}</p>
         <p><strong>Diagnosis Summary:</strong> ${hist.diagnosisSummary || ''}</p>
         <button onclick="showDetails('${encodeURIComponent(JSON.stringify(hist))}')">View Full Record</button>
       `;
@@ -232,7 +232,7 @@ function rendermedicalHistory(data, viewMode) {
         <td>${date}</td>
         <td>${hist.clinicName || ''}</td>
         <td>${hist.specialistName || ''}</td>
-        <td>${hist.specialty || ''}</td>
+        <td>${hist.specialistType || ''}</td>
         <td>${hist.diagnosisSummary || ''}</td>
         <td><button onclick="showDetails('${encodeURIComponent(JSON.stringify(hist))}')">View Record</button></td>
       `;
