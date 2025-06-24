@@ -1,7 +1,8 @@
-import express from 'express';
-import cors from 'cors';
-import admin from 'firebase-admin';
+const express = require("express");
+const cors = require("cors");
+const admin = require("firebase-admin");
 const serviceAccount = require("./serviceAccountKey.json");
+
 
 const app = express();
 app.use(cors());
