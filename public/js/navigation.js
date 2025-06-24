@@ -72,30 +72,62 @@ class NavigationManager {
     }
 
     setupEventListeners() {
+        // PREVENT DUPLICATE EVENT LISTENERS
         if (this.eventListenersAttached) {
             console.log('Event listeners already attached, skipping...');
             return;
         }
+
+        // Wait a moment for DOM elements to be ready, then set up listeners
         setTimeout(() => {
             const hamburger = document.querySelector('.hamburger-menu');
             if (hamburger) {
-                hamburger.onclick = () => this.toggleSidebar();
+                // REMOVE ANY EXISTING LISTENERS FIRST
+                hamburger.removeEventListener('click', this.handleHamburgerClick);
+                // ADD THE LISTENER WITH BOUND CONTEXT
+                this.handleHamburgerClick = this.handleHamburgerClick.bind(this);
+                hamburger.addEventListener('click', this.handleHamburgerClick);
+                console.log('Hamburger menu listener attached');
+            } else {
+                console.log('Hamburger menu not found');
             }
+
             const overlay = document.getElementById('overlay');
             if (overlay) {
-                overlay.onclick = () => this.closeSidebar();
+                overlay.removeEventListener('click', this.handleOverlayClick);
+                this.handleOverlayClick = this.handleOverlayClick.bind(this);
+                overlay.addEventListener('click', this.handleOverlayClick);
             }
+
             const logoutLink = document.getElementById('logout-link');
             if (logoutLink) {
-                logoutLink.onclick = (e) => { e.preventDefault(); this.logout(); };
+                logoutLink.removeEventListener('click', this.handleLogoutClick);
+                this.handleLogoutClick = this.handleLogoutClick.bind(this);
+                logoutLink.addEventListener('click', this.handleLogoutClick);
             }
+
+            // Mark listeners as attached
             this.eventListenersAttached = true;
         }, 100);
+
+        // Handle window resize
         window.addEventListener('resize', () => {
             if (window.innerWidth > 768) {
                 const overlay = document.getElementById('overlay');
                 if (overlay) overlay.classList.remove('show');
             }
+        });
+
+        document.querySelectorAll("a").forEach(link => {
+            link.addEventListener("click", function (e) {
+                if (link.hostname === window.location.hostname) {
+                    e.preventDefault();
+                    document.body.classList.add("fade-out");
+                    setTimeout(() => {
+                        window.location.href = link.href;
+                    }, 300);
+                }
+            });
         });
     }
 
@@ -121,32 +153,75 @@ class NavigationManager {
 
     async initializeFirebaseAuth() {
         try {
-            // Import shared Firebase config and auth
-            const { auth } = await import('./firebase-config.js');
-            const { onAuthStateChanged, signOut } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js");
+            // Import Firebase modules
+            const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js");
+            const { getAuth, onAuthStateChanged, signOut } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js");
+            
+            // Import your Firebase config - with error handling
+            let firebaseConfig;
+            try {
+                const configModule = await import('./firebase-config.js');
+                firebaseConfig = configModule.firebaseConfig || configModule.default;
+            } catch (configError) {
+                console.error('Error loading Firebase config:', configError);
+                // Fallback config - replace with your actual Firebase config
+                firebaseConfig = {
+                    apiKey: "your-api-key",
+                    authDomain: "your-project.firebaseapp.com",
+                    projectId: "your-project-id",
+                    storageBucket: "your-project.appspot.com",
+                    messagingSenderId: "123456789",
+                    appId: "your-app-id"
+                };
+                console.warn('Using fallback Firebase config. Please update with your actual config.');
+            }
 
+            // Validate config before initializing
+            if (!firebaseConfig || !firebaseConfig.apiKey) {
+                throw new Error('Invalid Firebase configuration');
+            }
+
+            // Initialize Firebase
+            const app = initializeApp(firebaseConfig);
+            const auth = getAuth(app);
+            
             // Make auth available globally
             window.firebaseAuth = auth;
             window.firebaseSignOut = signOut;
 
-            // Only update navigation UI, do NOT redirect
+            // Check authentication state
             onAuthStateChanged(auth, (user) => {
                 if (this.isLoggingOut) return;
+                
                 const loadingScreen = document.getElementById('loadingScreen');
                 const mainApp = document.querySelector('.main-app') || document.body;
+                
                 if (user) {
                     console.log('User is authenticated:', user.email);
                     this.loadAuthenticatedContent(user);
-                    if (loadingScreen) loadingScreen.style.display = 'none';
-                    if (mainApp.classList.contains('main-app')) mainApp.style.display = 'block';
+                    
+                    // Hide loading screen if it exists
+                    if (loadingScreen) {
+                        loadingScreen.style.display = 'none';
+                    }
+                    if (mainApp.classList.contains('main-app')) {
+                        mainApp.style.display = 'block';
+                    }
                 } else {
-                    // Do NOT redirect to login here. Let the main page handle it.
-                    // Optionally, update nav UI to show login button or hide user info.
-                    this.loadAuthenticatedContent(null);
+                    if (!this.isLoggingOut) {
+                        console.log('User not authenticated, redirecting to login');
+                        try {
+                            window.location.replace('./login.html');
+                        } catch (e) {
+                            window.location.href = '/login.html';
+                        }
+                    }
                 }
             });
+
         } catch (error) {
             console.error('Error initializing Firebase:', error);
+            // Don't redirect to login if Firebase fails to initialize
             console.warn('Firebase authentication not available. Navigation will work without auth.');
         }
     }
@@ -253,13 +328,7 @@ class NavigationManager {
                 try {
                     await window.firebaseSignOut(window.firebaseAuth);
                     console.log('User logged out successfully');
-                    this.isLoggingOut = false;
-                    
-                    // Hide loading screen on success
-                    if (loadingScreen && mainApp) {
-                        loadingScreen.style.display = 'none';
-                        mainApp.style.display = 'block';
-                    }
+                    window.location.replace('./login.html');
                 } catch (error) {
                     console.error('Logout error:', error);
                     this.isLoggingOut = false;
@@ -291,3 +360,39 @@ if (!window.navigationManager) {
 
 // Export for module use
 export default NavigationManager;
+
+window.addEventListener("DOMContentLoaded", () => {
+  fetch("/public/navigation.html")
+    .then(res => res.text())
+    .then(html => {
+      const navbarContainer = document.getElementById("navbar-container");
+      if (navbarContainer) {
+        navbarContainer.innerHTML = html;
+
+        // Add active class to current nav link
+        const currentPath = window.location.pathname.split('/').pop();
+        const navLinks = document.querySelectorAll(".navbar-list a");
+
+        navLinks.forEach(link => {
+          if (link.getAttribute("href") === currentPath) {
+            link.classList.add("active");
+          } else {
+            link.classList.remove("active");
+          }
+        });
+      }
+      document.body.classList.remove("preload"); // Show the page
+    });
+});
+
+document.querySelectorAll("a").forEach(link => {
+  link.addEventListener("click", function (e) {
+    if (link.hostname === window.location.hostname) {
+      e.preventDefault();
+      document.body.classList.add("fade-out");
+      setTimeout(() => {
+        window.location.href = link.href;
+      }, 300);
+    }
+  });
+});
