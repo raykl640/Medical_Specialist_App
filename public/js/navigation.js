@@ -14,7 +14,7 @@ class NavigationManager {
 
     async loadNavigationHTML() {
         try {
-            const response = await fetch('./navigation.html');
+            const response = await fetch('../navigation.html');
             console.log('Fetch status:', response.status);
             const html = await response.text();
             console.log('Fetched HTML:', html);
@@ -362,7 +362,7 @@ if (!window.navigationManager) {
 export default NavigationManager;
 
 window.addEventListener("DOMContentLoaded", () => {
-  fetch("/public/navigation.html")
+  fetch("/navigation.html")
     .then(res => res.text())
     .then(html => {
       const navbarContainer = document.getElementById("navbar-container");
