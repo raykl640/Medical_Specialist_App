@@ -1,7 +1,19 @@
-import { app } from "../js/firebase-config"; // Adjust path if needed
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging.js";
 import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBWkXxtI9514_YD6H4kQ6IgltPoSSf7W80",
+  authDomain: "medical-specialist-app-d3a46.firebaseapp.com",
+  projectId: "medical-specialist-app-d3a46",
+  storageBucket: "medical-specialist-app-d3a46.appspot.com",
+  messagingSenderId: "990201081362",
+  appId: "1:990201081362:web:273dbe33edbbee6f2bb2cb",
+  measurementId: "G-ECMD5067CE"
+};
+
+const app = initializeApp(firebaseConfig);
 
 // Initialize services
 const messaging = getMessaging(app);
