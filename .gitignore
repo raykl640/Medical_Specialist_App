@@ -71,3 +71,5 @@ node_modules/
 # Ignore Firebase service account key
 public/js/serviceAccountKey.json
 
+# Ignore Firebase service account key in fcm-Backend 
+public/fcm-Backend/serviceAccountKey.json
