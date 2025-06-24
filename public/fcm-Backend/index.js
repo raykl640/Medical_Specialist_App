@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import admin from 'firebase-admin';
-import serviceAccount from '../js/serviceAccountKey.json' assert { type: 'json' };
+const serviceAccount = require("./serviceAccountKey.json");
 
 const app = express();
 app.use(cors());
