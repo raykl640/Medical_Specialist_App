@@ -14,83 +14,66 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
+
+// Initialize services
 const messaging = getMessaging(app);
 const db = getFirestore(app);
 const auth = getAuth(app);
 
-// Register Service Worker
+// Register service worker
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('/firebase-messaging-sw.js')
-    .then(() => console.log("✅ Service Worker registered"))
-    .catch(err => console.error("❌ Service Worker failed:", err));
+    .then(registration => {
+      console.log("Service Worker registered:", registration);
+    })
+    .catch(error => {
+      console.error("Service Worker registration failed:", error);
+    });
 }
 
-// Save FCM token to Firestore
+// Save token function
 async function saveTokenToFirestore(token) {
   const user = auth.currentUser;
-  if (!user) return console.warn("⚠ User not logged in");
+  if (!user) {
+    console.warn("User not logged in, token not saved.");
+    return;
+  }
 
   try {
     await setDoc(doc(db, "fcmTokens", user.uid), {
       token,
       updatedAt: new Date()
     });
-    console.log("✅ Token saved for user:", user.uid);
+    console.log("FCM token saved to Firestore for user:", user.uid);
   } catch (error) {
-    console.error("❌ Error saving token:", error);
+    console.error("Error saving token to Firestore:", error);
   }
 }
 
-// Get and save token
+// Get FCM token
 getToken(messaging, {
   vapidKey: "BKxb9EvRBamrw-_fkmMOR-mnTbiImXLiCBIc8aJMtOEf1TuT0PYeRGoljnFPHI7KF-pt0L0Xj5sJZaqf7lTFIMY"
 })
-.then((token) => {
-  if (token) {
-    console.log("📲 FCM Token:", token);
-    saveTokenToFirestore(token);
+.then((currentToken) => {
+  if (currentToken) {
+    console.log("FCM Token:", currentToken);
+    saveTokenToFirestore(currentToken); // Save it to Firestore
   } else {
-    console.warn("⚠ No token. Request permission.");
+    console.warn("No token received. Permission required.");
   }
 })
-.catch(err => console.error("❌ Error getting token:", err));
-
-// === UI Elements ===
-const bell = document.getElementById("notificationBell");
-const count = document.getElementById("notificationCount");
-const dropdown = document.getElementById("notificationDropdown");
-const list = document.getElementById("notificationList");
-
-let unread = 0;
-
-// Display notification in dropdown
-function addNotification(title, body) {
-  unread++;
-  count.textContent = unread;
-  count.style.display = "inline-block";
-
-  const li = document.createElement("li");
-  li.classList.add("notification-item");
-  li.innerHTML = `
-    <strong>${title}</strong>
-    <span>${body}</span>
-  `;
-  list.prepend(li);
-}
-
-// Toggle dropdown
-bell.addEventListener("click", () => {
-  dropdown.classList.toggle("hidden");
-  if (!dropdown.classList.contains("hidden")) {
-    unread = 0;
-    count.textContent = "0";
-    count.style.display = "none";
-  }
+.catch((err) => {
+  console.error("Error retrieving token:", err);
 });
 
-// Handle incoming FCM message
+// Handle foreground messages
 onMessage(messaging, (payload) => {
-  console.log("🔔 Foreground message received:", payload);
-  const { title, body } = payload.notification;
-  addNotification(title, body);
+  console.log("Message received in foreground:", payload);
+  const {title, body} = payload.notification;
+  if(typeof window.displayNotification === 'function') {
+    window.displayNotification(title, body);
+  } else {
+    console.warn("Display function not yet available");
+  }
+  alert(payload.notification.title + "\n" + payload.notification.body);
 });

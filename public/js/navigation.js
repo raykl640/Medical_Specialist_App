@@ -24,51 +24,84 @@ class NavigationManager {
             // Create a temporary div to parse the HTML
             const tempDiv = document.createElement('div');
             tempDiv.innerHTML = html;
-            
+
             // Extract and insert the navigation elements
             const titleBar = tempDiv.querySelector('.title-bar');
             const overlay = tempDiv.querySelector('.overlay');
             const sidebar = tempDiv.querySelector('.sidebar');
-            
+
             // Insert at the beginning of the body
             if (titleBar) document.body.insertBefore(titleBar, document.body.firstChild);
             if (overlay) document.body.insertBefore(overlay, document.body.firstChild);
             if (sidebar) document.body.insertBefore(sidebar, document.body.firstChild);
 
             console.log('Navigation inserted into DOM');
+        
+            // Setup notification dropdown behavior
+            function setupNotificationUI() {
+                const bell = document.getElementById("notificationBell");
+                const count = document.getElementById("notificationCount");
+                const dropdown = document.getElementById("notificationDropdown");
+                const list = document.getElementById("notificationList");
 
+                let unread = 0;
+
+                window.displayNotification = (title, body) => {
+                    unread++;
+                    count.textContent = unread;
+                    count.style.display = "inline-block";
+
+                    const li = document.createElement("li");
+                    li.classList.add("notification-item");
+                    li.innerHTML = `
+                    <strong>${title}</strong>
+                     <span>${body}</span>
+                    `;
+                    list.prepend(li);
+                };
+
+                bell.addEventListener("click", () => {
+                    dropdown.classList.toggle("hidden");
+                    if (!dropdown.classList.contains("hidden")) {
+                        unread = 0;
+                        count.textContent = "0";
+                        count.style.display = "none";
+                    }
+                });
+            }
             // Add the main-content class to existing content if it doesn't exist
             let mainContent = document.querySelector('.main-content');
 
             if (!mainContent) {
                 // Wrap existing body content (excluding navigation) in main-content
-                const existingContent = Array.from(document.body.children).filter(child => 
-                    !child.classList.contains('title-bar') && 
-                    !child.classList.contains('overlay') && 
+                const existingContent = Array.from(document.body.children).filter(child =>
+                    !child.classList.contains('title-bar') &&
+                    !child.classList.contains('overlay') &&
                     !child.classList.contains('sidebar') &&
                     !child.classList.contains('loading-screen')
                 );
-                
+
                 const mainContentDiv = document.createElement('div');
                 mainContentDiv.className = 'main-content';
                 mainContentDiv.id = 'mainContent';
-                
+
                 existingContent.forEach(element => {
                     mainContentDiv.appendChild(element);
                 });
-                
+
                 document.body.appendChild(mainContentDiv);
             }
-            
+
             // Check localStorage for sidebar state
             const sidebarState = localStorage.getItem('sidebarOpen');
             if (sidebarState === 'true') {
                 this.openSidebar();
             }
-            
+
         } catch (error) {
             console.error('Error loading navigation:', error);
         }
+        setupNotificationUI();
     }
 
     setupEventListeners() {
@@ -156,7 +189,7 @@ class NavigationManager {
             // Import Firebase modules
             const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js");
             const { getAuth, onAuthStateChanged, signOut } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js");
-            
+
             // Import your Firebase config - with error handling
             let firebaseConfig;
             try {
@@ -184,7 +217,7 @@ class NavigationManager {
             // Initialize Firebase
             const app = initializeApp(firebaseConfig);
             const auth = getAuth(app);
-            
+
             // Make auth available globally
             window.firebaseAuth = auth;
             window.firebaseSignOut = signOut;
@@ -192,14 +225,14 @@ class NavigationManager {
             // Check authentication state
             onAuthStateChanged(auth, (user) => {
                 if (this.isLoggingOut) return;
-                
+
                 const loadingScreen = document.getElementById('loadingScreen');
                 const mainApp = document.querySelector('.main-app') || document.body;
-                
+
                 if (user) {
                     console.log('User is authenticated:', user.email);
                     this.loadAuthenticatedContent(user);
-                    
+
                     // Hide loading screen if it exists
                     if (loadingScreen) {
                         loadingScreen.style.display = 'none';
@@ -236,7 +269,7 @@ class NavigationManager {
                 userInitial.textContent = user.email.charAt(0).toUpperCase();
             }
         }
-        
+
         // Set active nav link based on current page
         this.setActiveNavLink();
     }
@@ -244,12 +277,12 @@ class NavigationManager {
     setActiveNavLink() {
         // Get current page name
         const currentPage = window.location.pathname.split('/').pop() || 'patientDashboard.html';
-        
+
         // Remove active class from all nav links
         document.querySelectorAll('.nav-link').forEach(link => {
             link.classList.remove('active');
         });
-        
+
         // Add active class to current page link
         document.querySelectorAll('.nav-link').forEach(link => {
             const linkPage = link.getAttribute('data-page') || link.getAttribute('href');
@@ -264,7 +297,7 @@ class NavigationManager {
         const sidebar = document.getElementById('sidebar');
         const mainContent = document.getElementById('mainContent');
         const overlay = document.getElementById('overlay');
-        
+
         if (sidebar) {
             const wasOpen = sidebar.classList.contains('open');
             sidebar.classList.toggle('open');
@@ -277,7 +310,7 @@ class NavigationManager {
             console.log('Sidebar element not found');
             return;
         }
-        
+
         // On desktop, shift main content; on mobile, show overlay
         if (window.innerWidth > 768) {
             if (mainContent) mainContent.classList.toggle('shifted');
@@ -290,7 +323,7 @@ class NavigationManager {
         const sidebar = document.getElementById('sidebar');
         const mainContent = document.getElementById('mainContent');
         const overlay = document.getElementById('overlay');
-        
+
         if (sidebar) sidebar.classList.add('open');
         if (mainContent && window.innerWidth > 768) mainContent.classList.add('shifted');
         if (overlay && window.innerWidth <= 768) overlay.classList.add('show');
@@ -300,7 +333,7 @@ class NavigationManager {
         const sidebar = document.getElementById('sidebar');
         const mainContent = document.getElementById('mainContent');
         const overlay = document.getElementById('overlay');
-        
+
         if (sidebar) sidebar.classList.remove('open');
         if (mainContent) mainContent.classList.remove('shifted');
         if (overlay) overlay.classList.remove('show');
@@ -311,19 +344,19 @@ class NavigationManager {
 
     async logout() {
         if (this.isLoggingOut) return;
-        
+
         if (confirm('Are you sure you want to log out?')) {
             this.isLoggingOut = true;
-            
+
             // Show loading state if loading screen exists
             const loadingScreen = document.getElementById('loadingScreen');
             const mainApp = document.querySelector('.main-app');
-            
+
             if (loadingScreen && mainApp) {
                 loadingScreen.style.display = 'flex';
                 mainApp.style.display = 'none';
             }
-            
+
             if (window.firebaseAuth && window.firebaseSignOut) {
                 try {
                     await window.firebaseSignOut(window.firebaseAuth);
@@ -332,7 +365,7 @@ class NavigationManager {
                 } catch (error) {
                     console.error('Logout error:', error);
                     this.isLoggingOut = false;
-                    
+
                     // Hide loading screen on error
                     if (loadingScreen && mainApp) {
                         loadingScreen.style.display = 'none';
@@ -362,37 +395,37 @@ if (!window.navigationManager) {
 export default NavigationManager;
 
 window.addEventListener("DOMContentLoaded", () => {
-  fetch("/navigation.html")
-    .then(res => res.text())
-    .then(html => {
-      const navbarContainer = document.getElementById("navbar-container");
-      if (navbarContainer) {
-        navbarContainer.innerHTML = html;
+    fetch("/navigation.html")
+        .then(res => res.text())
+        .then(html => {
+            const navbarContainer = document.getElementById("navbar-container");
+            if (navbarContainer) {
+                navbarContainer.innerHTML = html;
 
-        // Add active class to current nav link
-        const currentPath = window.location.pathname.split('/').pop();
-        const navLinks = document.querySelectorAll(".navbar-list a");
+                // Add active class to current nav link
+                const currentPath = window.location.pathname.split('/').pop();
+                const navLinks = document.querySelectorAll(".navbar-list a");
 
-        navLinks.forEach(link => {
-          if (link.getAttribute("href") === currentPath) {
-            link.classList.add("active");
-          } else {
-            link.classList.remove("active");
-          }
+                navLinks.forEach(link => {
+                    if (link.getAttribute("href") === currentPath) {
+                        link.classList.add("active");
+                    } else {
+                        link.classList.remove("active");
+                    }
+                });
+            }
+            document.body.classList.remove("preload"); // Show the page
         });
-      }
-      document.body.classList.remove("preload"); // Show the page
-    });
 });
 
 document.querySelectorAll("a").forEach(link => {
-  link.addEventListener("click", function (e) {
-    if (link.hostname === window.location.hostname) {
-      e.preventDefault();
-      document.body.classList.add("fade-out");
-      setTimeout(() => {
-        window.location.href = link.href;
-      }, 300);
-    }
-  });
+    link.addEventListener("click", function (e) {
+        if (link.hostname === window.location.hostname) {
+            e.preventDefault();
+            document.body.classList.add("fade-out");
+            setTimeout(() => {
+                window.location.href = link.href;
+            }, 300);
+        }
+    });
 });
