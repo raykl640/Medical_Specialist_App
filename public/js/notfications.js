@@ -2,6 +2,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/fireba
 import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging.js";
 import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBWkXxtI9514_YD6H4kQ6IgltPoSSf7W80",
@@ -51,26 +52,31 @@ async function saveTokenToFirestore(token) {
 }
 
 // Get FCM token
-getToken(messaging, {
-  vapidKey: "BKxb9EvRBamrw-_fkmMOR-mnTbiImXLiCBIc8aJMtOEf1TuT0PYeRGoljnFPHI7KF-pt0L0Xj5sJZaqf7lTFIMY"
-})
-.then((currentToken) => {
-  if (currentToken) {
-    console.log("FCM Token:", currentToken);
-    saveTokenToFirestore(currentToken); // Save it to Firestore
+onAuthStateChanged(auth, (user) => {
+  if (user) {
+    // User is now available, safe to get token
+    getToken(messaging, {
+      vapidKey: "BKxb9EvRBamrw-_fkmMOR-mnTbiImXLiCBIc8aJMtOEf1TuT0PYeRGoljnFPHI7KF-pt0L0Xj5sJZaqf7lTFIMY"
+    })
+      .then((token) => {
+        if (token) {
+          console.log("FCM Token:", token);
+          saveTokenToFirestore(token);
+        } else {
+          console.warn("⚠ No token. Request permission.");
+        }
+      })
+      .catch(err => console.error("Error getting token:", err));
   } else {
-    console.warn("No token received. Permission required.");
+    console.warn("⚠ User not logged in, token not saved.");
   }
-})
-.catch((err) => {
-  console.error("Error retrieving token:", err);
 });
 
 // Handle foreground messages
 onMessage(messaging, (payload) => {
   console.log("Message received in foreground:", payload);
-  const {title, body} = payload.notification;
-  if(typeof window.displayNotification === 'function') {
+  const { title, body } = payload.notification;
+  if (typeof window.displayNotification === 'function') {
     window.displayNotification(title, body);
   } else {
     console.warn("Display function not yet available");
