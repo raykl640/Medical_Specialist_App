@@ -111,6 +111,7 @@ function waitForNotificationElements() {
   };
 
   bell.addEventListener("click", () => {
+    console.log("Bell clicked");
     dropdown.classList.toggle("hidden");
     if (!dropdown.classList.contains("hidden")) {
       unread = 0;
@@ -122,6 +123,6 @@ function waitForNotificationElements() {
   console.log("🔔 Notification UI ready");
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  setTimeout(waitForNotificationElements, 300); // Wait for navigation injection
+document.addEventListener("navigationLoaded", () => {
+  waitForNotificationElements();
 });

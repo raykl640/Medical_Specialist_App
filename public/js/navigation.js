@@ -69,6 +69,8 @@ class NavigationManager {
         } catch (error) {
             console.error('Error loading navigation:', error);
         }
+
+        document.dispatchEvent(new CustomEvent("navigationLoaded"));
     }
 
     setupEventListeners() {
