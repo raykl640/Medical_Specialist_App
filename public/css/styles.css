@@ -108,6 +108,9 @@ body.fade-out {
   border-radius: 50%;
   display: none; /* hidden by default */
 }
+.notification-dropdown.hidden {
+  display: none;
+}
 
 /* Dropdown panel */
 .notification-dropdown {

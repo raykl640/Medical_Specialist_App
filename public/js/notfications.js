@@ -83,3 +83,45 @@ onMessage(messaging, (payload) => {
   }
   alert(payload.notification.title + "\n" + payload.notification.body);
 });
+
+function waitForNotificationElements() {
+  const bell = document.getElementById("notificationBell");
+  const count = document.getElementById("notificationCount");
+  const dropdown = document.getElementById("notificationDropdown");
+  const list = document.getElementById("notificationList");
+
+  if (!bell || !count || !dropdown || !list) {
+    return setTimeout(waitForNotificationElements, 200); // keep checking
+  }
+
+  let unread = 0;
+
+  window.displayNotification = function(title, body) {
+    unread++;
+    count.textContent = unread;
+    count.style.display = "inline-block";
+
+    const li = document.createElement("li");
+    li.classList.add("notification-item");
+    li.innerHTML = `
+      <strong>${title}</strong>
+      <span>${body}</span>
+    `;
+    list.prepend(li);
+  };
+
+  bell.addEventListener("click", () => {
+    dropdown.classList.toggle("hidden");
+    if (!dropdown.classList.contains("hidden")) {
+      unread = 0;
+      count.textContent = "0";
+      count.style.display = "none";
+    }
+  });
+
+  console.log("🔔 Notification UI ready");
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  setTimeout(waitForNotificationElements, 300); // Wait for navigation injection
+});
