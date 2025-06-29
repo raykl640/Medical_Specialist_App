@@ -1,76 +1,23 @@
-// navigation.js - FIXED VERSION
+// navigation.js - REFACTORED VERSION
 class NavigationManager {
     constructor() {
         this.isLoggingOut = false;
-        this.eventListenersAttached = false; // PREVENT DUPLICATE LISTENERS
+        this.eventListenersAttached = false;
         this.init();
     }
 
     async init() {
-        await this.loadNavigationHTML();
         this.setupEventListeners();
         this.initializeFirebaseAuth();
+        this.initializeSidebarState();
     }
 
-    async loadNavigationHTML() {
-        try {
-            const response = await fetch('../navigation.html');
-            console.log('Fetch status:', response.status);
-            const html = await response.text();
-            console.log('Fetched HTML:', html);
-
-            console.log('Fetching navigation...');
-
-            // Create a temporary div to parse the HTML
-            const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = html;
-            
-            // Extract and insert the navigation elements
-            const titleBar = tempDiv.querySelector('.title-bar');
-            const overlay = tempDiv.querySelector('.overlay');
-            const sidebar = tempDiv.querySelector('.sidebar');
-            
-            // Insert at the beginning of the body
-            if (titleBar) document.body.insertBefore(titleBar, document.body.firstChild);
-            if (overlay) document.body.insertBefore(overlay, document.body.firstChild);
-            if (sidebar) document.body.insertBefore(sidebar, document.body.firstChild);
-
-            console.log('Navigation inserted into DOM');
-            
-            // Add the main-content class to existing content if it doesn't exist
-            let mainContent = document.querySelector('.main-content');
-
-            if (!mainContent) {
-                // Wrap existing body content (excluding navigation) in main-content
-                const existingContent = Array.from(document.body.children).filter(child => 
-                    !child.classList.contains('title-bar') && 
-                    !child.classList.contains('overlay') && 
-                    !child.classList.contains('sidebar') &&
-                    !child.classList.contains('loading-screen')
-                );
-                
-                const mainContentDiv = document.createElement('div');
-                mainContentDiv.className = 'main-content';
-                mainContentDiv.id = 'mainContent';
-                
-                existingContent.forEach(element => {
-                    mainContentDiv.appendChild(element);
-                });
-                
-                document.body.appendChild(mainContentDiv);
-            }
-            
-            // Check localStorage for sidebar state
-            const sidebarState = localStorage.getItem('sidebarOpen');
-            if (sidebarState === 'true') {
-                this.openSidebar();
-            }
-            
-        } catch (error) {
-            console.error('Error loading navigation:', error);
+    initializeSidebarState() {
+        // Check localStorage for sidebar state
+        const sidebarState = localStorage.getItem('sidebarOpen');
+        if (sidebarState === 'true') {
+            this.openSidebar();
         }
-
-        document.dispatchEvent(new CustomEvent("navigationLoaded"));
     }
 
     setupEventListeners() {
@@ -120,9 +67,10 @@ class NavigationManager {
             }
         });
 
+        // Handle page transitions with fade effect
         document.querySelectorAll("a").forEach(link => {
             link.addEventListener("click", function (e) {
-                if (link.hostname === window.location.hostname) {
+                if (link.hostname === window.location.hostname && !link.classList.contains('no-fade')) {
                     e.preventDefault();
                     document.body.classList.add("fade-out");
                     setTimeout(() => {
@@ -254,8 +202,10 @@ class NavigationManager {
         
         // Add active class to current page link
         document.querySelectorAll('.nav-link').forEach(link => {
-            const linkPage = link.getAttribute('data-page') || link.getAttribute('href');
-            if (linkPage === currentPage) {
+            const linkHref = link.getAttribute('href');
+            const linkPage = link.getAttribute('data-page');
+            
+            if (linkHref === currentPage || linkHref === './' + currentPage) {
                 link.classList.add('active');
             }
         });
@@ -264,14 +214,13 @@ class NavigationManager {
     toggleSidebar() {
         console.log('Toggle sidebar called');
         const sidebar = document.getElementById('sidebar');
-        const mainContent = document.getElementById('mainContent');
+        const mainContent = document.getElementById('mainContent') || document.querySelector('.main-content');
         const overlay = document.getElementById('overlay');
         
         if (sidebar) {
             const wasOpen = sidebar.classList.contains('open');
             sidebar.classList.toggle('open');
             console.log('Sidebar toggled, open:', sidebar.classList.contains('open'));
-            console.log('Was open before toggle:', wasOpen);
 
             // Store sidebar state in localStorage
             localStorage.setItem('sidebarOpen', sidebar.classList.contains('open'));
@@ -290,7 +239,7 @@ class NavigationManager {
 
     openSidebar() {
         const sidebar = document.getElementById('sidebar');
-        const mainContent = document.getElementById('mainContent');
+        const mainContent = document.getElementById('mainContent') || document.querySelector('.main-content');
         const overlay = document.getElementById('overlay');
         
         if (sidebar) sidebar.classList.add('open');
@@ -300,7 +249,7 @@ class NavigationManager {
 
     closeSidebar() {
         const sidebar = document.getElementById('sidebar');
-        const mainContent = document.getElementById('mainContent');
+        const mainContent = document.getElementById('mainContent') || document.querySelector('.main-content');
         const overlay = document.getElementById('overlay');
         
         if (sidebar) sidebar.classList.remove('open');
@@ -362,39 +311,3 @@ if (!window.navigationManager) {
 
 // Export for module use
 export default NavigationManager;
-
-window.addEventListener("DOMContentLoaded", () => {
-  fetch("/navigation.html")
-    .then(res => res.text())
-    .then(html => {
-      const navbarContainer = document.getElementById("navbar-container");
-      if (navbarContainer) {
-        navbarContainer.innerHTML = html;
-
-        // Add active class to current nav link
-        const currentPath = window.location.pathname.split('/').pop();
-        const navLinks = document.querySelectorAll(".navbar-list a");
-
-        navLinks.forEach(link => {
-          if (link.getAttribute("href") === currentPath) {
-            link.classList.add("active");
-          } else {
-            link.classList.remove("active");
-          }
-        });
-      }
-      document.body.classList.remove("preload"); // Show the page
-    });
-});
-
-document.querySelectorAll("a").forEach(link => {
-  link.addEventListener("click", function (e) {
-    if (link.hostname === window.location.hostname) {
-      e.preventDefault();
-      document.body.classList.add("fade-out");
-      setTimeout(() => {
-        window.location.href = link.href;
-      }, 300);
-    }
-  });
-});

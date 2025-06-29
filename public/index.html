@@ -1,40 +1,184 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Login - Patient Portal</title>
-    <link rel="stylesheet" href="css/login.css"/>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Welcome to MedConnect</title>
+  <link rel="stylesheet" href="css/styles.css" />
+   
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(to right, #e0f7fa, #ffffff);
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 40px 20px;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 2.8rem;
+      margin-bottom: 1rem;
+      color: #00796b;
+    }
+
+    p.intro {
+      font-size: 1.2rem;
+      max-width: 700px;
+      margin-bottom: 2.5rem;
+      color: #555;
+    }
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 20px;
+      max-width: 1000px;
+      width: 100%;
+    }
+
+    .feature {
+      background-color: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      padding: 25px;
+      transition: transform 0.2s ease-in-out;
+    }
+
+    .feature:hover {
+      transform: translateY(-5px);
+    }
+
+    .feature h3 {
+      margin-bottom: 10px;
+      color: #00695c;
+    }
+
+    .feature p {
+      font-size: 0.95rem;
+      color: #666;
+    }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 2rem;
+      }
+
+      .features {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
-
 <body>
-    <div class="container">
-        <h1>Login</h1>
+    <!-- Navigation Component - Include this in each HTML page -->
 
-        <form id="loginForm">
-            <section class="section">
-                <div class="row">
-                    <input type="email" placeholder="Email Address" id="email" required />
-                </div>
-                <div class="row">
-                    <input type="password" placeholder="Password" id="password" required />
-                </div>
-                <div class="row">
-                    <p id="message" style="color: red;"></p>
-                </div>
-            </section>
+<!-- Title Bar -->
+<div class="title-bar">
+    <div class="hamburger-menu">
+        <div class="hamburger-line"></div>
+        <div class="hamburger-line"></div>
+        <div class="hamburger-line"></div>
+    </div>
+    <div class="notification-container">
+        <button id="notificationBell" class="bell-icon">
+            🔔
+            <span id="notificationCount" class="notification-count">0</span>
+        </button>
+        <!-- Notification Dropdown -->
+        <div id="notificationDropdown" class="notification-dropdown hidden">
+            <div class="notification-header">Notifications</div>
+            <ul id="notificationList" class="notification-list"></ul>
+        </div>
+    </div>
+</div>
 
-            <div class="submit">
-                <button type="submit" id="loginBtn">Log In</button>
-                <p>Don't have an account? <a href="register.html">Register</a></p>
-                <p><a href="resetPassword.html">Forgot Password?</a></p>
+<!-- Overlay for mobile -->
+<div class="overlay" id="overlay"></div>
 
+<!-- Navigation Sidebar -->
+<div class="sidebar" id="sidebar">
+    <div class="logo">
+        <div class="logo-circle">
+            <div class="profile-picture" id="userInitial">
+                U
             </div>
-        </form>
+        </div>
+    </div>
+    <div class="nav-section">
+        <h3>Dashboard</h3>
+        <ul>
+            <li><a href="patientDashboard.html" class="nav-link" data-page="dashboard">
+                <span class="icon">🏠</span>Home</a></li>
+            <li><a href="appointments.html" class="nav-link" data-page="appointments">
+                <span class="icon">📅</span>My Appointments</a></li>
+            <li><a href="patientsClinics.html" class="nav-link" data-page="clinics">
+                <span class="icon">🏥</span>Clinics</a></li>
+            <li><a href="patientHealthResources.html" class="nav-link" data-page="health-resources">
+                <span class="icon">📚</span>Health Resources</a></li>
+        </ul>
+    </div>
+    <div class="nav-section">
+        <h3>Medical</h3>
+        <ul>
+            <li><a href="medicalHistory.html" class="nav-link" data-page="medical-history">
+                <span class="icon">📋</span>Medical History</a></li>
+            <li><a href="patientLabTests.html" class="nav-link" data-page="lab-tests">
+                <span class="icon">🧪</span>Lab Tests</a></li>
+            <li><a href="patientRadiology.html" class="nav-link" data-page="radiology">
+                <span class="icon">💎</span>Radiology</a></li>
+            <li><a href="patientMedications.html" class="nav-link" data-page="prescriptions">
+                <span class="icon">💊</span>Medications</a></li>
+        </ul>
+    </div>
+    <div class="nav-section nav-bottom">
+        <ul>
+            <li><a href="profile.html" class="nav-link" id="profile-link" data-page="profile">
+                <span class="icon">👤</span>Profile</a></li>
+            <li><a href="#" class="nav-link" id="logout-link">
+                <span class="icon">🚪</span>Log Out</a></li>
+        </ul>
+    </div>
+</div>
+
+  <h1>Welcome to MedConnect</h1>
+  <p class="intro">
+    Your trusted platform to find medical specialists, access personal health records, and explore health education resources — all in one secure place.
+  </p>
+
+  <div class="features">
+    <div class="feature">
+      <h3>🩺 Find Specialists</h3>
+      <p>Search for top-rated medical specialists by name, expertise, or location.</p>
     </div>
 
-    <script type="module" src="js/login.js"></script>
-</body>
+    <div class="feature">
+      <h3>📄 View Medical Records</h3>
+      <p>Access and review your personal medical history securely and instantly.</p>
+    </div>
 
+    <div class="feature">
+      <h3>📚 Health Resources</h3>
+      <p>Read trusted articles, guides, and tips to better manage your health.</p>
+    </div>
+
+    <div class="feature">
+      <h3>🔐 Secure Login</h3>
+      <p>Protected access through secure Firebase Authentication.</p>
+    </div>
+  </div>
+
+ <script type="module" src="js/navigation.js"></script>
+
+</body>
 </html>

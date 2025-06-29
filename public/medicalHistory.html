@@ -25,7 +25,75 @@
 </head>
 
 <body class="preload">
-    <div id="navbar-container"></div>
+    <!-- Navigation Component - Include this in each HTML page -->
+
+<!-- Title Bar -->
+<div class="title-bar">
+    <div class="hamburger-menu">
+        <div class="hamburger-line"></div>
+        <div class="hamburger-line"></div>
+        <div class="hamburger-line"></div>
+    </div>
+    <div class="notification-container">
+        <button id="notificationBell" class="bell-icon">
+            🔔
+            <span id="notificationCount" class="notification-count">0</span>
+        </button>
+        <!-- Notification Dropdown -->
+        <div id="notificationDropdown" class="notification-dropdown hidden">
+            <div class="notification-header">Notifications</div>
+            <ul id="notificationList" class="notification-list"></ul>
+        </div>
+    </div>
+</div>
+
+<!-- Overlay for mobile -->
+<div class="overlay" id="overlay"></div>
+
+<!-- Navigation Sidebar -->
+<div class="sidebar" id="sidebar">
+    <div class="logo">
+        <div class="logo-circle">
+            <div class="profile-picture" id="userInitial">
+                U
+            </div>
+        </div>
+    </div>
+    <div class="nav-section">
+        <h3>Dashboard</h3>
+        <ul>
+            <li><a href="patientDashboard.html" class="nav-link" data-page="dashboard">
+                <span class="icon">🏠</span>Home</a></li>
+            <li><a href="appointments.html" class="nav-link" data-page="appointments">
+                <span class="icon">📅</span>My Appointments</a></li>
+            <li><a href="patientsClinics.html" class="nav-link" data-page="clinics">
+                <span class="icon">🏥</span>Clinics</a></li>
+            <li><a href="patientHealthResources.html" class="nav-link" data-page="health-resources">
+                <span class="icon">📚</span>Health Resources</a></li>
+        </ul>
+    </div>
+    <div class="nav-section">
+        <h3>Medical</h3>
+        <ul>
+            <li><a href="medicalHistory.html" class="nav-link" data-page="medical-history">
+                <span class="icon">📋</span>Medical History</a></li>
+            <li><a href="patientLabTests.html" class="nav-link" data-page="lab-tests">
+                <span class="icon">🧪</span>Lab Tests</a></li>
+            <li><a href="patientRadiology.html" class="nav-link" data-page="radiology">
+                <span class="icon">💎</span>Radiology</a></li>
+            <li><a href="patientMedications.html" class="nav-link" data-page="prescriptions">
+                <span class="icon">💊</span>Medications</a></li>
+        </ul>
+    </div>
+    <div class="nav-section nav-bottom">
+        <ul>
+            <li><a href="profile.html" class="nav-link" id="profile-link" data-page="profile">
+                <span class="icon">👤</span>Profile</a></li>
+            <li><a href="#" class="nav-link" id="logout-link">
+                <span class="icon">🚪</span>Log Out</a></li>
+        </ul>
+    </div>
+</div>
     <div class="table-content">
         <h2>Medical History</h2>
         <h4>Browse your Medical History by clinic or Specialty. Click 'view Record' to see more details.</h4>

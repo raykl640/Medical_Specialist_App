@@ -1,10 +1,11 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
-  getFirestore, doc, getDoc
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-import {
-  getAuth, onAuthStateChanged
+    getAuth, onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {
+    doc, getDoc,
+    getFirestore
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
     apiKey: "AIzaSyBWkXxtI9514_YD6H4kQ6IgltPoSSf7W80",
@@ -28,20 +29,41 @@ onAuthStateChanged(auth, async (user) => {
     
     if (snapshot.exists()) {
       const data = snapshot.data();
-      document.getElementById("fullName").textContent = data.fullName || "";
-      document.getElementById("dob").textContent = data.dateOfBirth || "";
-      document.getElementById("sex").textContent = data.sex || "";
-      document.getElementById("nid").textContent = data.nationalId || "";
-      document.getElementById("phone").textContent = data.phone || "";
-      document.getElementById("email").textContent = data.email || "";
-      document.getElementById("address").textContent = data.homeAddress || "";
+      // Full Name: Try to construct from firstName + otherNames if fullName is missing
+      let fullName = data.fullName || ((data.firstName || "") + " " + (data.otherNames || "")).trim();
+      document.getElementById("fullName").textContent = fullName || "-";
+      // Date of Birth: try dob, fallback to dateOfBirth
+      document.getElementById("dob").textContent = data.dob || data.dateOfBirth || "-";
+      // Sex/Gender
+      document.getElementById("sex").textContent = data.gender || data.sex || "-";
+      // National ID
+      document.getElementById("nid").textContent = data.nationalId || "-";
+      // Phone
+      document.getElementById("phone").textContent = data.phone || "-";
+      // Email
+      document.getElementById("email").textContent = data.email || "-";
+      // Address
+      document.getElementById("address").textContent = data.address || data.homeAddress || "-";
 
-      document.getElementById("emgName").textContent = data.emergencyContact?.name || "";
-      document.getElementById("emgPhone").textContent = data.emergencyContact?.phone || "";
+      // Emergency Contact
+      let emgName = "-";
+      let emgPhone = "-";
+      if (data.emergencyContact) {
+        // Try to construct name from firstName + otherNames if available
+        if (data.emergencyContact.firstName) {
+          emgName = (data.emergencyContact.firstName + " " + (data.emergencyContact.otherNames || "")).trim();
+        } else if (data.emergencyContact.name) {
+          emgName = data.emergencyContact.name;
+        }
+        emgPhone = data.emergencyContact.phone || "-";
+      }
+      document.getElementById("emgName").textContent = emgName;
+      document.getElementById("emgPhone").textContent = emgPhone;
 
-      const allergies = data.knownAllergies || [];
+      // Allergies
+      const allergies = data.knownAllergies || data.allergies || [];
       const allergyList = document.getElementById("allergyList");
-      allergyList.innerHTML = allergies.length
+      allergyList.innerHTML = Array.isArray(allergies) && allergies.length
         ? allergies.map(a => `<li>${a}</li>`).join('')
         : "<li>None reported</li>";
     } else {
@@ -50,13 +72,18 @@ onAuthStateChanged(auth, async (user) => {
   } else {
     window.location.href = "/login.html"; // redirect if not logged in
   }
-  
-  const userInitial = document.getElementById('userInitial');
-        if (userInitial) {
-            if (user.displayName) {
-                userInitial.textContent = user.displayName.charAt(0).toUpperCase();
-            } else if (user.email) {
-                userInitial.textContent = user.email.charAt(0).toUpperCase();
-            }
-        }
+
+  // Set user initial robustly
+  const userInitialEls = document.querySelectorAll('#userInitial');
+  userInitialEls.forEach(userInitial => {
+    let initial = 'U';
+    if (user) {
+      if (user.displayName && typeof user.displayName === 'string' && user.displayName.trim().length > 0) {
+        initial = user.displayName.trim().charAt(0).toUpperCase();
+      } else if (user.email && typeof user.email === 'string' && user.email.trim().length > 0) {
+        initial = user.email.trim().charAt(0).toUpperCase();
+      }
+    }
+    userInitial.textContent = initial;
+  });
 });
