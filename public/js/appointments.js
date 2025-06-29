@@ -2,17 +2,15 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
 import {
-    getFirestore,
-    collection,
-    getDocs,
     addDoc,
-    updateDoc,
-    deleteDoc,
+    collection,
     doc,
+    getDocs,
+    getFirestore,
     query,
-    where,
-    orderBy,
-    Timestamp
+    Timestamp,
+    updateDoc,
+    where
 } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -38,6 +36,7 @@ let userAppointments = [];
 let selectedTimeSlot = null;
 let selectedRescheduleTimeSlot = null;
 let currentAppointmentToReschedule = null;
+let bookedTimeSlots = new Map(); // Key: "specialistId_date_time", Value: appointmentId
 
 // Utility functions
 const utils = {
@@ -188,6 +187,14 @@ const dataService = {
 
     async bookAppointment(appointmentData) {
         try {
+            // Check for double booking before creating appointment
+            const dateStr = appointmentData.date.toISOString().split('T')[0];
+            const slotKey = `${appointmentData.specialistId}_${dateStr}_${appointmentData.time}`;
+            
+            if (bookedTimeSlots.has(slotKey)) {
+                throw new Error('This time slot is already booked. Please select another time.');
+            }
+            
             const appointmentsRef = collection(db, 'appointments');
             
             // Create the appointment document
@@ -202,6 +209,9 @@ const dataService = {
             
             // Add to Firestore
             const docRef = await addDoc(appointmentsRef, appointment);
+            
+            // Update local booked slots map
+            bookedTimeSlots.set(slotKey, docRef.id);
             
             // Update local state
             const newAppointment = {
@@ -330,6 +340,33 @@ const dataService = {
         });
         await Promise.all(updates);
         console.log('Finished checking and updating appointment statuses.');
+    },
+
+    getAllBookedSlots: async function() {
+        try {
+            const appointmentsRef = collection(db, 'appointments');
+            const q = query(
+                appointmentsRef,
+                where('status', 'in', ['confirmed', 'upcoming'])
+            );
+            
+            const querySnapshot = await getDocs(q);
+            const bookedSlots = new Map();
+            
+            querySnapshot.forEach((doc) => {
+                const data = doc.data();
+                const date = data.date?.toDate?.() || new Date(data.date);
+                const dateStr = date.toISOString().split('T')[0];
+                const key = `${data.specialistId}_${dateStr}_${data.time}`;
+                bookedSlots.set(key, doc.id);
+            });
+            
+            console.log('📅 Loaded booked slots:', bookedSlots);
+            return bookedSlots;
+        } catch (error) {
+            console.error('Error getting booked slots:', error);
+            return new Map();
+        }
     }
 };
 
@@ -339,6 +376,8 @@ const ui = {
         if (!currentUser) return;
 
         try {
+            // Load booked slots first
+            bookedTimeSlots = await dataService.getAllBookedSlots();
             userAppointments = await dataService.getUserAppointments(currentUser.uid);
             await this.checkAndUpdateAppointmentStatuses();
             this.renderAppointments();
@@ -618,11 +657,20 @@ const ui = {
             return;
         }
 
+        // Get selected date and specialist
+        const dateInput = type === 'booking' ? 
+            document.getElementById('appointmentDate') : 
+            document.getElementById('newAppointmentDate');
+        const selectedDate = dateInput.value;
+        let specialistId;
+        if (type === 'booking') {
+            specialistId = document.getElementById('specialistSelect').value;
+        } else {
+            specialistId = currentAppointmentToReschedule?.specialistId;
+        }
         container.innerHTML = '';
         availability.forEach(slot => {
             const timeSlot = document.createElement('div');
-            timeSlot.className = 'time-slot';
-            
             // Handle different slot formats
             let timeStr = 'Time Slot';
             if (typeof slot === 'string') {
@@ -636,44 +684,62 @@ const ui = {
                     timeStr = utils.formatTime(slot);
                 }
             }
-            
+            // Check if this slot is already booked
+            const slotKey = `${specialistId}_${selectedDate}_${timeStr}`;
+            const isBooked = bookedTimeSlots.has(slotKey);
+            // Set appropriate classes
+            if (isBooked) {
+                timeSlot.className = 'time-slot booked';
+                timeSlot.title = 'This time slot is already booked';
+            } else {
+                timeSlot.className = 'time-slot';
+            }
             timeSlot.textContent = timeStr;
-            
-            timeSlot.onclick = () => {
-                // Remove selected class from all slots
-                container.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
-                // Add selected class to clicked slot
-                timeSlot.classList.add('selected');
-                
-                if (type === 'booking') {
-                    selectedTimeSlot = timeStr;
-                } else {
-                    selectedRescheduleTimeSlot = timeStr;
-                }
-            };
-            
+            // Add click handler only if not booked
+            if (!isBooked) {
+                timeSlot.onclick = () => {
+                    // Remove selected class from all slots
+                    container.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
+                    // Add selected class to clicked slot
+                    timeSlot.classList.add('selected');
+                    if (type === 'booking') {
+                        selectedTimeSlot = timeStr;
+                    } else {
+                        selectedRescheduleTimeSlot = timeStr;
+                    }
+                };
+            } else {
+                // Show error message when trying to click booked slot
+                timeSlot.onclick = () => {
+                    utils.showMessage('This time slot is already booked. Please select another time.', 'error');
+                };
+            }
             container.appendChild(timeSlot);
         });
     },
 
     async handleBookingSubmit(event) {
         event.preventDefault();
-        
         const clinicId = document.getElementById('clinicSelect').value;
         const specialistId = document.getElementById('specialistSelect').value;
         const date = document.getElementById('appointmentDate').value;
         const reason = document.getElementById('appointmentReason').value;
         const notes = document.getElementById('patientNotes').value;
-
         if (!selectedTimeSlot) {
             utils.showMessage('Please select a time slot', 'error');
             return;
         }
-
+        // Double-check for booking conflicts before submitting
+        const slotKey = `${specialistId}_${date}_${selectedTimeSlot}`;
+        if (bookedTimeSlots.has(slotKey)) {
+            utils.showMessage('This time slot has just been booked by another user. Please select a different time.', 'error');
+            // Refresh the time slots to show updated availability
+            this.handleDateChange({ target: document.getElementById('appointmentDate') });
+            return;
+        }
         try {
             const clinic = allClinics.find(c => c.id === clinicId);
             const specialist = allSpecialists.find(s => s.id === specialistId);
-
             const appointmentData = {
                 clinicId,
                 clinicName: clinic.clinicName || clinic.name,
@@ -686,14 +752,19 @@ const ui = {
                 notes,
                 location: clinic.location
             };
-
             await dataService.bookAppointment(appointmentData);
             utils.showMessage('Appointment booked successfully!');
             closeBookingModal();
             this.loadAppointments();
         } catch (error) {
             console.error('Error booking appointment:', error);
-            utils.showMessage('Failed to book appointment', 'error');
+            if (error.message.includes('already booked')) {
+                utils.showMessage(error.message, 'error');
+                // Refresh the time slots to show updated availability
+                this.handleDateChange({ target: document.getElementById('appointmentDate') });
+            } else {
+                utils.showMessage('Failed to book appointment', 'error');
+            }
         }
     },
 
