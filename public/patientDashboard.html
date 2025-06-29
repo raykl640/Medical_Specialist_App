@@ -83,107 +83,192 @@
 </head>
 
 <body>
-  <!-- Navigation Component - Include this in each HTML page -->
-
-  <!-- Title Bar -->
-  <div class="title-bar">
-    <div class="hamburger-menu">
-      <div class="hamburger-line"></div>
-      <div class="hamburger-line"></div>
-      <div class="hamburger-line"></div>
-    </div>
-    <div class="notification-container">
-      <button id="notificationBell" class="bell-icon">
-        🔔
-        <span id="notificationCount" class="notification-count">0</span>
-      </button>
-      <!-- Notification Dropdown -->
-      <div id="notificationDropdown" class="notification-dropdown hidden">
-        <div class="notification-header">Notifications</div>
-        <ul id="notificationList" class="notification-list"></ul>
-      </div>
-    </div>
-  </div>
-
-  <!-- Overlay for mobile -->
-  <div class="overlay" id="overlay"></div>
-
-  <!-- Navigation Sidebar -->
-  <div class="sidebar" id="sidebar">
-    <div class="logo">
-      <div class="logo-circle">
-        <div class="profile-picture" id="userInitial">
-          U
+    <!-- Navigation Component - Include this in each HTML page -->
+    <div class="title-bar">
+        <div class="hamburger-menu">
+            <div class="hamburger-line"></div>
+            <div class="hamburger-line"></div>
+            <div class="hamburger-line"></div>
         </div>
-      </div>
+        <div class="notification-container">
+            <button id="notificationBell" class="bell-icon">
+                🔔
+                <span id="notificationCount" class="notification-count">0</span>
+            </button>
+            <div id="notificationDropdown" class="notification-dropdown hidden">
+                <div class="notification-header">Notifications</div>
+                <ul id="notificationList" class="notification-list"></ul>
+            </div>
+        </div>
     </div>
-    <div class="nav-section">
-      <h3>Dashboard</h3>
-      <ul>
-        <li><a href="patientDashboard.html" class="nav-link" data-page="dashboard">
-            <span class="icon">🏠</span>Home</a></li>
-        <li><a href="appointments.html" class="nav-link" data-page="appointments">
-            <span class="icon">📅</span>My Appointments</a></li>
-        <li><a href="patientsClinics.html" class="nav-link" data-page="clinics">
-            <span class="icon">🏥</span>Clinics</a></li>
-        <li><a href="patientHealthResources.html" class="nav-link" data-page="health-resources">
-            <span class="icon">📚</span>Health Resources</a></li>
-      </ul>
+    <div class="overlay" id="overlay"></div>
+    <div class="sidebar" id="sidebar">
+        <div class="logo">
+            <div class="logo-circle">
+                <div class="profile-picture" id="userInitial">U</div>
+            </div>
+        </div>
+        <div class="nav-section">
+            <h3>Dashboard</h3>
+            <ul>
+                <li><a href="patientDashboard.html" class="nav-link active" data-page="dashboard"><span class="icon">🏠</span>Home</a></li>
+                <li><a href="appointments.html" class="nav-link" data-page="appointments"><span class="icon">📅</span>My Appointments</a></li>
+                <li><a href="patientsClinics.html" class="nav-link" data-page="clinics"><span class="icon">🏥</span>Clinics</a></li>
+                <li><a href="patientHealthResources.html" class="nav-link" data-page="health-resources"><span class="icon">📚</span>Health Resources</a></li>
+            </ul>
+        </div>
+        <div class="nav-section">
+            <h3>Medical</h3>
+            <ul>
+                <li><a href="medicalHistory.html" class="nav-link" data-page="medical-history"><span class="icon">📋</span>Medical History</a></li>
+                <li><a href="patientLabTests.html" class="nav-link" data-page="lab-tests"><span class="icon">🧪</span>Lab Tests</a></li>
+                <li><a href="patientRadiology.html" class="nav-link" data-page="radiology"><span class="icon">💎</span>Radiology</a></li>
+                <li><a href="patientMedications.html" class="nav-link" data-page="prescriptions"><span class="icon">💊</span>Medications</a></li>
+            </ul>
+        </div>
+        <div class="nav-section nav-bottom">
+            <ul>
+                <li><a href="profile.html" class="nav-link" id="profile-link" data-page="profile"><span class="icon">👤</span>Profile</a></li>
+                <li><a href="#" class="nav-link" id="logout-link"><span class="icon">🚪</span>Log Out</a></li>
+            </ul>
+        </div>
     </div>
-    <div class="nav-section">
-      <h3>Medical</h3>
-      <ul>
-        <li><a href="medicalHistory.html" class="nav-link" data-page="medical-history">
-            <span class="icon">📋</span>Medical History</a></li>
-        <li><a href="patientLabTests.html" class="nav-link" data-page="lab-tests">
-            <span class="icon">🧪</span>Lab Tests</a></li>
-        <li><a href="patientRadiology.html" class="nav-link" data-page="radiology">
-            <span class="icon">💎</span>Radiology</a></li>
-        <li><a href="patientMedications.html" class="nav-link" data-page="prescriptions">
-            <span class="icon">💊</span>Medications</a></li>
-      </ul>
-    </div>
-    <div class="nav-section nav-bottom">
-      <ul>
-        <li><a href="profile.html" class="nav-link" id="profile-link" data-page="profile">
-            <span class="icon">👤</span>Profile</a></li>
-        <li><a href="#" class="nav-link" id="logout-link">
-            <span class="icon">🚪</span>Log Out</a></li>
-      </ul>
-    </div>
-  </div>
-
-  <h1>Welcome to MedConnect</h1>
-  <p class="intro">
-    Your trusted platform to find medical specialists, access personal health records, and explore health education
-    resources — all in one secure place.
-  </p>
-
-  <div class="features">
-    <div class="feature">
-      <h3>🩺 Find Specialists</h3>
-      <p>Search for top-rated medical specialists by name, expertise, or location.</p>
-    </div>
-
-    <div class="feature">
-      <h3>📄 View Medical Records</h3>
-      <p>Access and review your personal medical history securely and instantly.</p>
-    </div>
-
-    <div class="feature">
-      <h3>📚 Health Resources</h3>
-      <p>Read trusted articles, guides, and tips to better manage your health.</p>
-    </div>
-
-    <div class="feature">
-      <h3>🔐 Secure Login</h3>
-      <p>Protected access through secure Firebase Authentication.</p>
-    </div>
-  </div>
-
-  <script type="module" src="js/navigation.js"></script>
-  <script src="https://cdn.botpress.cloud/webchat/v3.0/inject.js"></script>
-  <script src="https://files.bpcontent.cloud/2025/06/15/12/20250615120138-GUVYWBFG.js"></script>
+    <main class="dashboard-main">
+        <h2 id="welcomeTitle">Welcome, <span id="patientName">[patient name]</span></h2>
+        <div class="dashboard-grid">
+            <section class="dashboard-section" id="upcomingAppointmentSection">
+                <h3>Upcoming Appointment</h3>
+                <div class="appointment-card" id="upcomingAppointment">
+                    <div class="appt-detail" id="apptClinic">Clinic Name</div>
+                    <div class="appt-detail" id="apptSpecialist">Specialist Name [Specialty]</div>
+                    <div class="appt-detail" id="apptDateTime">Date and time</div>
+                    <div class="appt-detail" id="apptLocation">Location</div>
+                </div>
+            </section>
+            <section class="dashboard-section" id="quickActionsSection">
+                <h3>Quick Actions</h3>
+                <div class="quick-actions">
+                    <a href="appointments.html" class="quick-btn">Book Appointment</a>
+                    <a href="patientsClinics.html" class="quick-btn">Clinics</a>
+                    <a href="medicalHistory.html" class="quick-btn">Medical History</a>
+                    <a href="patientMedications.html" class="quick-btn">Prescriptions</a>
+                </div>
+            </section>
+        </div>
+        <section class="dashboard-section" id="healthTipsSection">
+            <h3>Popular Health Tips</h3>
+            <div class="health-tips-grid" id="healthTipsGrid">
+                <!-- Health tips will be injected here by JS -->
+                <div class="health-tip-card placeholder">
+                    <div class="tip-title">TITLE</div>
+                    <div class="tip-desc">Description......</div>
+                    <div class="tip-meta">Resource TYPE</div>
+                    <div class="tip-meta">Source</div>
+                    <button class="tip-view-btn">View</button>
+                </div>
+                <div class="health-tip-card placeholder">
+                    <div class="tip-title">TITLE</div>
+                    <div class="tip-desc">Description......</div>
+                    <div class="tip-meta">Resource TYPE</div>
+                    <div class="tip-meta">Source</div>
+                    <button class="tip-view-btn">View</button>
+                </div>
+                <div class="health-tip-card placeholder">
+                    <div class="tip-title">TITLE</div>
+                    <div class="tip-desc">Description......</div>
+                    <div class="tip-meta">Resource TYPE</div>
+                    <div class="tip-meta">Source</div>
+                    <button class="tip-view-btn">View</button>
+                </div>
+            </div>
+        </section>
+    </main>
+    <style>
+        .dashboard-main {
+            margin-left: 260px;
+            padding: 40px 30px 30px 30px;
+            min-height: 100vh;
+            background: #f7fafd;
+        }
+        .dashboard-grid {
+            display: flex;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+        .dashboard-section {
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+            padding: 24px 20px;
+            flex: 1;
+            min-width: 280px;
+        }
+        .appointment-card {
+            border: 1.5px solid #bbb;
+            border-radius: 7px;
+            padding: 16px 14px;
+            margin-top: 10px;
+            background: #f9f9f9;
+        }
+        .appt-detail { margin-bottom: 6px; }
+        .quick-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 10px;
+        }
+        .quick-btn {
+            background: #e3f2fd;
+            border: 1px solid #90caf9;
+            border-radius: 6px;
+            padding: 10px 0;
+            text-align: center;
+            color: #1976d2;
+            font-weight: 600;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+        .quick-btn:hover { background: #bbdefb; }
+        #healthTipsSection { margin-top: 30px; }
+        .health-tips-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 18px;
+            margin-top: 12px;
+        }
+        .health-tip-card {
+            background: #fff;
+            border: 1.5px solid #bbb;
+            border-radius: 7px;
+            padding: 16px 14px;
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+        .tip-title { font-weight: bold; font-size: 1.1em; }
+        .tip-desc { color: #555; font-size: 0.97em; }
+        .tip-meta { color: #888; font-size: 0.93em; }
+        .tip-view-btn {
+            margin-top: 8px;
+            background: #e3f2fd;
+            border: 1px solid #90caf9;
+            border-radius: 5px;
+            padding: 6px 0;
+            color: #1976d2;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .tip-view-btn:hover { background: #bbdefb; }
+        @media (max-width: 900px) {
+            .dashboard-main { margin-left: 0; padding: 20px 5px; }
+            .dashboard-grid { flex-direction: column; gap: 20px; }
+        }
+    </style>
+    <script type="module" src="js/navigation.js"></script>
+    <script type="module" src="js/patient/appointments.js"></script>
+    <script type="module" src="js/patient/healthResources.js"></script>
+    <script type="module" src="js/patient/dashboard.js"></script>
 </body>
 
 </html>
