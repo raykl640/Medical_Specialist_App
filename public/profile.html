@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Welcome to MedConnect</title>
     <link rel="stylesheet" href="css/styles.css" />
+    
 
     <style>
         /* main content */
@@ -13,13 +14,13 @@
             margin: 0;
             font-family: Arial, sans-serif;
             color: #333;
-        background: #aad0f0;
-  transition: opacity 0.3s ease;
-}
+            background: #aad0f0;
+            transition: opacity 0.3s ease;
+        }
 
-body.fade-out {
-  opacity: 0;
-}
+        body.fade-out {
+            opacity: 0;
+        }
 
         .main {
             max-width: 1000px;
@@ -89,73 +90,73 @@ body.fade-out {
 <body>
     <!-- Navigation Component - Include this in each HTML page -->
 
-<!-- Title Bar -->
-<div class="title-bar">
-    <div class="hamburger-menu">
-        <div class="hamburger-line"></div>
-        <div class="hamburger-line"></div>
-        <div class="hamburger-line"></div>
-    </div>
-    <div class="notification-container">
-        <button id="notificationBell" class="bell-icon">
-            🔔
-            <span id="notificationCount" class="notification-count">0</span>
-        </button>
-        <!-- Notification Dropdown -->
-        <div id="notificationDropdown" class="notification-dropdown hidden">
-            <div class="notification-header">Notifications</div>
-            <ul id="notificationList" class="notification-list"></ul>
+    <!-- Title Bar -->
+    <div class="title-bar">
+        <div class="hamburger-menu">
+            <div class="hamburger-line"></div>
+            <div class="hamburger-line"></div>
+            <div class="hamburger-line"></div>
         </div>
-    </div>
-</div>
-
-<!-- Overlay for mobile -->
-<div class="overlay" id="overlay"></div>
-
-<!-- Navigation Sidebar -->
-<div class="sidebar" id="sidebar">
-    <div class="logo">
-        <div class="logo-circle">
-            <div class="profile-picture" id="userInitial">
-                U
+        <div class="notification-container">
+            <button id="notificationBell" class="bell-icon">
+                🔔
+                <span id="notificationCount" class="notification-count">0</span>
+            </button>
+            <!-- Notification Dropdown -->
+            <div id="notificationDropdown" class="notification-dropdown hidden">
+                <div class="notification-header">Notifications</div>
+                <ul id="notificationList" class="notification-list"></ul>
             </div>
         </div>
     </div>
-    <div class="nav-section">
-        <h3>Dashboard</h3>
-        <ul>
-            <li><a href="patientDashboard.html" class="nav-link" data-page="dashboard">
-                <span class="icon">🏠</span>Home</a></li>
-            <li><a href="appointments.html" class="nav-link" data-page="appointments">
-                <span class="icon">📅</span>My Appointments</a></li>
-            <li><a href="patientsClinics.html" class="nav-link" data-page="clinics">
-                <span class="icon">🏥</span>Clinics</a></li>
-            <li><a href="patientHealthResources.html" class="nav-link" data-page="health-resources">
-                <span class="icon">📚</span>Health Resources</a></li>
-        </ul>
+
+    <!-- Overlay for mobile -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Navigation Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="logo">
+            <div class="logo-circle">
+                <div class="profile-picture" id="userInitial">
+                    U
+                </div>
+            </div>
+        </div>
+        <div class="nav-section">
+            <h3>Dashboard</h3>
+            <ul>
+                <li><a href="patientDashboard.html" class="nav-link" data-page="dashboard">
+                        <span class="icon">🏠</span>Home</a></li>
+                <li><a href="appointments.html" class="nav-link" data-page="appointments">
+                        <span class="icon">📅</span>My Appointments</a></li>
+                <li><a href="patientsClinics.html" class="nav-link" data-page="clinics">
+                        <span class="icon">🏥</span>Clinics</a></li>
+                <li><a href="patientHealthResources.html" class="nav-link" data-page="health-resources">
+                        <span class="icon">📚</span>Health Resources</a></li>
+            </ul>
+        </div>
+        <div class="nav-section">
+            <h3>Medical</h3>
+            <ul>
+                <li><a href="medicalHistory.html" class="nav-link" data-page="medical-history">
+                        <span class="icon">📋</span>Medical History</a></li>
+                <li><a href="patientLabTests.html" class="nav-link" data-page="lab-tests">
+                        <span class="icon">🧪</span>Lab Tests</a></li>
+                <li><a href="patientRadiology.html" class="nav-link" data-page="radiology">
+                        <span class="icon">💎</span>Radiology</a></li>
+                <li><a href="patientMedications.html" class="nav-link" data-page="prescriptions">
+                        <span class="icon">💊</span>Medications</a></li>
+            </ul>
+        </div>
+        <div class="nav-section nav-bottom">
+            <ul>
+                <li><a href="profile.html" class="nav-link" id="profile-link" data-page="profile">
+                        <span class="icon">👤</span>Profile</a></li>
+                <li><a href="#" class="nav-link" id="logout-link">
+                        <span class="icon">🚪</span>Log Out</a></li>
+            </ul>
+        </div>
     </div>
-    <div class="nav-section">
-        <h3>Medical</h3>
-        <ul>
-            <li><a href="medicalHistory.html" class="nav-link" data-page="medical-history">
-                <span class="icon">📋</span>Medical History</a></li>
-            <li><a href="patientLabTests.html" class="nav-link" data-page="lab-tests">
-                <span class="icon">🧪</span>Lab Tests</a></li>
-            <li><a href="patientRadiology.html" class="nav-link" data-page="radiology">
-                <span class="icon">💎</span>Radiology</a></li>
-            <li><a href="patientMedications.html" class="nav-link" data-page="prescriptions">
-                <span class="icon">💊</span>Medications</a></li>
-        </ul>
-    </div>
-    <div class="nav-section nav-bottom">
-        <ul>
-            <li><a href="profile.html" class="nav-link" id="profile-link" data-page="profile">
-                <span class="icon">👤</span>Profile</a></li>
-            <li><a href="#" class="nav-link" id="logout-link">
-                <span class="icon">🚪</span>Log Out</a></li>
-        </ul>
-    </div>
-</div>
 
     <h2>Profile</h2>
     <button id="editBtn">✏️ Edit Profile</button>
@@ -169,16 +170,16 @@ body.fade-out {
             </div>
             <div class="personal-info">
                 <ul>
-                <li><strong>Full Name:</strong> <span id="fullName"></span></li>
-                <li><strong>Date of Birth:</strong> <span id="dob"></span></li>
-                <li><strong>Sex:</strong> <span id="sex"></span></li>
-                <li><strong>National ID:</strong> <span id="nid"></span></li>
-                <li><strong>Phone:</strong> <span id="phone"></span></li>
-                <li><strong>Email:</strong> <span id="email"></span></li>
-                <li><strong>Home Address:</strong> <span id="address"></span></li>
-            </ul>
+                    <li><strong>Full Name:</strong> <span id="fullName"></span></li>
+                    <li><strong>Date of Birth:</strong> <span id="dob"></span></li>
+                    <li><strong>Sex:</strong> <span id="sex"></span></li>
+                    <li><strong>National ID:</strong> <span id="nid"></span></li>
+                    <li><strong>Phone:</strong> <span id="phone"></span></li>
+                    <li><strong>Email:</strong> <span id="email"></span></li>
+                    <li><strong>Home Address:</strong> <span id="address"></span></li>
+                </ul>
             </div>
-            
+
         </div>
 
         <div class="emergency">
@@ -197,6 +198,8 @@ body.fade-out {
     <script src="./js/index.js"></script>
     <script type="module" src="js/patient/profile.js"></script>
     <script type="module" src="js/notfications.js"></script>
+    <script src="https://cdn.botpress.cloud/webchat/v3.0/inject.js"></script>
+    <script src="https://files.bpcontent.cloud/2025/06/15/12/20250615120138-GUVYWBFG.js"></script>
 </body>
 
 </html>

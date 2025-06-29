@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Available Clinics - Medical Specialist App</title>
     <link rel="stylesheet" href="css/styles.css" />
+
     <style>
         * {
             margin: 0;
@@ -14,7 +16,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-          background: linear-gradient(to right, #e0f7fa, #ffffff);
+            background: linear-gradient(to right, #e0f7fa, #ffffff);
             min-height: 100vh;
             padding: 20px;
         }
@@ -29,7 +31,7 @@
         }
 
         .header {
-            background:#aad0f0;
+            background: #aad0f0;
             color: white;
             padding: 40px;
             text-align: center;
@@ -70,7 +72,8 @@
             font-size: 14px;
         }
 
-        .filter-group select, .filter-group input {
+        .filter-group select,
+        .filter-group input {
             padding: 8px 12px;
             border: 2px solid #ddd;
             border-radius: 8px;
@@ -78,7 +81,8 @@
             background: white;
         }
 
-        .filter-group select:focus, .filter-group input:focus {
+        .filter-group select:focus,
+        .filter-group input:focus {
             outline: none;
             border-color: #667eea;
         }
@@ -418,81 +422,83 @@
         }
     </style>
 </head>
+
 <body>
-     <!-- Navigation Component - Include this in each HTML page -->
+    <!-- Navigation Component - Include this in each HTML page -->
 
-<!-- Title Bar -->
-<div class="title-bar">
-    <div class="hamburger-menu">
-        <div class="hamburger-line"></div>
-        <div class="hamburger-line"></div>
-        <div class="hamburger-line"></div>
-    </div>
-    <div class="notification-container">
-        <button id="notificationBell" class="bell-icon">
-            🔔
-            <span id="notificationCount" class="notification-count">0</span>
-        </button>
-        <!-- Notification Dropdown -->
-        <div id="notificationDropdown" class="notification-dropdown hidden">
-            <div class="notification-header">Notifications</div>
-            <ul id="notificationList" class="notification-list"></ul>
+    <!-- Title Bar -->
+    <div class="title-bar">
+        <div class="hamburger-menu">
+            <div class="hamburger-line"></div>
+            <div class="hamburger-line"></div>
+            <div class="hamburger-line"></div>
         </div>
-    </div>
-</div>
-
-<!-- Overlay for mobile -->
-<div class="overlay" id="overlay"></div>
-
-<!-- Navigation Sidebar -->
-<div class="sidebar" id="sidebar">
-    <div class="logo">
-        <div class="logo-circle">
-            <div class="profile-picture" id="userInitial">
-                U
+        <div class="notification-container">
+            <button id="notificationBell" class="bell-icon">
+                🔔
+                <span id="notificationCount" class="notification-count">0</span>
+            </button>
+            <!-- Notification Dropdown -->
+            <div id="notificationDropdown" class="notification-dropdown hidden">
+                <div class="notification-header">Notifications</div>
+                <ul id="notificationList" class="notification-list"></ul>
             </div>
         </div>
     </div>
-    <div class="nav-section">
-        <h3>Dashboard</h3>
-        <ul>
-            <li><a href="patientDashboard.html" class="nav-link" data-page="dashboard">
-                <span class="icon">🏠</span>Home</a></li>
-            <li><a href="appointments.html" class="nav-link" data-page="appointments">
-                <span class="icon">📅</span>My Appointments</a></li>
-            <li><a href="patientsClinics.html" class="nav-link" data-page="clinics">
-                <span class="icon">🏥</span>Clinics</a></li>
-            <li><a href="patientHealthResources.html" class="nav-link" data-page="health-resources">
-                <span class="icon">📚</span>Health Resources</a></li>
-        </ul>
+
+    <!-- Overlay for mobile -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Navigation Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="logo">
+            <div class="logo-circle">
+                <div class="profile-picture" id="userInitial">
+                    U
+                </div>
+            </div>
+        </div>
+        <div class="nav-section">
+            <h3>Dashboard</h3>
+            <ul>
+                <li><a href="patientDashboard.html" class="nav-link" data-page="dashboard">
+                        <span class="icon">🏠</span>Home</a></li>
+                <li><a href="appointments.html" class="nav-link" data-page="appointments">
+                        <span class="icon">📅</span>My Appointments</a></li>
+                <li><a href="patientsClinics.html" class="nav-link" data-page="clinics">
+                        <span class="icon">🏥</span>Clinics</a></li>
+                <li><a href="patientHealthResources.html" class="nav-link" data-page="health-resources">
+                        <span class="icon">📚</span>Health Resources</a></li>
+            </ul>
+        </div>
+        <div class="nav-section">
+            <h3>Medical</h3>
+            <ul>
+                <li><a href="medicalHistory.html" class="nav-link" data-page="medical-history">
+                        <span class="icon">📋</span>Medical History</a></li>
+                <li><a href="patientLabTests.html" class="nav-link" data-page="lab-tests">
+                        <span class="icon">🧪</span>Lab Tests</a></li>
+                <li><a href="patientRadiology.html" class="nav-link" data-page="radiology">
+                        <span class="icon">💎</span>Radiology</a></li>
+                <li><a href="patientMedications.html" class="nav-link" data-page="prescriptions">
+                        <span class="icon">💊</span>Medications</a></li>
+            </ul>
+        </div>
+        <div class="nav-section nav-bottom">
+            <ul>
+                <li><a href="profile.html" class="nav-link" id="profile-link" data-page="profile">
+                        <span class="icon">👤</span>Profile</a></li>
+                <li><a href="#" class="nav-link" id="logout-link">
+                        <span class="icon">🚪</span>Log Out</a></li>
+            </ul>
+        </div>
     </div>
-    <div class="nav-section">
-        <h3>Medical</h3>
-        <ul>
-            <li><a href="medicalHistory.html" class="nav-link" data-page="medical-history">
-                <span class="icon">📋</span>Medical History</a></li>
-            <li><a href="patientLabTests.html" class="nav-link" data-page="lab-tests">
-                <span class="icon">🧪</span>Lab Tests</a></li>
-            <li><a href="patientRadiology.html" class="nav-link" data-page="radiology">
-                <span class="icon">💎</span>Radiology</a></li>
-            <li><a href="patientMedications.html" class="nav-link" data-page="prescriptions">
-                <span class="icon">💊</span>Medications</a></li>
-        </ul>
-    </div>
-    <div class="nav-section nav-bottom">
-        <ul>
-            <li><a href="profile.html" class="nav-link" id="profile-link" data-page="profile">
-                <span class="icon">👤</span>Profile</a></li>
-            <li><a href="#" class="nav-link" id="logout-link">
-                <span class="icon">🚪</span>Log Out</a></li>
-        </ul>
-    </div>
-</div>
 
     <div class="container">
         <div class="header">
             <h1>🏥 Available Clinics</h1>
-            <p>Browse through clinics and find the right specialist. Click on the cards to see more details or schedule an appointment.</p>
+            <p>Browse through clinics and find the right specialist. Click on the cards to see more details or schedule
+                an appointment.</p>
         </div>
 
         <div class="content">
@@ -534,7 +540,7 @@
                     <p><strong>Location:</strong> <span id="modalClinicLocation"></span></p>
                     <p><strong>Clinic ID:</strong> <span id="modalClinicId"></span></p>
                 </div>
-                
+
                 <div class="specialists-section">
                     <h3>👨‍⚕️ Available Specialists</h3>
                     <div id="specialistsList">
@@ -559,7 +565,7 @@
             orderBy
         } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
-        
+
         const firebaseConfig = {
             apiKey: "AIzaSyBWkXxtI9514_YD6H4kQ6IgltPoSSf7W80",
             authDomain: "medical-specialist-app-d3a46.firebaseapp.com",
@@ -617,174 +623,174 @@
             }
         };
 
-  // 🔧 FIXED DATA SERVICE FUNCTIONS
-const dataService = {
-    async getClinics() {
-        try {
-            console.log('🔄 Fetching clinics...');
-            
-            let q = query(
-                collection(db, 'clinics'),
-                orderBy('createdAt', 'desc')
-            );
-            
-            let querySnapshot = await getDocs(q);
-            let clinics = [];
-            
-            querySnapshot.forEach((doc) => {
-                const data = doc.data();
-                // Only include active clinics if isActive field exists, otherwise include all
-                if (data.isActive === undefined || data.isActive === true) {
-                    clinics.push({
-                        id: doc.id,
-                        ...data
+        // 🔧 FIXED DATA SERVICE FUNCTIONS
+        const dataService = {
+            async getClinics() {
+                try {
+                    console.log('🔄 Fetching clinics...');
+
+                    let q = query(
+                        collection(db, 'clinics'),
+                        orderBy('createdAt', 'desc')
+                    );
+
+                    let querySnapshot = await getDocs(q);
+                    let clinics = [];
+
+                    querySnapshot.forEach((doc) => {
+                        const data = doc.data();
+                        // Only include active clinics if isActive field exists, otherwise include all
+                        if (data.isActive === undefined || data.isActive === true) {
+                            clinics.push({
+                                id: doc.id,
+                                ...data
+                            });
+                        }
                     });
-                }
-            });
-            
-            // If no clinics found with createdAt ordering, try without ordering
-            if (clinics.length === 0) {
-                console.log('⚠️ No clinics found with ordering, trying without...');
-                querySnapshot = await getDocs(collection(db, 'clinics'));
-                querySnapshot.forEach((doc) => {
-                    const data = doc.data();
-                    if (data.isActive === undefined || data.isActive === true) {
-                        clinics.push({
-                            id: doc.id,
-                            ...data
+
+                    // If no clinics found with createdAt ordering, try without ordering
+                    if (clinics.length === 0) {
+                        console.log('⚠️ No clinics found with ordering, trying without...');
+                        querySnapshot = await getDocs(collection(db, 'clinics'));
+                        querySnapshot.forEach((doc) => {
+                            const data = doc.data();
+                            if (data.isActive === undefined || data.isActive === true) {
+                                clinics.push({
+                                    id: doc.id,
+                                    ...data
+                                });
+                            }
                         });
                     }
-                });
-            }
-            
-            console.log('✅ Fetched clinics:', clinics.length, clinics);
-            return clinics;
-        } catch (error) {
-            console.error('❌ Error getting clinics:', error);
-            
-            // Try a simpler query as fallback
-            try {
-                console.log('🔄 Trying simple clinic query...');
-                const querySnapshot = await getDocs(collection(db, 'clinics'));
-                const clinics = [];
-                
-                querySnapshot.forEach((doc) => {
-                    clinics.push({
-                        id: doc.id,
-                        ...doc.data()
+
+                    console.log('✅ Fetched clinics:', clinics.length, clinics);
+                    return clinics;
+                } catch (error) {
+                    console.error('❌ Error getting clinics:', error);
+
+                    // Try a simpler query as fallback
+                    try {
+                        console.log('🔄 Trying simple clinic query...');
+                        const querySnapshot = await getDocs(collection(db, 'clinics'));
+                        const clinics = [];
+
+                        querySnapshot.forEach((doc) => {
+                            clinics.push({
+                                id: doc.id,
+                                ...doc.data()
+                            });
+                        });
+
+                        console.log('✅ Fallback query successful:', clinics.length);
+                        return clinics;
+                    } catch (fallbackError) {
+                        console.error('❌ Fallback query failed:', fallbackError);
+                        throw new Error(`Failed to get clinics: ${error.message}`);
+                    }
+                }
+            },
+
+            async getSpecialists() {
+                try {
+                    console.log('🔄 Fetching specialists...');
+                    const specialistsRef = collection(db, 'specialists');
+                    console.log('📁 Specialists collection reference:', specialistsRef);
+
+                    const querySnapshot = await getDocs(specialistsRef);
+                    console.log('📄 Query snapshot:', querySnapshot);
+
+                    const specialists = [];
+                    querySnapshot.forEach((doc) => {
+                        const data = doc.data();
+                        console.log('📝 Specialist document:', { id: doc.id, data });
+
+                        // 🔧 FIX: Handle the leading space in name field and normalize field names
+                        const normalizedData = {
+                            id: doc.id,
+                            specialistId: data.specialistId || data.specialist_id || doc.id,
+                            name: (data.name || data[' name'] || '').trim(), // Handle " name" field with leading space
+                            specialty: data.specialty || data.speciality || 'General Practice',
+                            clinicId: data.clinicId || data.clinic_Id || data.clinic_id || data.clinicID, // Multiple possible clinic ID fields
+                            availability: data.availability || [],
+                            isActive: data.isActive !== false, // Default to true if not specified
+                            ...data // Keep all other fields
+                        };
+
+                        console.log('🔧 Normalized specialist:', normalizedData);
+                        specialists.push(normalizedData);
                     });
+
+                    console.log('✅ Fetched specialists:', specialists.length, specialists);
+                    return specialists;
+                } catch (error) {
+                    console.error('❌ Error getting specialists:', error);
+                    utils.showError(`Failed to load specialists: ${error.message}`);
+                    return [];
+                }
+            },
+
+            // 🔧 FIXED: More robust clinic-specialist matching
+            getSpecialistsByClinic(clinicFirebaseId) {
+                console.log('🔍 Looking for specialists for clinic Firebase ID:', clinicFirebaseId);
+                console.log('🔍 All specialists:', allSpecialists);
+
+                const matchingSpecialists = allSpecialists.filter(specialist => {
+                    // Try multiple possible clinic ID field combinations and trim any whitespace
+                    const specialistClinicId = (specialist.clinicId ||
+                        specialist.clinic_Id ||
+                        specialist.clinic_id ||
+                        specialist.clinicID || '').trim();
+
+                    console.log('🔗 Comparing clinic IDs:', {
+                        clinicFirebaseId,
+                        specialistClinicId,
+                        specialistName: specialist.name,
+                        fullSpecialist: specialist
+                    });
+
+                    // Compare trimmed IDs
+                    return specialistClinicId === clinicFirebaseId;
                 });
-                
-                console.log('✅ Fallback query successful:', clinics.length);
-                return clinics;
-            } catch (fallbackError) {
-                console.error('❌ Fallback query failed:', fallbackError);
-                throw new Error(`Failed to get clinics: ${error.message}`);
+
+                console.log(`✅ Found ${matchingSpecialists.length} specialists for clinic ${clinicFirebaseId}:`, matchingSpecialists);
+                return matchingSpecialists;
             }
-        }
-    },
+        };
+        // 🎨 FIXED UI RENDERING FUNCTIONS
+        const ui = {
+            renderClinics(clinics) {
+                const container = document.getElementById('clinicsContainer');
 
-    async getSpecialists() {
-        try {
-            console.log('🔄 Fetching specialists...');
-            const specialistsRef = collection(db, 'specialists');
-            console.log('📁 Specialists collection reference:', specialistsRef);
-            
-            const querySnapshot = await getDocs(specialistsRef);
-            console.log('📄 Query snapshot:', querySnapshot);
-            
-            const specialists = [];
-            querySnapshot.forEach((doc) => {
-                const data = doc.data();
-                console.log('📝 Specialist document:', { id: doc.id, data });
-                
-                // 🔧 FIX: Handle the leading space in name field and normalize field names
-                const normalizedData = {
-                    id: doc.id,
-                    specialistId: data.specialistId || data.specialist_id || doc.id,
-                    name: (data.name || data[' name'] || '').trim(), // Handle " name" field with leading space
-                    specialty: data.specialty || data.speciality || 'General Practice',
-                    clinicId: data.clinicId || data.clinic_Id || data.clinic_id || data.clinicID, // Multiple possible clinic ID fields
-                    availability: data.availability || [],
-                    isActive: data.isActive !== false, // Default to true if not specified
-                    ...data // Keep all other fields
-                };
-                
-                console.log('🔧 Normalized specialist:', normalizedData);
-                specialists.push(normalizedData);
-            });
-            
-            console.log('✅ Fetched specialists:', specialists.length, specialists);
-            return specialists;
-        } catch (error) {
-            console.error('❌ Error getting specialists:', error);
-            utils.showError(`Failed to load specialists: ${error.message}`);
-            return [];
-        }
-    },
-
-    // 🔧 FIXED: More robust clinic-specialist matching
-    getSpecialistsByClinic(clinicFirebaseId) {
-        console.log('🔍 Looking for specialists for clinic Firebase ID:', clinicFirebaseId);
-        console.log('🔍 All specialists:', allSpecialists);
-        
-        const matchingSpecialists = allSpecialists.filter(specialist => {
-            // Try multiple possible clinic ID field combinations and trim any whitespace
-            const specialistClinicId = (specialist.clinicId || 
-                                     specialist.clinic_Id || 
-                                     specialist.clinic_id || 
-                                     specialist.clinicID || '').trim();
-            
-            console.log('🔗 Comparing clinic IDs:', { 
-                clinicFirebaseId, 
-                specialistClinicId, 
-                specialistName: specialist.name,
-                fullSpecialist: specialist 
-            });
-            
-            // Compare trimmed IDs
-            return specialistClinicId === clinicFirebaseId;
-        });
-        
-        console.log(`✅ Found ${matchingSpecialists.length} specialists for clinic ${clinicFirebaseId}:`, matchingSpecialists);
-        return matchingSpecialists;
-    }
-};
-  // 🎨 FIXED UI RENDERING FUNCTIONS
-const ui = {
-    renderClinics(clinics) {
-        const container = document.getElementById('clinicsContainer');
-        
-        if (!clinics || clinics.length === 0) {
-            container.innerHTML = `
+                if (!clinics || clinics.length === 0) {
+                    container.innerHTML = `
                 <div class="no-clinics">
                     <h3>🏥 No clinics available</h3>
                     <p>There are currently no clinics matching your criteria.</p>
                 </div>
             `;
-            return;
-        }
+                    return;
+                }
 
-        const clinicsGrid = document.createElement('div');
-        clinicsGrid.className = 'clinics-grid';
-        
-        clinics.forEach(clinic => {
-            // 🔧 CRITICAL FIX: Use Firebase document ID for matching specialists
-            const clinicFirebaseId = clinic.id; // This is the Firebase document ID
-            const specialistCount = dataService.getSpecialistsByClinic(clinicFirebaseId).length;
-            
-            console.log('🏥 Rendering clinic:', {
-                name: clinic.clinicName || clinic.name,
-                firebaseId: clinicFirebaseId,
-                clinic_Id: clinic.clinic_Id,
-                specialistCount
-            });
-            
-            const clinicCard = document.createElement('div');
-            clinicCard.className = 'clinic-card';
-            clinicCard.onclick = () => this.openClinicModal(clinic);
-            
-            clinicCard.innerHTML = `
+                const clinicsGrid = document.createElement('div');
+                clinicsGrid.className = 'clinics-grid';
+
+                clinics.forEach(clinic => {
+                    // 🔧 CRITICAL FIX: Use Firebase document ID for matching specialists
+                    const clinicFirebaseId = clinic.id; // This is the Firebase document ID
+                    const specialistCount = dataService.getSpecialistsByClinic(clinicFirebaseId).length;
+
+                    console.log('🏥 Rendering clinic:', {
+                        name: clinic.clinicName || clinic.name,
+                        firebaseId: clinicFirebaseId,
+                        clinic_Id: clinic.clinic_Id,
+                        specialistCount
+                    });
+
+                    const clinicCard = document.createElement('div');
+                    clinicCard.className = 'clinic-card';
+                    clinicCard.onclick = () => this.openClinicModal(clinic);
+
+                    clinicCard.innerHTML = `
                 <h3>🏥 ${utils.escapeHtml(clinic.clinicName || clinic.name || 'Unknown Clinic')}</h3>
                 <div class="location">📍 ${utils.escapeHtml(clinic.location || 'Location not specified')}</div>
                 <div class="specialist-count">
@@ -794,62 +800,62 @@ const ui = {
                     View Details & Book Appointment
                 </button>
             `;
-            
-            clinicsGrid.appendChild(clinicCard);
-        });
-        
-        container.innerHTML = '';
-        container.appendChild(clinicsGrid);
-    },
 
-    openClinicModal(clinic) {
-        const modal = document.getElementById('clinicModal');
-        const modalClinicName = document.getElementById('modalClinicName');
-        const modalClinicLocation = document.getElementById('modalClinicLocation');
-        const modalClinicId = document.getElementById('modalClinicId');
-        const specialistsList = document.getElementById('specialistsList');
-        
-        modalClinicName.textContent = clinic.clinicName || clinic.name || 'Unknown Clinic';
-        modalClinicLocation.textContent = clinic.location || 'Location not specified';
-        
-        // 🔧 CRITICAL FIX: Use Firebase document ID for matching
-        const clinicFirebaseId = clinic.id; // This is the Firebase document ID
-        modalClinicId.textContent = clinicFirebaseId;
-        
-        console.log('🔍 Opening modal for clinic Firebase ID:', clinicFirebaseId);
-        console.log('🔍 Clinic data:', clinic);
-        
-        // Load specialists for this clinic using Firebase document ID
-        const clinicSpecialists = dataService.getSpecialistsByClinic(clinicFirebaseId);
-        console.log('👨‍⚕️ Specialists for modal:', clinicSpecialists);
-        
-        this.renderSpecialists(clinicSpecialists, specialistsList);
-        
-        modal.style.display = 'block';
-    },
+                    clinicsGrid.appendChild(clinicCard);
+                });
 
-    renderSpecialists(specialists, container) {
-        console.log('🎨 Rendering specialists:', specialists);
-        
-        if (!specialists || specialists.length === 0) {
-            container.innerHTML = `
+                container.innerHTML = '';
+                container.appendChild(clinicsGrid);
+            },
+
+            openClinicModal(clinic) {
+                const modal = document.getElementById('clinicModal');
+                const modalClinicName = document.getElementById('modalClinicName');
+                const modalClinicLocation = document.getElementById('modalClinicLocation');
+                const modalClinicId = document.getElementById('modalClinicId');
+                const specialistsList = document.getElementById('specialistsList');
+
+                modalClinicName.textContent = clinic.clinicName || clinic.name || 'Unknown Clinic';
+                modalClinicLocation.textContent = clinic.location || 'Location not specified';
+
+                // 🔧 CRITICAL FIX: Use Firebase document ID for matching
+                const clinicFirebaseId = clinic.id; // This is the Firebase document ID
+                modalClinicId.textContent = clinicFirebaseId;
+
+                console.log('🔍 Opening modal for clinic Firebase ID:', clinicFirebaseId);
+                console.log('🔍 Clinic data:', clinic);
+
+                // Load specialists for this clinic using Firebase document ID
+                const clinicSpecialists = dataService.getSpecialistsByClinic(clinicFirebaseId);
+                console.log('👨‍⚕️ Specialists for modal:', clinicSpecialists);
+
+                this.renderSpecialists(clinicSpecialists, specialistsList);
+
+                modal.style.display = 'block';
+            },
+
+            renderSpecialists(specialists, container) {
+                console.log('🎨 Rendering specialists:', specialists);
+
+                if (!specialists || specialists.length === 0) {
+                    container.innerHTML = `
                 <div class="no-availability">
                     ❌ No specialists available at this clinic currently.
                     <br><small>Please check if the clinic_Id in specialists matches the clinic's Firebase document ID.</small>
                 </div>
             `;
-            return;
-        }
+                    return;
+                }
 
-        container.innerHTML = '';
-        
-        specialists.forEach(specialist => {
-            console.log('👨‍⚕️ Rendering specialist:', specialist);
-            
-            const specialistCard = document.createElement('div');
-            specialistCard.className = 'specialist-card';
-            
-            specialistCard.innerHTML = `
+                container.innerHTML = '';
+
+                specialists.forEach(specialist => {
+                    console.log('👨‍⚕️ Rendering specialist:', specialist);
+
+                    const specialistCard = document.createElement('div');
+                    specialistCard.className = 'specialist-card';
+
+                    specialistCard.innerHTML = `
                 <div class="specialist-header">
                     <div class="specialist-info">
                         <h4>👨‍⚕️ ${utils.escapeHtml(specialist.name || 'Dr. Unknown')}</h4>
@@ -872,123 +878,123 @@ const ui = {
                     📅 Book Appointment
                 </button>
             `;
-            
-            container.appendChild(specialistCard);
-        });
-    },
 
-    renderTimeSlots(availability) {
-        console.log('🕐 Rendering time slots:', availability);
-        
-        if (!availability || !Array.isArray(availability) || availability.length === 0) {
-            return `
+                    container.appendChild(specialistCard);
+                });
+            },
+
+            renderTimeSlots(availability) {
+                console.log('🕐 Rendering time slots:', availability);
+
+                if (!availability || !Array.isArray(availability) || availability.length === 0) {
+                    return `
                 <div class="no-availability">
                     📅 No available time slots configured
                     <br><small>Please contact the clinic directly</small>
                 </div>
             `;
-        }
-
-        return availability.map((slot, index) => {
-            let timeStr = 'Time Slot';
-            let isBooked = false;
-            
-            // Handle different slot formats
-            if (typeof slot === 'string') {
-                timeStr = slot;
-            } else if (slot && typeof slot === 'object') {
-                if (slot.time) {
-                    timeStr = utils.formatTime(slot.time);
-                } else if (slot.startTime) {
-                    timeStr = utils.formatTime(slot.startTime);
-                } else {
-                    timeStr = utils.formatTime(slot);
                 }
-                isBooked = slot.booked || slot.isBooked || false;
-            } else {
-                timeStr = `Slot ${index + 1}`;
-            }
-            
-            return `
+
+                return availability.map((slot, index) => {
+                    let timeStr = 'Time Slot';
+                    let isBooked = false;
+
+                    // Handle different slot formats
+                    if (typeof slot === 'string') {
+                        timeStr = slot;
+                    } else if (slot && typeof slot === 'object') {
+                        if (slot.time) {
+                            timeStr = utils.formatTime(slot.time);
+                        } else if (slot.startTime) {
+                            timeStr = utils.formatTime(slot.startTime);
+                        } else {
+                            timeStr = utils.formatTime(slot);
+                        }
+                        isBooked = slot.booked || slot.isBooked || false;
+                    } else {
+                        timeStr = `Slot ${index + 1}`;
+                    }
+
+                    return `
                 <div class="time-slot ${isBooked ? 'booked' : ''}" 
                      onclick="${isBooked ? '' : `selectTimeSlot('${timeStr}')`}">
                     ${timeStr} ${isBooked ? '(Booked)' : ''}
                 </div>
             `;
-        }).join('');
-    },
+                }).join('');
+            },
 
-    setupFilters() {
-        // Get unique locations from clinics
-        const locations = [...new Set(allClinics.map(clinic => clinic.location).filter(Boolean))];
-        const locationFilter = document.getElementById('locationFilter');
-        locationFilter.innerHTML = '<option value="">All Locations</option>';
-        locations.forEach(location => {
-            const option = document.createElement('option');
-            option.value = location;
-            option.textContent = location;
-            locationFilter.appendChild(option);
-        });
+            setupFilters() {
+                // Get unique locations from clinics
+                const locations = [...new Set(allClinics.map(clinic => clinic.location).filter(Boolean))];
+                const locationFilter = document.getElementById('locationFilter');
+                locationFilter.innerHTML = '<option value="">All Locations</option>';
+                locations.forEach(location => {
+                    const option = document.createElement('option');
+                    option.value = location;
+                    option.textContent = location;
+                    locationFilter.appendChild(option);
+                });
 
-        // Get unique specialties from specialists  
-        const specialties = [...new Set(allSpecialists.map(specialist => specialist.specialty).filter(Boolean))];
-        const specialtyFilter = document.getElementById('specialtyFilter');
-        specialtyFilter.innerHTML = '<option value="">All Specialties</option>';
-        specialties.forEach(specialty => {
-            const option = document.createElement('option');
-            option.value = specialty;
-            option.textContent = specialty;
-            specialtyFilter.appendChild(option);
-        });
+                // Get unique specialties from specialists  
+                const specialties = [...new Set(allSpecialists.map(specialist => specialist.specialty).filter(Boolean))];
+                const specialtyFilter = document.getElementById('specialtyFilter');
+                specialtyFilter.innerHTML = '<option value="">All Specialties</option>';
+                specialties.forEach(specialty => {
+                    const option = document.createElement('option');
+                    option.value = specialty;
+                    option.textContent = specialty;
+                    specialtyFilter.appendChild(option);
+                });
 
-        console.log('🔧 Filters setup:', { locations, specialties });
+                console.log('🔧 Filters setup:', { locations, specialties });
 
-        // Add event listeners
-        document.getElementById('locationFilter').addEventListener('change', this.applyFilters.bind(this));
-        document.getElementById('specialtyFilter').addEventListener('change', this.applyFilters.bind(this));
-        document.getElementById('searchFilter').addEventListener('input', this.applyFilters.bind(this));
-    },
+                // Add event listeners
+                document.getElementById('locationFilter').addEventListener('change', this.applyFilters.bind(this));
+                document.getElementById('specialtyFilter').addEventListener('change', this.applyFilters.bind(this));
+                document.getElementById('searchFilter').addEventListener('input', this.applyFilters.bind(this));
+            },
 
-    applyFilters() {
-        const locationFilter = document.getElementById('locationFilter').value;
-        const specialtyFilter = document.getElementById('specialtyFilter').value;
-        const searchFilter = document.getElementById('searchFilter').value.toLowerCase();
+            applyFilters() {
+                const locationFilter = document.getElementById('locationFilter').value;
+                const specialtyFilter = document.getElementById('specialtyFilter').value;
+                const searchFilter = document.getElementById('searchFilter').value.toLowerCase();
 
-        console.log('🔍 Applying filters:', { locationFilter, specialtyFilter, searchFilter });
+                console.log('🔍 Applying filters:', { locationFilter, specialtyFilter, searchFilter });
 
-        filteredClinics = allClinics.filter(clinic => {
-            // Location filter
-            if (locationFilter && clinic.location !== locationFilter) {
-                return false;
+                filteredClinics = allClinics.filter(clinic => {
+                    // Location filter
+                    if (locationFilter && clinic.location !== locationFilter) {
+                        return false;
+                    }
+
+                    // Specialty filter - 🔧 FIX: Use Firebase document ID
+                    if (specialtyFilter) {
+                        const clinicFirebaseId = clinic.id; // Use Firebase document ID
+                        const clinicSpecialists = dataService.getSpecialistsByClinic(clinicFirebaseId);
+                        const hasSpecialty = clinicSpecialists.some(specialist =>
+                            specialist.specialty === specialtyFilter
+                        );
+                        if (!hasSpecialty) {
+                            return false;
+                        }
+                    }
+
+                    // Search filter
+                    if (searchFilter) {
+                        const searchText = `${clinic.clinicName || clinic.name || ''} ${clinic.location || ''}`.toLowerCase();
+                        if (!searchText.includes(searchFilter)) {
+                            return false;
+                        }
+                    }
+
+                    return true;
+                });
+
+                console.log('✅ Filtered clinics:', filteredClinics.length);
+                this.renderClinics(filteredClinics);
             }
-
-            // Specialty filter - 🔧 FIX: Use Firebase document ID
-            if (specialtyFilter) {
-                const clinicFirebaseId = clinic.id; // Use Firebase document ID
-                const clinicSpecialists = dataService.getSpecialistsByClinic(clinicFirebaseId);
-                const hasSpecialty = clinicSpecialists.some(specialist => 
-                    specialist.specialty === specialtyFilter
-                );
-                if (!hasSpecialty) {
-                    return false;
-                }
-            }
-
-            // Search filter
-            if (searchFilter) {
-                const searchText = `${clinic.clinicName || clinic.name || ''} ${clinic.location || ''}`.toLowerCase();
-                if (!searchText.includes(searchFilter)) {
-                    return false;
-                }
-            }
-
-            return true;
-        });
-
-        console.log('✅ Filtered clinics:', filteredClinics.length);
-        this.renderClinics(filteredClinics);
-    }
-};
+        };
 
         // Global functions for onclick events
         window.bookAppointment = (specialistId, specialistName) => {
@@ -1021,17 +1027,17 @@ const ui = {
         async function startApp() {
             try {
                 console.log('🚀 Starting application...');
-                
+
                 // Load clinics and specialists
                 allClinics = await dataService.getClinics();
                 allSpecialists = await dataService.getSpecialists();
-                
+
                 filteredClinics = [...allClinics];
-                
+
                 // Setup UI
                 ui.setupFilters();
                 ui.renderClinics(filteredClinics);
-                
+
                 console.log('✅ Patient clinics page initialized successfully!');
                 console.log('📊 Data loaded:', { clinics: allClinics.length, specialists: allSpecialists.length });
             } catch (error) {
@@ -1044,6 +1050,8 @@ const ui = {
         startApp();
     </script>
 
-
+    <script src="https://cdn.botpress.cloud/webchat/v3.0/inject.js"></script>
+    <script src="https://files.bpcontent.cloud/2025/06/15/12/20250615120138-GUVYWBFG.js"></script>
 </body>
+
 </html>
