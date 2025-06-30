@@ -31,6 +31,19 @@
     </script>
 
 <style>
+.card-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  padding: 90px 1.5rem 2rem 1.5rem;
+  transition: margin-left 0.3s ease;
+
+}
+
+.sidebar.open ~ .card-container {
+  margin-left: 250px;
+}
+
 .dashboard-card {
   background: #ffffff;
   padding: 2rem;
@@ -154,6 +167,9 @@
                 <div class="hamburger-line"></div>
                 <div class="hamburger-line"></div>
                 <div class="hamburger-line"></div>
+            </div>
+            <div class="notifications">
+                <span class="notification-icon">🔔</span>
             </div>
         </div>
         

@@ -5,6 +5,10 @@
     box-sizing: border-box;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
+body {
+    background-color: #aad0f0;
+
+}
 
 /* Loading screen */
 .loading-screen {
