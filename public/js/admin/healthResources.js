@@ -1,9 +1,8 @@
-
 // Import centralized Firebase config and services
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getFirestore, collection, addDoc, getDocs, updateDoc, deleteDoc, doc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-import { collection, addDoc, getDocs, updateDoc, deleteDoc, doc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 const firebaseConfig = {
     apiKey: "AIzaSyBWkXxtI9514_YD6H4kQ6IgltPoSSf7W80",
     authDomain: "medical-specialist-app-d3a46.firebaseapp.com",
@@ -16,6 +15,7 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const auth = getAuth(app);
 
 // Utility functions (reuse your utils object as before)
 const utils = {
@@ -32,7 +32,12 @@ const utils = {
         messageDiv.textContent = message;
 
         const container = document.querySelector('.container');
-        container.insertBefore(messageDiv, container.firstChild);
+        if (container) {
+            container.insertBefore(messageDiv, container.firstChild);
+        } else {
+            // fallback: append to body if container not found
+            document.body.appendChild(messageDiv);
+        }
 
         setTimeout(() => {
             if (messageDiv.parentNode) {
@@ -62,6 +67,27 @@ const utils = {
         return text.substring(0, maxLength) + '...';
     }
 };
+
+async function logSystemEvent({ action, details }) {
+    try {
+        const user = auth.currentUser;
+        if (!user) {
+            console.error("logSystemEvent: No authenticated user");
+            return;
+        }
+        await addDoc(collection(db, "systemLogs"), {
+            timestamp: serverTimestamp(),
+            action,
+            userId: user.uid,
+            userName: user.displayName || user.email || "Unknown User",
+            role: "admin",
+            details
+        });
+        console.log(`System event logged: ${action}`, details);
+    } catch (err) {
+        console.error("Error logging system event:", err);
+    }
+}
 
 // Firestore service for health resources
 const resourceService = {
@@ -352,9 +378,24 @@ const formManager = {
             if (currentEditingId) {
                 await resourceService.updateResource(currentEditingId, resourceData);
                 utils.showMessage('Resource updated successfully! ✅', 'success');
+                await logSystemEvent({
+                    action: 'resource updated',
+                    details: {
+                        healthResourceTitle: resourceData.title,
+                        ...resourceData,
+                    }
+                });
                 this.cancelEdit();
             } else {
                 await resourceService.addResource(resourceData);
+                await logSystemEvent({
+                    action: 'resource added',
+                    details: {
+                        healthResourceTitle: resourceData.title,
+                        category: resourceData.category,
+                        externalLink: resourceData.externalLink,
+                    }
+                });
                 utils.showMessage('Resource added successfully! ✅', 'success');
             }
 
@@ -451,6 +492,13 @@ window.deleteResource = async function (resourceId) {
     try {
         await resourceService.deleteResource(resourceId);
         utils.showMessage('Resource deleted successfully! 🗑️', 'success');
+        await logSystemEvent({
+            action: 'resource deleted',
+            details: {
+                healthResourceTitle: resource.title,
+                resourceId: resource.resource_Id || 'N/A'
+            }
+        });
         await loadAndDisplayResources();
     } catch (error) {
         console.error('Error deleting resource:', error);
