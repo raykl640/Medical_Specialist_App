@@ -1,7 +1,7 @@
 // firebase-config.js
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-import { getAuth, connectAuthEmulator } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js";
-import { getFirestore, connectFirestoreEmulator } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 // Firebase configuration
 const firebaseConfig = {
@@ -16,8 +16,6 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-
-// Initialize Firebase services
 const auth = getAuth(app);
 const db = getFirestore(app);
 
@@ -44,7 +42,7 @@ if (isDevelopment) {
 }
 
 // Export Firebase services
-export { auth, db, app, firebaseConfig };
+export { app, auth, db, firebaseConfig };
 
 // Global error handler for Firebase
 window.addEventListener('unhandledrejection', (event) => {

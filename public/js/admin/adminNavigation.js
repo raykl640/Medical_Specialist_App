@@ -151,37 +151,9 @@ class NavigationManager {
 
     async initializeFirebaseAuth() {
         try {
-            // Import Firebase modules
-            const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js");
-            const { getAuth, onAuthStateChanged, signOut } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js");
-            
-            // Import your Firebase config - with error handling
-            let firebaseConfig;
-            try {
-                const configModule = await import('../firebase-config.js');
-                firebaseConfig = configModule.firebaseConfig || configModule.default;
-            } catch (configError) {
-                console.error('Error loading Firebase config:', configError);
-                // Fallback config - replace with your actual Firebase config
-                firebaseConfig = {
-                    apiKey: "your-api-key",
-                    authDomain: "your-project.firebaseapp.com",
-                    projectId: "your-project-id",
-                    storageBucket: "your-project.appspot.com",
-                    messagingSenderId: "123456789",
-                    appId: "your-app-id"
-                };
-                console.warn('Using fallback Firebase config. Please update with your actual config.');
-            }
-
-            // Validate config before initializing
-            if (!firebaseConfig || !firebaseConfig.apiKey) {
-                throw new Error('Invalid Firebase configuration');
-            }
-
-            // Initialize Firebase
-            const app = initializeApp(firebaseConfig);
-            const auth = getAuth(app);
+            // Import Firebase services from centralized config
+            const { app, auth } = await import("../firebase-config.js");
+            const { onAuthStateChanged, signOut } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js");
             
             // Make auth available globally
             window.firebaseAuth = auth;

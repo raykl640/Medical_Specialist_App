@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Medical Resources Management</title>
+    <link rel="stylesheet" href="css/admin.css">
     <style>
         * {
             margin: 0;
@@ -478,6 +479,48 @@
     </style>
 </head>
 <body>
+ <!-- Title Bar -->
+    <div class="title-bar">
+        <div class="hamburger-menu">
+            <div class="hamburger-line"></div>
+            <div class="hamburger-line"></div>
+            <div class="hamburger-line"></div>
+        </div>
+        <div class="notifications">
+            <span class="notification-icon">🔔</span>
+        </div>
+    </div>
+    
+    <!-- Overlay for mobile -->
+    <div class="overlay" id="overlay"></div>
+    
+    <!-- Navigation Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="logo">
+            <div class="logo-circle">
+                 <div class="profile-picture" id="userInitial">
+                        U
+                </div>
+            </div>
+        </div>
+        <div class="nav-section">
+             <ul>
+                <li><a href="adminIndex.html" class="nav-link active" onclick="loadPage('dashboard')"><span class="icon">🏠</span>Dashboard</a></li>
+                    <li><a href="adminpatients.html" class="nav-link" onclick="loadPage('appointments')"><span class="icon">👤</span>Patients</a></li>
+                    <li><a href="adminClinics.html" class="nav-link" onclick="loadPage('clinics')"><span class="icon">🏥</span>Clinics</a></li>
+                    <li><a href="adminAppointments.html" class="nav-link" onclick="loadPage('health-resources')"><span class="icon">📅</span>Appointments</a></li>
+                    <li><a href="systemLogs.html" class="nav-link" onclick="loadPage('health-resources')"><span class="icon">⚙️</span>System logs</a></li>
+                    <li><a href="reports.html" class="nav-link" onclick="loadPage('health-resources')"><span class="icon">📁</span>Reports</a></li>
+                    <li><a href="HealthResources.html" class="nav-link" onclick="loadPage('health-resources')"><span class="icon">📚</span>Health Resources</a></li>
+                </ul>
+        </div>
+        <div class="nav-section nav-bottom">
+            <ul>
+                <li><a href="#" class="nav-link" id="logout-link"><span class="icon">⏻</span> Log Out</a></li>
+            </ul>
+        </div>
+    </div>
+
     <div class="container">
         <h1>📚 Medical Resources Management</h1>
         
@@ -614,24 +657,13 @@
         </div>
     </div>
 
+    <script type="module" src="js/admin/adminNavigation.js"></script>
+    <script src="./js/index.js"></script>
+
     <script type="module">
-        // Firebase imports
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs, updateDoc, deleteDoc, doc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
-
-        // Firebase config (replace with your actual config if needed)
-        const firebaseConfig = {
-            apiKey: "AIzaSyBWkXxtI9514_YD6H4kQ6IgltPoSSf7W80",
-            authDomain: "medical-specialist-app-d3a46.firebaseapp.com",
-            projectId: "medical-specialist-app-d3a46",
-            storageBucket: "medical-specialist-app-d3a46.appspot.com",
-            messagingSenderId: "990201081362",
-            appId: "1:990201081362:web:273dbe33edbbee6f2bb2cb"
-        };
-
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+        // Import centralized Firebase config and services
+        import { app, db } from "./js/firebase-config.js";
+        import { collection, addDoc, getDocs, updateDoc, deleteDoc, doc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
         // Utility functions (reuse your utils object as before)
         const utils = {
