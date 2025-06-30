@@ -4,13 +4,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Welcome to MedConnect</title>
-  <link rel="stylesheet" href="css/admin.css" />
+  <title>System Logs | MedConnect</title>
+  <link rel="stylesheet" href="../css/admin.css" />
 
   <style>
-
-
-    /*Main content */
     h2 {
       margin-bottom: 20px;
     }
@@ -42,26 +39,12 @@
       padding: 12px;
       border-bottom: 1px solid #ddd;
       text-align: left;
+      vertical-align: top;
     }
 
     th {
       background-color: #1E88E5;
       color: white;
-    }
-
-    .overlay {
-      position: fixed;
-      top: 60px;
-      left: 0;
-      width: 100%;
-      height: calc(100vh - 60px);
-      background-color: rgba(0, 0, 0, 0.5);
-      z-index: 998;
-      display: none;
-    }
-
-    .overlay.show {
-      display: block;
     }
 
     @media (max-width: 768px) {
@@ -74,53 +57,39 @@
 
 <body>
   <div id="navbar-container"></div>
+
   <div class="table-content">
-    <h2>Appointments</h2>
+    <h2>System Logs</h2>
 
     <div class="controls">
-      <input type="text" id="filterInput" placeholder="Search......" />
-      <select id="sortSelect">
-        <option value="">Sort By</option>
-        <option value="email">Email (A-Z)</option>
-        <option value="clinic">Clinic (A-Z)</option>
-        <option value="specialist">Specialist (A-Z)</option>
-        <option value="specialty">Specialty (A-Z)</option>
-        <option value="status">Status (A-Z)</option>
-      </select>
-      <select id="clinicFilter">
-        <option value="">All Clinics</option>
-      </select>
-
-      <select id="specialistFilter">
-        <option value="">All Specialists</option>
-      </select>
-
-      <select id="specialtyFilter">
-        <option value="">All Specialties</option>
+      <input type="text" id="searchInput" placeholder="Search by action or user..." />
+      <input type="date" id="startDate" />
+      <input type="date" id="endDate" />
+      <select id="roleFilter">
+        <option value="">All Roles</option>
+        <option value="admin">Admin</option>
+        <option value="patient">Patient</option>
       </select>
     </div>
 
     <table>
       <thead>
         <tr>
-          <th>Email</th>
-          <th>clinic</th>
-          <th>Specialist</th>
-          <th>Specialty</th>
-          <th>Status</th>
-          <th>Date & Time</th>
+          <th>Action</th>
+          <th>User</th>
+          <th>Role</th>
+          <th>Timestamp</th>
+          <th>Details</th>
         </tr>
       </thead>
-      <tbody id="patientTbody">
-        <!-- Populated by JS -->
+      <tbody id="logsTbody">
+        <!-- Logs go here -->
       </tbody>
     </table>
   </div>
 
-  <script type="module" src="js/admin/adminNavigation.js"></script>
-  <script src="./js/index.js"></script>
-  <script type="module" src="js/admin/appointment.js"></script>
-  
+  <script type="module" src="./js/admin/adminNavigation.js"></script>
+  <script type="module" src="./js/admin/systemLogs.js"></script>
 </body>
 
 </html>

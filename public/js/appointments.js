@@ -22,6 +22,8 @@ const firebaseConfig = {
     appId: "1:990201081362:web:273dbe33edbbee6f2bb2cb",
     measurementId: "G-ECMD5067CE"
 };
+import { collection as logCollection, addDoc as logAddDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
+
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
@@ -78,10 +80,10 @@ const utils = {
         const messageDiv = document.createElement('div');
         messageDiv.className = type;
         messageDiv.textContent = message;
-        
+
         const firstSection = document.querySelector('.section');
         firstSection.insertBefore(messageDiv, firstSection.firstChild);
-        
+
         setTimeout(() => {
             messageDiv.remove();
         }, 5000);
@@ -105,6 +107,19 @@ const utils = {
         return { hours, minutes };
     }
 };
+
+async function logSystemEvent({ action, details }) {
+    const user = auth.currentUser;
+    if (!user) return;
+    await logAddDoc(logCollection(db, "systemLogs"), {
+        timestamp: serverTimestamp(),
+        action,
+        userId: user.uid,
+        userName: user.firstName || "Unknown",
+        role: "patient",
+        details
+    });
+}
 
 // Data service functions
 const dataService = {
@@ -153,14 +168,14 @@ const dataService = {
                 appointmentsRef,
                 where('patientId', '==', userId)
             );
-            
+
             const querySnapshot = await getDocs(q);
             const appointments = [];
-            
+
             querySnapshot.forEach((doc) => {
                 const data = doc.data();
                 console.log('📝 Appointment document:', { id: doc.id, data });
-                
+
                 // Convert Firestore timestamps to Date objects
                 const appointment = {
                     id: doc.id,
@@ -169,14 +184,14 @@ const dataService = {
                     createdAt: data.createdAt?.toDate?.() || new Date(data.createdAt),
                     updatedAt: data.updatedAt?.toDate?.() || new Date(data.updatedAt)
                 };
-                
+
                 console.log('🔄 Processed appointment:', appointment);
                 appointments.push(appointment);
             });
-            
+
             // Sort appointments by date in memory
             appointments.sort((a, b) => b.date - a.date);
-            
+
             console.log('✅ Fetched appointments:', appointments.length, appointments);
             return appointments;
         } catch (error) {
@@ -190,13 +205,13 @@ const dataService = {
             // Check for double booking before creating appointment
             const dateStr = appointmentData.date.toISOString().split('T')[0];
             const slotKey = `${appointmentData.specialistId}_${dateStr}_${appointmentData.time}`;
-            
+
             if (bookedTimeSlots.has(slotKey)) {
                 throw new Error('This time slot is already booked. Please select another time.');
             }
-            
+
             const appointmentsRef = collection(db, 'appointments');
-            
+
             // Create the appointment document
             const appointment = {
                 ...appointmentData,
@@ -206,13 +221,13 @@ const dataService = {
                 createdAt: Timestamp.now(),
                 updatedAt: Timestamp.now()
             };
-            
+
             // Add to Firestore
             const docRef = await addDoc(appointmentsRef, appointment);
-            
+
             // Update local booked slots map
             bookedTimeSlots.set(slotKey, docRef.id);
-            
+
             // Update local state
             const newAppointment = {
                 id: docRef.id,
@@ -221,7 +236,7 @@ const dataService = {
                 createdAt: appointment.createdAt.toDate(),
                 updatedAt: appointment.updatedAt.toDate()
             };
-            
+
             userAppointments.unshift(newAppointment);
             return newAppointment;
         } catch (error) {
@@ -233,7 +248,7 @@ const dataService = {
     async rescheduleAppointment(appointmentId, newDate, newTime, reason) {
         try {
             const appointmentRef = doc(db, 'appointments', appointmentId);
-            
+
             // Update in Firestore
             await updateDoc(appointmentRef, {
                 date: Timestamp.fromDate(newDate),
@@ -241,7 +256,7 @@ const dataService = {
                 rescheduleReason: reason,
                 updatedAt: Timestamp.now()
             });
-            
+
             // Update local state
             const appointmentIndex = userAppointments.findIndex(apt => apt.id === appointmentId);
             if (appointmentIndex !== -1) {
@@ -253,7 +268,7 @@ const dataService = {
                     updatedAt: new Date()
                 };
             }
-            
+
             return userAppointments[appointmentIndex];
         } catch (error) {
             console.error('Error rescheduling appointment:', error);
@@ -264,20 +279,20 @@ const dataService = {
     async cancelAppointment(appointmentId) {
         try {
             const appointmentRef = doc(db, 'appointments', appointmentId);
-            
+
             // Update in Firestore
             await updateDoc(appointmentRef, {
                 status: 'cancelled',
                 updatedAt: Timestamp.now()
             });
-            
+
             // Update local state
             const appointmentIndex = userAppointments.findIndex(apt => apt.id === appointmentId);
             if (appointmentIndex !== -1) {
                 userAppointments[appointmentIndex].status = 'cancelled';
                 userAppointments[appointmentIndex].updatedAt = new Date();
             }
-            
+
             return true;
         } catch (error) {
             console.error('Error cancelling appointment:', error);
@@ -310,11 +325,11 @@ const dataService = {
             if (apt.status !== 'confirmed') {
                 return;
             }
-            
+
             // Combine date and time into a single Date object for accurate comparison
             const datePart = apt.date.toISOString().split('T')[0];
             const [year, month, day] = datePart.split('-').map(Number);
-            
+
             const { hours, minutes } = utils.parseTime(apt.time);
 
             const appointmentDateTime = new Date(year, month - 1, day, hours, minutes);
@@ -342,17 +357,17 @@ const dataService = {
         console.log('Finished checking and updating appointment statuses.');
     },
 
-    getAllBookedSlots: async function() {
+    getAllBookedSlots: async function () {
         try {
             const appointmentsRef = collection(db, 'appointments');
             const q = query(
                 appointmentsRef,
                 where('status', 'in', ['confirmed', 'upcoming'])
             );
-            
+
             const querySnapshot = await getDocs(q);
             const bookedSlots = new Map();
-            
+
             querySnapshot.forEach((doc) => {
                 const data = doc.data();
                 const date = data.date?.toDate?.() || new Date(data.date);
@@ -360,7 +375,7 @@ const dataService = {
                 const key = `${data.specialistId}_${dateStr}_${data.time}`;
                 bookedSlots.set(key, doc.id);
             });
-            
+
             console.log('📅 Loaded booked slots:', bookedSlots);
             return bookedSlots;
         } catch (error) {
@@ -397,11 +412,11 @@ const ui = {
             if (apt.status !== 'confirmed') {
                 return;
             }
-            
+
             // Combine date and time into a single Date object for accurate comparison
             const datePart = apt.date.toISOString().split('T')[0];
             const [year, month, day] = datePart.split('-').map(Number);
-            
+
             const { hours, minutes } = utils.parseTime(apt.time);
 
             const appointmentDateTime = new Date(year, month - 1, day, hours, minutes);
@@ -432,7 +447,7 @@ const ui = {
     renderAppointments() {
         console.log('🎨 Rendering appointments:', userAppointments);
         const now = new Date();
-        
+
         const upcomingAppointments = userAppointments.filter(apt => {
             const appointmentDate = new Date(apt.date);
             console.log('📅 Comparing dates:', {
@@ -443,7 +458,7 @@ const ui = {
             });
             return appointmentDate >= now && apt.status !== 'cancelled';
         });
-        
+
         const pastAppointments = userAppointments.filter(apt => {
             const appointmentDate = new Date(apt.date);
             return appointmentDate < now || apt.status === 'cancelled';
@@ -461,27 +476,27 @@ const ui = {
     renderAppointmentSection(containerId, appointments, type) {
         console.log(`🎨 Rendering ${type} appointments:`, appointments);
         const container = document.getElementById(containerId);
-        
+
         if (!appointments || appointments.length === 0) {
             container.innerHTML = `
                 <div class="no-appointments">
                     <h3>📅 No ${type} appointments</h3>
-                    <p>${type === 'upcoming' ? 
-                        'You have no upcoming appointments. Book one using the button above!' : 
-                        'No appointment history available.'
-                    }</p>
+                    <p>${type === 'upcoming' ?
+                    'You have no upcoming appointments. Book one using the button above!' :
+                    'No appointment history available.'
+                }</p>
                 </div>
             `;
             return;
         }
 
         container.innerHTML = '';
-        
+
         appointments.forEach(appointment => {
             console.log('🎯 Rendering appointment:', appointment);
             const appointmentCard = document.createElement('div');
             appointmentCard.className = `appointment-card ${appointment.status}`;
-            
+
             appointmentCard.innerHTML = `
                 <div class="appointment-header">
                     <div class="appointment-info">
@@ -530,7 +545,7 @@ const ui = {
                     </button>
                 </div>
             `;
-            
+
             container.appendChild(appointmentCard);
         });
     },
@@ -543,7 +558,7 @@ const ui = {
         // Populate clinic dropdown
         const clinicSelect = document.getElementById('clinicSelect');
         clinicSelect.innerHTML = '<option value="">Choose a clinic...</option>';
-        
+
         allClinics.forEach(clinic => {
             const option = document.createElement('option');
             option.value = clinic.id;
@@ -583,17 +598,17 @@ const ui = {
     handleClinicChange(event) {
         const clinicId = event.target.value;
         const specialistSelect = document.getElementById('specialistSelect');
-        
+
         // Reset specialist dropdown
         specialistSelect.innerHTML = '<option value="">Select a specialist...</option>';
         specialistSelect.disabled = !clinicId;
-        
+
         if (clinicId) {
             // Filter specialists for selected clinic
-            const clinicSpecialists = allSpecialists.filter(specialist => 
+            const clinicSpecialists = allSpecialists.filter(specialist =>
                 (specialist.clinicId || specialist.clinic_Id || specialist.clinic_id || '').trim() === clinicId
             );
-            
+
             clinicSpecialists.forEach(specialist => {
                 const option = document.createElement('option');
                 option.value = specialist.id;
@@ -606,7 +621,7 @@ const ui = {
     handleDateChange(event) {
         const date = event.target.value;
         const timeSlots = document.getElementById('timeSlots');
-        
+
         if (!date) {
             timeSlots.innerHTML = '<div class="time-slot unavailable">Select date first</div>';
             return;
@@ -615,7 +630,7 @@ const ui = {
         // Get selected specialist
         const specialistId = document.getElementById('specialistSelect').value;
         const specialist = allSpecialists.find(s => s.id === specialistId);
-        
+
         if (!specialist) {
             timeSlots.innerHTML = '<div class="time-slot unavailable">Select specialist first</div>';
             return;
@@ -628,7 +643,7 @@ const ui = {
     handleRescheduleDateChange(event) {
         const date = event.target.value;
         const timeSlots = document.getElementById('rescheduleTimeSlots');
-        
+
         if (!date) {
             timeSlots.innerHTML = '<div class="time-slot unavailable">Select date first</div>';
             return;
@@ -641,7 +656,7 @@ const ui = {
 
         // Get specialist
         const specialist = allSpecialists.find(s => s.id === currentAppointmentToReschedule.specialistId);
-        
+
         if (!specialist) {
             timeSlots.innerHTML = '<div class="time-slot unavailable">Specialist not found</div>';
             return;
@@ -658,8 +673,8 @@ const ui = {
         }
 
         // Get selected date and specialist
-        const dateInput = type === 'booking' ? 
-            document.getElementById('appointmentDate') : 
+        const dateInput = type === 'booking' ?
+            document.getElementById('appointmentDate') :
             document.getElementById('newAppointmentDate');
         const selectedDate = dateInput.value;
         let specialistId;
@@ -752,10 +767,20 @@ const ui = {
                 notes,
                 location: clinic.location
             };
-            await dataService.bookAppointment(appointmentData);
+           const newAppointment = await dataService.bookAppointment(appointmentData);
+            await logSystemEvent({
+                action: "Appointment Booked",
+                details: {
+                    appointmentId: newAppointment.id,
+                    clinic: clinic.clinicName || clinic.name
+                }
+            });
+           
             utils.showMessage('Appointment booked successfully!');
             closeBookingModal();
             this.loadAppointments();
+            
+
         } catch (error) {
             console.error('Error booking appointment:', error);
             if (error.message.includes('already booked')) {
@@ -770,7 +795,7 @@ const ui = {
 
     async handleRescheduleSubmit(event) {
         event.preventDefault();
-        
+
         if (!currentAppointmentToReschedule) {
             utils.showMessage('No appointment selected for rescheduling', 'error');
             return;
@@ -791,10 +816,23 @@ const ui = {
                 selectedRescheduleTimeSlot,
                 reason
             );
-            
+            await logSystemEvent({
+                action: "Appointment Rescheduled",
+                details: {
+                    appointmentId: currentAppointmentToReschedule.id,
+                    clinic: currentAppointmentToReschedule.clinicName,
+                    oldDate: utils.formatDate(currentAppointmentToReschedule.date),
+                    oldTime: currentAppointmentToReschedule.time,
+                    newDate: utils.formatDate(newDate),
+                    newTime: selectedRescheduleTimeSlot,
+                    rescheduleReason: reason
+                }
+            });
+
             utils.showMessage('Appointment rescheduled successfully!');
             closeRescheduleModal();
             this.loadAppointments();
+
         } catch (error) {
             console.error('Error rescheduling appointment:', error);
             utils.showMessage('Failed to reschedule appointment', 'error');
@@ -864,6 +902,14 @@ window.cancelAppointment = async (appointmentId) => {
 
     try {
         await dataService.cancelAppointment(appointmentId);
+                const appointment = userAppointments.find(apt => apt.id === appointmentId);
+        await logSystemEvent({
+            action: "Appointment Cancelled",
+            details: {
+                appointmentId,
+                clinic: appointment ? appointment.clinicName : undefined
+            }
+        });
         utils.showMessage('Appointment cancelled successfully');
         ui.loadAppointments();
     } catch (error) {
@@ -898,7 +944,7 @@ window.viewAppointmentDetails = (appointmentId) => {
 async function startApp() {
     try {
         console.log('🚀 Starting appointments page...');
-        
+
         // Check for selected specialist from patientsClinics.html
         const selectedSpecialist = sessionStorage.getItem('selectedSpecialist');
         if (selectedSpecialist) {
@@ -909,7 +955,7 @@ async function startApp() {
             // Show booking modal with pre-selected specialist
             showBookingModal(specialist);
         }
-        
+
         // Wait for auth state
         onAuthStateChanged(auth, async (user) => {
             if (user) {
@@ -921,7 +967,7 @@ async function startApp() {
                 window.location.href = 'login.html';
             }
         });
-        
+
         console.log('✅ Appointments page initialized successfully!');
     } catch (error) {
         console.error('❌ Failed to initialize app:', error);
