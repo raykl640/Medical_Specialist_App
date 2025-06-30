@@ -1,6 +1,7 @@
 // Import Firebase modules
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 // Firebase config
 const firebaseConfig = {
@@ -16,6 +17,31 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const db = getFirestore(app);
+
+async function logSystemEvent({ action, details }) {
+    try {
+        const user = auth.currentUser;
+        if (!user) {
+            console.error("logSystemEvent: No authenticated user");
+            return;
+        }
+        // Set role based on UID
+        const adminUID = "mkDXWQzZzMd52KhaQ3r0aqthT8E2";
+        const role = user.uid === adminUID ? "admin" : "patient";
+        await addDoc(collection(db, "systemLogs"), {
+            timestamp: serverTimestamp(),
+            action,
+            userId: user.uid,
+            userName: user.displayName || user.email || "Unknown User",
+            role,
+            details
+        });
+        console.log(`System event logged: ${action, details}`);
+    } catch (err) {
+        console.error("logSystemEvent error:", err);
+    }
+}
 
 document.getElementById("loginForm").addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -41,7 +67,13 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
 
         messageEl.style.color = "green";
         messageEl.textContent = "Login successful! Redirecting...";
-
+        await logSystemEvent({
+            action: 'user login',
+            details: {
+                userId: user.uid,
+                userName: user.displayName || user.email || "Unknown User"
+            }
+        });
         // Redirecting based on user identity
         const adminUID = "mkDXWQzZzMd52KhaQ3r0aqthT8E2";
         const adminEmail = "raylukorito@gmail.com";
