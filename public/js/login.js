@@ -80,7 +80,7 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
 
         setTimeout(() => {
             if (user.uid === adminUID || user.email === adminEmail) {
-                window.location.href = "adminIndex.html";
+                window.location.href = "reports.html";
             } else {
                 window.location.href = "patientDashboard.html";
             }

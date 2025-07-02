@@ -39,26 +39,11 @@ async function getTotalClincs() {
 
 async function getTotalAppointments() {
     try {
-        const now = new Date();
-        const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-        const startOfNextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
-
-        const startTimestamp = Timestamp.fromDate(startOfMonth);
-        const endTimestamp = Timestamp.fromDate(startOfNextMonth);
-
-        const appointmentsRef = collection(db, "appointments");
-        const q = query(
-            appointmentsRef,
-            where("createdAt", ">=", startTimestamp),
-            where("createdAt", "<", endTimestamp)
-        );
-
-        const snapshot = await getDocs(q);
+        const snapshot = await getDocs(collection(db, "appointments"));
         const total = snapshot.size;
-
         document.getElementById("appointments-count").innerText = total;
     } catch (error) {
-        console.error("Error fetching total appointments for this month:", error);
+        console.error("Error fetching total appointments:", error);
     }
 }
 
