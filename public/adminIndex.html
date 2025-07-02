@@ -6,37 +6,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Medical Dashboard</title>
   <link rel="stylesheet" href="css/admin.css">
-  <script type="module">
-    // Import Firebase modules (same version as login page)
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-
-    // Firebase configuration
-    const firebaseConfig = {
-      apiKey: "AIzaSyBWkXxtI9514_YD6H4kQ6IgltPoSSf7W80",
-      authDomain: "medical-specialist-app-d3a46.firebaseapp.com",
-      projectId: "medical-specialist-app-d3a46",
-      storageBucket: "medical-specialist-app-d3a46.appspot.com",
-      messagingSenderId: "990201081362",
-      appId: "1:990201081362:web:273dbe33edbbee6f2bb2cb",
-      measurementId: "G-ECMD5067CE"
-    };
-
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-
-    // Make auth available globally for other functions
-    window.firebaseAuth = auth;
-    window.firebaseSignOut = signOut;
-  </script>
-
   <style>
     .card-container {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 1.5rem;
-      padding: 90px 1.5rem 2rem 1.5rem;
+      padding: 10px;
       transition: margin-left 0.3s ease;
 
     }
@@ -152,65 +127,11 @@
   </style>
 
 </head>
-
 <body>
   <!-- Loading Screen -->
   <div class="loading-screen" id="loadingScreen">
     <div class="loading-spinner"></div>
   </div>
-
-  <!-- Main App Content -->
-  <div class="main-app" id="mainApp">
-    <!-- Title Bar -->
-    <div class="title-bar">
-      <div class="hamburger-menu" onclick="toggleSidebar()">
-        <div class="hamburger-line"></div>
-        <div class="hamburger-line"></div>
-        <div class="hamburger-line"></div>
-      </div>
-      <div class="notifications">
-        <span class="notification-icon">🔔</span>
-      </div>
-    </div>
-
-    <!-- Overlay for mobile -->
-    <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
-
-    <!-- Navigation Sidebar -->
-    <div class="sidebar" id="sidebar">
-      <div class="logo">
-        <div class="logo-circle">
-          <div class="profile-picture" id="userInitial">
-            U
-          </div>
-        </div>
-      </div>
-      <div class="nav-section">
-        <ul>
-          <li><a href="adminIndex.html" class="nav-link active" onclick="loadPage('dashboard')"><span
-                class="icon">🏠</span>Dashboard</a></li>
-          <li><a href="adminpatients.html" class="nav-link" onclick="loadPage('appointments')"><span
-                class="icon">👤</span>Patients</a></li>
-          <li><a href="adminClinics.html" class="nav-link" onclick="loadPage('clinics')"><span
-                class="icon">🏥</span>Clinics</a></li>
-          <li><a href="adminAppointments.html" class="nav-link" onclick="loadPage('health-resources')"><span
-                class="icon">📅</span>Appointments</a></li>
-          <li><a href="systemLogs.html" class="nav-link" onclick="loadPage('health-resources')"><span
-                class="icon">⚙️</span>System logs</a></li>
-          <li><a href="reports.html" class="nav-link" onclick="loadPage('health-resources')"><span
-                class="icon">📁</span>Reports</a></li>
-          <li><a href="healthResources.html" class="nav-link" onclick="loadPage('health-resources')"><span
-                class="icon">📚</span>Health Resources</a></li>
-
-        </ul>
-      </div>
-      <div class="nav-section nav-bottom">
-        <ul>
-          <li><a href="#" class="nav-link" onclick="logout()"><span class="icon">⏻</span> Log Out</a></li>
-        </ul>
-      </div>
-    </div>
-
     <!-- Main Content Area -->
     <div class="card-container" id="dashboard-cards">
       <div class="dashboard-card" id="totalPatientsCard">
@@ -241,7 +162,7 @@
   </div>
   <script type="module" src="./js/admin/dashboardStats.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="./js/index.js"></script>
+  <script type="module" src="./js/admin/adminNavigation.js"></script>
 </body>
 
 </html>
