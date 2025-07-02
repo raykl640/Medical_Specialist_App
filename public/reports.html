@@ -1,22 +1,268 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Welcome to MedConnect</title>
-  <link rel="stylesheet" href="css/admin.css" />
-   
+  <link rel="stylesheet" href="css/admin.css">
+  <link rel="stylesheet" href="css/medical.css">
+
   <style>
-    /* main content */
-    
+    .card-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 18px;
+      padding: 10px;
+      transition: margin-left 0.3s ease;
+    }
+
+    .sidebar.open~.card-container {
+      margin-left: 250px;
+    }
+
+    .dashboard-card {
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      text-align: center;
+      transition: transform 0.2s ease;
+      min-width: 180px;
+    }
+
+    .dashboard-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .dashboard-card h3 {
+      margin-bottom: 8px;
+      color: #0077cc;
+      font-size: 18px;
+    }
+
+    .card-count {
+      font-size: 26px;
+      font-weight: bold;
+    }
+
+    /* Overlay for mobile */
+    .overlay {
+      position: fixed;
+      top: 60px;
+      left: 0;
+      width: 100%;
+      height: calc(100vh - 60px);
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 998;
+      display: none;
+    }
+
+    .overlay.show {
+      display: block;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .sidebar.open~.card-container {
+        margin-left: 0;
+      }
+
+      .card-container {
+        padding: 10px 15px 30px 15px;
+        grid-template-columns: 1fr;
+      }
+
+      .dashboard-card {
+        margin-bottom: 15px;
+      }
+    }
+
+    .tabs {
+      margin-top: 20px;
+    }
+
+    .tab-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .tab-btn {
+      padding: 10px 16px;
+      background-color: #f0f0f0;
+      border: none;
+      border-radius: 8px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    .tab-btn:hover {
+      background-color: #e0e0e0;
+    }
+
+    .tab-btn.active {
+      background-color: #0275d8;
+      color: white;
+    }
+
+    .tab-content {
+      display: none;
+      background-color: #ffffff;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
   </style>
 </head>
+
 <body>
-    <div id="navbar-container"></div>
+  <div id="navbar-container"></div>
+  <div class="card-container" id="dashboard-cards">
+    <div class="dashboard-card" id="totalPatientsCard">
+      <h3>Total Patients</h3>
+      <p class="card-count" id="patient-count">Loading...</p>
+    </div>
+    <div class="dashboard-card" id="totalClinicsCard">
+      <h3>Total Clinics</h3>
+      <p class="card-count" id="clinics-count">Loading...</p>
+    </div>
+    <div class="dashboard-card" id="totalAppointmentsCard">
+      <h3>Appointments this month</h3>
+      <p class="card-count" id="appointments-count">Loading...</p>
+    </div>
+    <div class="dashboard-card" id="totalHealthResourcesCard">
+      <h3>Total Health Resources</h3>
+      <p class="card-count" id="health-resources-count">Loading...</p>
+    </div>
+    <div class="dashboard-card" id="totalSystemLogsCard">
+      <h3>Total System Logs</h3>
+      <p class="card-count" id="system-logs-count">Loading...</p>
+    </div>
+  </div>
+  <div class="tabs">
+    <!-- Tab Buttons -->
+    <div class="tab-buttons">
+      <button class="tab-btn active" data-tab="overview">📊 Overview</button>
+      <button class="tab-btn" data-tab="patients">👤 Patients</button>
+      <button class="tab-btn" data-tab="clinics">🏥 Clinics</button>
+      <button class="tab-btn" data-tab="appointments">📅 Appointments</button>
+      <button class="tab-btn" data-tab="resources">📚 Health Resources</button>
+      <button class="tab-btn" data-tab="logs">🧾 System Logs</button>
+    </div>
 
-  
+    <!-- Tab Content -->
+    <div class="tab-content active" id="overview">
+      <h3>Summary Graphs and Stats</h3>
+      <div id="overview-graphs">
+        <!-- Placeholder for dynamic charts -->
+        <canvas id="appointmentsChart" width="400" height="200"></canvas>
+        <canvas id="patientsChart" width="400" height="200"></canvas>
+      </div>
+    </div>
 
- <script type="module" src="js/admin/adminNavigation.js"></script>
- <script src="./js/index.js"></script>
+    <div class="tab-content" id="patients">
+      <h3>Patients Report</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Patient ID</th>
+            <th>First Name</th>
+            <th>Other Names</th>
+            <th>Email</th>
+            <th>Registered Date</th>
+          </tr>
+        </thead>
+        <tbody id="patientsReportBody">
+          <!-- Populate rows dynamically -->
+        </tbody>
+      </table>
+    </div>
+
+    <div class="tab-content" id="clinics">
+      <h3>Clinics Report</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Clinic ID</th>
+            <th>Clinic Name</th>
+            <th>Location</th>
+            <th>Created At</th>
+            <th>Total Patients</th>
+          </tr>
+        </thead>
+        <tbody id="clinicsReportBody">
+          <!-- Populate rows dynamically -->
+        </tbody>
+      </table>
+    </div>
+
+    <div class="tab-content" id="appointments">
+      <h3>Appointments Report</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Appointment ID</th>
+            <th>Patient</th>
+            <th>Clinic</th>
+            <th>Date</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="appointmentsReportBody">
+          <!-- Populate rows dynamically -->
+        </tbody>
+      </table>
+    </div>
+
+    <div class="tab-content" id="resources">
+      <h3>Health Resources Report</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Resource ID</th>
+            <th>Title</th>
+            <th>Category</th>
+            <th>External Link</th>
+            <th>Date Added</th>
+          </tr>
+        </thead>
+        <tbody id="resourcesReportBody">
+          <!-- Populate rows dynamically -->
+        </tbody>
+      </table>
+    </div>
+
+    <div class="tab-content" id="logs">
+      <h3>System Logs</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>User</th>
+            <th>Role</th>
+            <th>Action</th>
+            <th>Details</th>
+            <th>Timestamp</th>
+          </tr>
+        </thead>
+        <tbody id="logsReportBody">
+          <!-- Populate rows dynamically -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+
+
+  <script type="module" src="js/admin/adminNavigation.js"></script>
+  <script type="module" src="js/admin/reportStats.js"></script>
 </body>
+
 </html>
