@@ -81,96 +81,75 @@ body.fade-out {
     transition: 0.3s;
 }
 
-/* Container for the bell and dropdown */
-.notification-container {
+/* Notification css */
+.notification-wrapper {
   position: relative;
   display: inline-block;
 }
 
-/* Bell icon styling */
-.bell-icon {
-  background: none;
-  border: none;
+.notification-bell {
   cursor: pointer;
-  font-size: 24px;
+  font-size: 22px;
   position: relative;
 }
 
-/* Red circle badge for unread count */
-.notification-count {
+.badge {
   position: absolute;
   top: -6px;
-  right: -6px;
+  right: -8px;
   background: red;
   color: white;
-  font-size: 12px;
-  padding: 2px 6px;
   border-radius: 50%;
-  display: none; /* hidden by default */
+  padding: 2px 6px;
+  font-size: 12px;
 }
+
+.badge.hidden {
+  display: none;
+}
+
+.notification-dropdown {
+  position: absolute;
+  right: 0;
+  top: 30px;
+  width: 300px;
+  max-height: 400px;
+  overflow-y: auto;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  z-index: 1000;
+}
+
 .notification-dropdown.hidden {
   display: none;
 }
 
-/* Dropdown panel */
-.notification-dropdown {
-  position: absolute;
-  right: 0;
-  top: 36px;
-  width: 300px;
-  max-height: 400px;
-  overflow-y: auto;
-  background-color: #fff;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  box-shadow: 0px 4px 12px rgba(0,0,0,0.1);
-  z-index: 999;
-}
-
-/* Hidden class (to toggle visibility) */
-.hidden {
-  display: none;
-}
-
-/* Header */
 .notification-header {
+  display: flex;
+  justify-content: space-between;
   padding: 10px;
   font-weight: bold;
-  background-color: #f5f5f5;
   border-bottom: 1px solid #ddd;
-  border-radius: 8px 8px 0 0;
 }
 
-/* Notification list */
-.notification-list {
+#notificationList {
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
-/* Individual notification */
-.notification-item {
+#notificationList li {
   padding: 10px;
   border-bottom: 1px solid #eee;
-  transition: background 0.2s ease;
-}
-
-.notification-item:hover {
-  background-color: #f0f8ff;
-}
-
-.notification-item strong {
-  display: block;
-  font-weight: 600;
-  margin-bottom: 4px;
-  color: #333;
-}
-
-.notification-item p {
-  margin: 0;
   font-size: 14px;
-  color: #555;
 }
+
+#notificationList li:last-child {
+  border-bottom: none;
+}
+
+
 
 /* Sidebar - FIXED POSITIONING AND Z-INDEX */
 .sidebar {

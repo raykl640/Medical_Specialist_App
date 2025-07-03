@@ -767,7 +767,12 @@ const ui = {
                 notes,
                 location: clinic.location
             };
-           const newAppointment = await dataService.bookAppointment(appointmentData);
+            const newAppointment = await dataService.bookAppointment(appointmentData);
+            console.log("Dispatching appointmentBooked event");
+            document.dispatchEvent(new CustomEvent("appointmentBooked", {
+                detail: { date: appointmentData.date }
+            }));
+
             await logSystemEvent({
                 action: "Appointment Booked",
                 details: {
@@ -775,11 +780,11 @@ const ui = {
                     clinic: clinic.clinicName || clinic.name
                 }
             });
-           
+
             utils.showMessage('Appointment booked successfully!');
             closeBookingModal();
             this.loadAppointments();
-            
+
 
         } catch (error) {
             console.error('Error booking appointment:', error);
@@ -816,6 +821,12 @@ const ui = {
                 selectedRescheduleTimeSlot,
                 reason
             );
+            document.dispatchEvent(new CustomEvent("appointmentRescheduled", {
+                detail: {
+                    date: new Date(newDate),
+                    time: selectedRescheduleTimeSlot
+                }
+            }));
             await logSystemEvent({
                 action: "Appointment Rescheduled",
                 details: {
@@ -902,7 +913,10 @@ window.cancelAppointment = async (appointmentId) => {
 
     try {
         await dataService.cancelAppointment(appointmentId);
-                const appointment = userAppointments.find(apt => apt.id === appointmentId);
+        document.dispatchEvent(new CustomEvent("appointmentCanceled", {
+            detail: { appointmentId }
+        }));
+        const appointment = userAppointments.find(apt => apt.id === appointmentId);
         await logSystemEvent({
             action: "Appointment Cancelled",
             details: {

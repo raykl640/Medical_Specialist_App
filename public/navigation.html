@@ -17,18 +17,17 @@
             <div class="hamburger-line"></div>
             <div class="hamburger-line"></div>
         </div>
-        <div class="notification-container">
-            <button id="notificationBell" class="bell-icon">
-                🔔
-                <span id="notificationCount" class="notification-count">0</span>
-            </button>
-
-            <!-- Notification Dropdown -->
+        <div class="notification-wrapper">
+            <button id="notificationBell">🔔<span id="notificationBadge" class="badge hidden">0</span></button>
             <div id="notificationDropdown" class="notification-dropdown hidden">
-                <div class="notification-header">Notifications</div>
-                <ul id="notificationList" class="notification-list"></ul>
+                <div class="notification-header">
+                    <span>Notifications</span>
+                    <button id="markAllRead">Mark all as read</button>
+                </div>
+                <ul id="notificationList"></ul>
             </div>
         </div>
+
     </div>
 
     <!-- Overlay for mobile -->

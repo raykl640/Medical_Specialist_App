@@ -1,73 +1,112 @@
-// navigation.js - REFACTORED VERSION
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, collection, query, where, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { firebaseConfig } from './firebase-config.js';
+
 class NavigationManager {
     constructor() {
         this.isLoggingOut = false;
         this.eventListenersAttached = false;
+        this.appointmentUnsub = null;
+        this.medicalUnsubs = [];
+        // Bind event handlers once for consistent references
+        this.handleHamburgerClick = this.handleHamburgerClick.bind(this);
+        this.handleOverlayClick = this.handleOverlayClick.bind(this);
+        this.handleLogoutClick = this.handleLogoutClick.bind(this);
         this.init();
     }
 
     async init() {
+        this.setupNotificationUI();
         this.setupEventListeners();
         this.initializeFirebaseAuth();
-        this.initializeSidebarState();
     }
 
-    initializeSidebarState() {
-        // Check localStorage for sidebar state
-        const sidebarState = localStorage.getItem('sidebarOpen');
-        if (sidebarState === 'true') {
-            this.openSidebar();
+    setupNotificationUI() {
+        this.unreadCount = 0;
+        this.bell = document.getElementById('notificationBell');
+        this.badge = document.getElementById('notificationCount');
+        this.dropdown = document.getElementById('notificationDropdown');
+        this.list = document.getElementById('notificationList');
+        this.markAllBtn = document.getElementById('markAllRead');
+        if (this.bell) {
+            this.bell.addEventListener('click', () => {
+                if (this.dropdown) this.dropdown.classList.toggle('hidden');
+                this.hideBadge();
+            });
+        }
+        if (this.markAllBtn) {
+            this.markAllBtn.addEventListener('click', () => {
+                if (this.list) this.list.innerHTML = '';
+                if (this.dropdown) this.dropdown.classList.add('hidden');
+                this.hideBadge();
+            });
+        }
+        document.addEventListener("appointmentBooked", e => {
+            const date = e.detail.date;
+            const readableDate = date ? new Date(date).toLocaleString() : '';
+            this.showNotification(`📅 Appointment booked for ${readableDate}`);
+        });
+
+        document.addEventListener("appointmentRescheduled", e => {
+            const { date, time } = e.detail || {};
+            const readableDate = date ? new Date(date).toLocaleDateString() : '';
+            this.showNotification(`✏️ Appointment rescheduled to ${readableDate} at ${time}`);
+        });
+
+        document.addEventListener("appointmentCanceled", () => {
+            this.showNotification(`❌ Appointment canceled`);
+        });
+
+    }
+    showNotification(message) {
+        if (!this.list) return;
+        const li = document.createElement('li');
+        li.textContent = message;
+        this.list.prepend(li);
+        this.unreadCount++;
+        if (this.badge) {
+            this.badge.textContent = this.unreadCount;
+            this.badge.classList.remove('hidden');
         }
     }
-
+    hideBadge() {
+        this.unreadCount = 0;
+        if (this.badge) this.badge.classList.add('hidden');
+    }
     setupEventListeners() {
         // PREVENT DUPLICATE EVENT LISTENERS
         if (this.eventListenersAttached) {
             console.log('Event listeners already attached, skipping...');
             return;
         }
-
-        // Wait a moment for DOM elements to be ready, then set up listeners
         setTimeout(() => {
             const hamburger = document.querySelector('.hamburger-menu');
             if (hamburger) {
-                // REMOVE ANY EXISTING LISTENERS FIRST
                 hamburger.removeEventListener('click', this.handleHamburgerClick);
-                // ADD THE LISTENER WITH BOUND CONTEXT
-                this.handleHamburgerClick = this.handleHamburgerClick.bind(this);
                 hamburger.addEventListener('click', this.handleHamburgerClick);
                 console.log('Hamburger menu listener attached');
             } else {
                 console.log('Hamburger menu not found');
             }
-
             const overlay = document.getElementById('overlay');
             if (overlay) {
                 overlay.removeEventListener('click', this.handleOverlayClick);
-                this.handleOverlayClick = this.handleOverlayClick.bind(this);
                 overlay.addEventListener('click', this.handleOverlayClick);
             }
-
             const logoutLink = document.getElementById('logout-link');
             if (logoutLink) {
                 logoutLink.removeEventListener('click', this.handleLogoutClick);
-                this.handleLogoutClick = this.handleLogoutClick.bind(this);
                 logoutLink.addEventListener('click', this.handleLogoutClick);
             }
-
-            // Mark listeners as attached
             this.eventListenersAttached = true;
         }, 100);
-
-        // Handle window resize
         window.addEventListener('resize', () => {
             if (window.innerWidth > 768) {
                 const overlay = document.getElementById('overlay');
                 if (overlay) overlay.classList.remove('show');
             }
         });
-
-        // Handle page transitions with fade effect
         document.querySelectorAll("a").forEach(link => {
             link.addEventListener("click", function (e) {
                 if (link.hostname === window.location.hostname && !link.classList.contains('no-fade')) {
@@ -80,77 +119,39 @@ class NavigationManager {
             });
         });
     }
-
-    // SEPARATE HANDLER METHODS TO PREVENT CONFLICTS
     handleHamburgerClick(e) {
         e.preventDefault();
         e.stopPropagation();
         console.log('Hamburger clicked - single handler');
         this.toggleSidebar();
     }
-
     handleOverlayClick(e) {
         e.preventDefault();
         e.stopPropagation();
         this.closeSidebar();
     }
-
     handleLogoutClick(e) {
         e.preventDefault();
         e.stopPropagation();
         this.logout();
     }
-
     async initializeFirebaseAuth() {
         try {
-            // Import Firebase modules
-            const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js");
-            const { getAuth, onAuthStateChanged, signOut } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js");
-            
-            // Import your Firebase config - with error handling
-            let firebaseConfig;
-            try {
-                const configModule = await import('./firebase-config.js');
-                firebaseConfig = configModule.firebaseConfig || configModule.default;
-            } catch (configError) {
-                console.error('Error loading Firebase config:', configError);
-                // Fallback config - replace with your actual Firebase config
-                firebaseConfig = {
-                    apiKey: "your-api-key",
-                    authDomain: "your-project.firebaseapp.com",
-                    projectId: "your-project-id",
-                    storageBucket: "your-project.appspot.com",
-                    messagingSenderId: "123456789",
-                    appId: "your-app-id"
-                };
-                console.warn('Using fallback Firebase config. Please update with your actual config.');
-            }
-
-            // Validate config before initializing
-            if (!firebaseConfig || !firebaseConfig.apiKey) {
-                throw new Error('Invalid Firebase configuration');
-            }
-
-            // Initialize Firebase
             const app = initializeApp(firebaseConfig);
             const auth = getAuth(app);
-            
-            // Make auth available globally
+            const db = getFirestore(app);
+            this.db = db;
             window.firebaseAuth = auth;
             window.firebaseSignOut = signOut;
-
-            // Check authentication state
             onAuthStateChanged(auth, (user) => {
                 if (this.isLoggingOut) return;
-                
                 const loadingScreen = document.getElementById('loadingScreen');
                 const mainApp = document.querySelector('.main-app') || document.body;
-                
                 if (user) {
                     console.log('User is authenticated:', user.email);
                     this.loadAuthenticatedContent(user);
-                    
-                    // Hide loading screen if it exists
+                    this.attachListenersForUser(db, user.uid);
+
                     if (loadingScreen) {
                         loadingScreen.style.display = 'none';
                     }
@@ -158,6 +159,7 @@ class NavigationManager {
                         mainApp.style.display = 'block';
                     }
                 } else {
+                    this.detachListeners();
                     if (!this.isLoggingOut) {
                         console.log('User not authenticated, redirecting to login');
                         try {
@@ -175,9 +177,30 @@ class NavigationManager {
             console.warn('Firebase authentication not available. Navigation will work without auth.');
         }
     }
+    attachListenersForUser(db, uid) {
+        // Medical record types
+        const recordTypes = ['medicalHistory', 'labTests', 'radiology', 'medications'];
+        this.medicalUnsubs = recordTypes.map(type => {
+            const recQuery = query(
+                collection(db, type),
+                where('patientId', '==', uid)
+            );
+            return onSnapshot(recQuery, snap => {
+                snap.docChanges().forEach(change => {
+                    if (change.type === 'added') {
+                        const name = type.replace(/([A-Z])/g, ' $1');
+                        this.showNotification(`🩺 New ${name.trim()} record added`);
+                    }
+                });
+            });
+        });
+    }
+    detachListeners() {
+        this.medicalUnsubs.forEach(unsub => unsub && unsub());
+        this.medicalUnsubs = [];
+    }
 
     loadAuthenticatedContent(user) {
-        // Update user initial in profile picture
         const userInitial = document.getElementById('userInitial');
         if (userInitial) {
             if (user.displayName) {
@@ -186,25 +209,19 @@ class NavigationManager {
                 userInitial.textContent = user.email.charAt(0).toUpperCase();
             }
         }
-        
-        // Set active nav link based on current page
         this.setActiveNavLink();
     }
-
     setActiveNavLink() {
-        // Get current page name
         const currentPage = window.location.pathname.split('/').pop() || 'patientDashboard.html';
-        
+
         // Remove active class from all nav links
         document.querySelectorAll('.nav-link').forEach(link => {
             link.classList.remove('active');
         });
-        
+
         // Add active class to current page link
         document.querySelectorAll('.nav-link').forEach(link => {
             const linkHref = link.getAttribute('href');
-            const linkPage = link.getAttribute('data-page');
-            
             if (linkHref === currentPage || linkHref === './' + currentPage) {
                 link.classList.add('active');
             }
@@ -216,32 +233,28 @@ class NavigationManager {
         const sidebar = document.getElementById('sidebar');
         const mainContent = document.getElementById('mainContent') || document.querySelector('.main-content');
         const overlay = document.getElementById('overlay');
-        
+
         if (sidebar) {
             const wasOpen = sidebar.classList.contains('open');
             sidebar.classList.toggle('open');
             console.log('Sidebar toggled, open:', sidebar.classList.contains('open'));
 
-            // Store sidebar state in localStorage
             localStorage.setItem('sidebarOpen', sidebar.classList.contains('open'));
         } else {
             console.log('Sidebar element not found');
             return;
         }
-        
-        // On desktop, shift main content; on mobile, show overlay
         if (window.innerWidth > 768) {
             if (mainContent) mainContent.classList.toggle('shifted');
         } else {
             if (overlay) overlay.classList.toggle('show');
         }
     }
-
     openSidebar() {
         const sidebar = document.getElementById('sidebar');
         const mainContent = document.getElementById('mainContent') || document.querySelector('.main-content');
         const overlay = document.getElementById('overlay');
-        
+
         if (sidebar) sidebar.classList.add('open');
         if (mainContent && window.innerWidth > 768) mainContent.classList.add('shifted');
         if (overlay && window.innerWidth <= 768) overlay.classList.add('show');
@@ -251,30 +264,29 @@ class NavigationManager {
         const sidebar = document.getElementById('sidebar');
         const mainContent = document.getElementById('mainContent') || document.querySelector('.main-content');
         const overlay = document.getElementById('overlay');
-        
+
         if (sidebar) sidebar.classList.remove('open');
         if (mainContent) mainContent.classList.remove('shifted');
         if (overlay) overlay.classList.remove('show');
 
-        // Update localStorage
         localStorage.setItem('sidebarOpen', 'false');
     }
 
     async logout() {
         if (this.isLoggingOut) return;
-        
+
         if (confirm('Are you sure you want to log out?')) {
             this.isLoggingOut = true;
-            
+
             // Show loading state if loading screen exists
             const loadingScreen = document.getElementById('loadingScreen');
             const mainApp = document.querySelector('.main-app');
-            
+
             if (loadingScreen && mainApp) {
                 loadingScreen.style.display = 'flex';
                 mainApp.style.display = 'none';
             }
-            
+
             if (window.firebaseAuth && window.firebaseSignOut) {
                 try {
                     await window.firebaseSignOut(window.firebaseAuth);
@@ -283,7 +295,7 @@ class NavigationManager {
                 } catch (error) {
                     console.error('Logout error:', error);
                     this.isLoggingOut = false;
-                    
+
                     // Hide loading screen on error
                     if (loadingScreen && mainApp) {
                         loadingScreen.style.display = 'none';
@@ -300,14 +312,10 @@ class NavigationManager {
     }
 }
 
-// PREVENT MULTIPLE INSTANCES
 if (!window.navigationManager) {
-    // Initialize navigation when DOM is loaded
     document.addEventListener('DOMContentLoaded', () => {
         console.log("DOM loaded, initializing NavigationManager");
         window.navigationManager = new NavigationManager();
     });
 }
-
-// Export for module use
 export default NavigationManager;
