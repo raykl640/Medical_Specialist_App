@@ -7,6 +7,7 @@
     <title>Welcome to MedConnect</title>
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/medical.css">
+    <script src="https://kit.fontawesome.com/87385ae8db.js" crossorigin="anonymous"></script>
 
     <style>
         /* main content */
@@ -26,76 +27,72 @@
 </head>
 
 <body>
-    <!-- Navigation Component - Include this in each HTML page -->
-
-<!-- Title Bar -->
-<div class="title-bar">
-    <div class="hamburger-menu">
-        <div class="hamburger-line"></div>
-        <div class="hamburger-line"></div>
-        <div class="hamburger-line"></div>
-    </div>
-    <div class="notification-container">
-        <button id="notificationBell" class="bell-icon">
-            🔔
-            <span id="notificationCount" class="notification-count">0</span>
-        </button>
-        <!-- Notification Dropdown -->
-        <div id="notificationDropdown" class="notification-dropdown hidden">
-            <div class="notification-header">Notifications</div>
-            <ul id="notificationList" class="notification-list"></ul>
+ <div class="title-bar">
+        <div class="hamburger-menu">
+            <div class="hamburger-line"></div>
+            <div class="hamburger-line"></div>
+            <div class="hamburger-line"></div>
         </div>
-    </div>
-</div>
-
-<!-- Overlay for mobile -->
-<div class="overlay" id="overlay"></div>
-
-<!-- Navigation Sidebar -->
-<div class="sidebar" id="sidebar">
-    <div class="logo">
-        <div class="logo-circle">
-            <div class="profile-picture" id="userInitial">
-                U
+        <div class="notification-wrapper">
+            <button id="notificationBell">
+                <i class="fas fa-bell"></i>
+                <span id="notificationCount" class="notification-count">0</span>
+            </button>
+            <div id="notificationDropdown" class="notification-dropdown hidden">
+                <div class="notification-header">
+                    <span>Notifications</span>
+                    <button id="markAllRead">Mark all as read</button>
+                </div>
+                <ul id="notificationList"></ul>
             </div>
         </div>
     </div>
-    <div class="nav-section">
-        <h3>Dashboard</h3>
-        <ul>
-            <li><a href="patientDashboard.html" class="nav-link" data-page="dashboard">
-                <span class="icon">🏠</span>Home</a></li>
-            <li><a href="appointments.html" class="nav-link" data-page="appointments">
-                <span class="icon">📅</span>My Appointments</a></li>
-            <li><a href="patientsClinics.html" class="nav-link" data-page="clinics">
-                <span class="icon">🏥</span>Clinics</a></li>
-            <li><a href="patientHealthResources.html" class="nav-link" data-page="health-resources">
-                <span class="icon">📚</span>Health Resources</a></li>
-        </ul>
+    <div class="overlay" id="overlay"></div>
+    <div class="sidebar" id="sidebar">
+        <div class="logo">
+            <div class="logo-circle">
+                <div class="profile-picture" id="userInitial">
+                    U
+                </div>
+            </div>
+        </div>
+        <div class="nav-section">
+            <h3>Dashboard</h3>
+            <ul>
+                <li><a href="patientDashboard.html" class="nav-link" data-page="dashboard">
+                        <span class="icon"><i class="fas fa-home"></i></span> Home</a></li>
+                <li><a href="appointments.html" class="nav-link" data-page="appointments">
+                        <span class="icon"><i class="fas fa-calendar-alt"></i></span> My Appointments</a></li>
+                <li><a href="patientsClinics.html" class="nav-link" data-page="clinics">
+                        <span class="icon"><i class="fas fa-hospital"></i></span> Clinics</a></li>
+                <li><a href="patientHealthResources.html" class="nav-link" data-page="health-resources">
+                        <span class="icon"><i class="fas fa-book-medical"></i></span> Health Resources</a></li>
+            </ul>
+        </div>
+        <div class="nav-section">
+            <h3>Medical</h3>
+            <ul>
+                <li><a href="medicalHistory.html" class="nav-link" data-page="medical-history">
+                        <span class="icon"><i class="fas fa-notes-medical"></i></span> Medical History</a></li>
+                <li><a href="patientLabTests.html" class="nav-link" data-page="lab-tests">
+                        <span class="icon"><i class="fas fa-vials"></i></span> Lab Tests</a></li>
+                <li><a href="patientRadiology.html" class="nav-link" data-page="radiology">
+                        <span class="icon"><i class="fas fa-x-ray"></i></span> Radiology</a></li>
+                <li><a href="patientMedications.html" class="nav-link" data-page="prescriptions">
+                        <span class="icon"><i class="fas fa-pills"></i></span> Medications</a></li>
+            </ul>
+        </div>
+        <div class="nav-section nav-bottom">
+            <ul>
+                <li><a href="profile.html" class="nav-link" id="profile-link" data-page="profile">
+                        <span class="icon"><i class="fas fa-user"></i></span> Profile</a></li>
+                <li><a href="#" class="nav-link" id="logout-link">
+                        <span class="icon"><i class="fas fa-sign-out-alt"></i></span> Log Out</a></li>
+            </ul>
+        </div>
     </div>
-    <div class="nav-section">
-        <h3>Medical</h3>
-        <ul>
-            <li><a href="medicalHistory.html" class="nav-link" data-page="medical-history">
-                <span class="icon">📋</span>Medical History</a></li>
-            <li><a href="patientLabTests.html" class="nav-link" data-page="lab-tests">
-                <span class="icon">🧪</span>Lab Tests</a></li>
-            <li><a href="patientRadiology.html" class="nav-link" data-page="radiology">
-                <span class="icon">💎</span>Radiology</a></li>
-            <li><a href="patientMedications.html" class="nav-link" data-page="prescriptions">
-                <span class="icon">💊</span>Medications</a></li>
-        </ul>
-    </div>
-    <div class="nav-section nav-bottom">
-        <ul>
-            <li><a href="profile.html" class="nav-link" id="profile-link" data-page="profile">
-                <span class="icon">👤</span>Profile</a></li>
-            <li><a href="#" class="nav-link" id="logout-link">
-                <span class="icon">🚪</span>Log Out</a></li>
-        </ul>
-    </div>
-</div>
-    <div class="table-content">
+
+    <div id="mainContent" class="main-content">
         <h2>Medications</h2>
         <h4>Browse through your medications by clinic or specialist.</h4>
         <div class="controls">

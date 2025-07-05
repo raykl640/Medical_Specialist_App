@@ -1,458 +1,306 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Patient Health Resources</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/healthResources.css">
+    <script src="https://kit.fontawesome.com/87385ae8db.js" crossorigin="anonymous"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            min-height: 100vh;
-            padding: 20px;
-            color: #333;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        }
-
+        /* Page Header */
         h1 {
-            text-align: center;
-            color: #2c3e50;
-            margin-bottom: 30px;
-            font-size: 2.2rem;
-            background: linear-gradient(45deg, #4b6cb7, #182848);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            font-size: 24px;
+            color: var(--luna-deep);
+            margin-bottom: 10px;
             display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 15px;
+            gap: 10px;
         }
 
         .welcome-message {
-            text-align: center;
-            margin-bottom: 30px;
-            color: #5d6d7e;
+            margin-bottom: 25px;
+            font-size: 15px;
+            color: #333;
             line-height: 1.6;
         }
 
+        /* Search + Filter Section */
         .search-filter-section {
-            background: white;
-            border-radius: 15px;
+            margin-bottom: 25px;
+            background: #ffffff;
             padding: 20px;
-            margin-bottom: 30px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            border-radius: 8px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
         }
 
         .search-filter-row {
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr auto;
-            gap: 15px;
-            align-items: end;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
         }
 
         .form-group {
-            margin-bottom: 15px;
+            flex: 1 1 200px;
+            display: flex;
+            flex-direction: column;
         }
 
-        label {
-            display: block;
-            margin-bottom: 8px;
+        .form-group label {
             font-weight: 600;
-            color: #34495e;
-            font-size: 0.9rem;
+            margin-bottom: 6px;
+            font-size: 14px;
+            color: var(--luna-dark);
         }
 
-        input[type="text"],
-        select {
-            width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #e3f2fd;
-            border-radius: 10px;
-            font-size: 16px;
-            transition: all 0.3s ease;
-            background: white;
-        }
-
-        input[type="text"]:focus,
-        select:focus {
+        .form-group input,
+        .form-group select {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 14px;
             outline: none;
-            border-color: #4b6cb7;
-            box-shadow: 0 0 0 3px rgba(75, 108, 183, 0.1);
+            background: #fff;
         }
 
-        button {
-            background: linear-gradient(45deg, #4b6cb7, #182848);
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(75, 108, 183, 0.3);
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: var(--luna-accent);
+            box-shadow: 0 0 3px var(--luna-accent);
         }
 
         button.secondary {
-            background: linear-gradient(45deg, #6c757d, #495057);
+            background: #eee;
+            color: #333;
+            padding: 10px 14px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background 0.2s ease;
         }
 
-        button.success {
-            background: linear-gradient(45deg, #28a745, #218838);
+        button.secondary:hover {
+            background: #ddd;
         }
 
-        button.danger {
-            background: linear-gradient(45deg, #dc3545, #c82333);
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
         }
 
-        .resources-section {
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        .tab {
+            padding: 10px 16px;
+            border-radius: 20px;
+            background: #f0f0f0;
+            color: #333;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background 0.2s ease, color 0.2s ease;
+        }
+
+        .tab.active {
+            background: var(--luna-primary);
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .tab:hover:not(.active) {
+            background: #e0e0e0;
         }
 
         .resources-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-            gap: 25px;
-            margin-top: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 20px;
         }
 
-        .resource-card {
-            background: white;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            border: 1px solid #e3f2fd;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        .resource-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-        }
-
-        .resource-image {
-            width: 100%;
-            height: 180px;
-            object-fit: cover;
-            background: linear-gradient(45deg, #f8f9fa, #e9ecef);
-        }
-
-        .resource-content {
-            padding: 20px;
-        }
-
-        .resource-title {
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: #2c3e50;
-            margin-bottom: 10px;
-            line-height: 1.3;
-        }
-
-        .resource-meta {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            font-size: 0.8rem;
-            color: #7f8c8d;
-        }
-
-        .resource-category {
-            background: linear-gradient(45deg, #4b6cb7, #182848);
-            color: white;
-            padding: 4px 10px;
-            border-radius: 10px;
-            font-weight: 600;
-            font-size: 0.75rem;
-        }
-
-        .resource-summary {
-            color: #5d6d7e;
-            line-height: 1.6;
-            margin-bottom: 15px;
-            display: -webkit-box;
-            /*-webkit-line-clamp: 3;*/
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            font-size: 0.9rem;
-        }
-
-        .resource-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 5px;
-            margin-bottom: 15px;
-        }
-
-        .resource-tag {
-            background: #f8f9fa;
-            color: #495057;
-            padding: 3px 8px;
-            border-radius: 8px;
-            font-size: 0.7rem;
-            border: 1px solid #dee2e6;
-        }
-
-        .resource-actions {
-            display: flex;
-            gap: 10px;
-            justify-content: space-between;
-            margin-top: 15px;
-        }
-
-        .btn-small {
-            padding: 8px 15px;
-            font-size: 0.8rem;
-            border-radius: 8px;
-            flex: 1;
-        }
-
-        .btn-view {
-            background: linear-gradient(45deg, #4b6cb7, #182848);
-        }
-
-        .bookmark-btn {
-            background: linear-gradient(45deg, #ffc107, #fd7e14);
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            z-index: 2;
-            border: none;
-            color: white;
-            font-size: 1rem;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .bookmark-btn.bookmarked {
-            background: linear-gradient(45deg, #fd7e14, #dc3545);
-        }
 
         .loading {
             text-align: center;
-            padding: 40px;
-            color: #7f8c8d;
+            color: #777;
             font-style: italic;
+            padding: 20px;
         }
 
-        .error {
-            background: #ffe6e6;
-            color: #d63384;
-            padding: 15px;
-            border-radius: 10px;
-            margin: 10px 0;
-            border-left: 4px solid #dc3545;
-        }
-
-        .success {
-            background: #e8f5e8;
-            color: #198754;
-            padding: 15px;
-            border-radius: 10px;
-            margin: 10px 0;
-            border-left: 4px solid #28a745;
-        }
-
-        .tabs {
-            display: flex;
-            margin-bottom: 20px;
-            border-bottom: 2px solid #e3f2fd;
-        }
-
-        .tab {
-            padding: 10px 20px;
-            cursor: pointer;
-            font-weight: 600;
-            color: #6c757d;
-            transition: all 0.3s ease;
-            border-bottom: 3px solid transparent;
-        }
-
-        .tab.active {
-            color: #4b6cb7;
-            border-bottom-color: #4b6cb7;
-        }
-
-        .tab:hover:not(.active) {
-            color: #2c3e50;
-        }
-
-        .modal {
-            display: none;
+        /* Overlay base */
+        #resourceModal {
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            z-index: 1000;
-            backdrop-filter: blur(5px);
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 2000;
+            display: none;
+            align-items: center;
+            justify-content: center;
         }
 
-        .modal-content {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: white;
-            border-radius: 20px;
-            padding: 30px;
+        #resourceModal .modal-backdrop[style*="display: flex"] {
+            display: flex !important;
+        }
+
+        /* Modal content box */
+        #resourceModal .modal-content {
+            background-color: #fff;
+            padding: 25px;
+            border-radius: 10px;
+            max-width: 700px;
             width: 90%;
-            max-width: 800px;
             max-height: 90vh;
             overflow-y: auto;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
         }
 
-        .modal-header {
+        /* Modal header */
+        #resourceModal .modal-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            border-bottom: 1px solid #ddd;
             margin-bottom: 20px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid #e3f2fd;
         }
 
-        .close-modal {
+        #resourceModal .modal-header h2 {
+            font-size: 20px;
+            margin: 0;
+        }
+
+        /* Close button */
+        #resourceModal .close-modal {
             background: none;
             border: none;
-            color: #adb5bd;
-            font-size: 1.5rem;
+            font-size: 28px;
             cursor: pointer;
-            padding: 5px;
+            color: #555;
+            transition: color 0.2s ease;
         }
 
-        .close-modal:hover {
-            color: #dc3545;
+        #resourceModal .close-modal:hover {
+            color: #000;
         }
 
-        .resource-detail-image {
+
+        /* Modal body */
+        #resourceModal #modalBody {
+            padding: 20px 24px;
+            color: #333;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        /* Image styling */
+        #resourceModal .resource-detail-image {
             width: 100%;
-            max-height: 300px;
-            object-fit: cover;
-            border-radius: 10px;
-            margin-bottom: 20px;
+            height: auto;
+            border-radius: 8px;
+            margin-bottom: 16px;
         }
 
-        .resource-content-full {
-            line-height: 1.8;
-            color: #495057;
-            white-space: pre-wrap;
+        /* Meta data */
+        #resourceModal .resource-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            font-size: 14px;
+            color: #777;
+            margin-bottom: 10px;
         }
 
-        .external-link {
+        /* Tags */
+        #resourceModal .resource-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        #resourceModal .resource-tag {
+            background: var(--luna-light);
+            color: var(--luna-deep);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 13px;
+            border: 1px solid var(--luna-accent);
+        }
+
+        /* External link */
+        #resourceModal .external-link {
             display: inline-flex;
             align-items: center;
-            gap: 5px;
-            color: #4b6cb7;
+            margin-top: 20px;
+            padding: 8px 14px;
+            background-color: var(--luna-accent);
+            color: white;
+            border-radius: 6px;
             text-decoration: none;
-            font-weight: 600;
-            margin-top: 15px;
+            font-weight: 500;
+            transition: background 0.2s ease;
         }
 
-        .external-link:hover {
-            text-decoration: underline;
+        #resourceModal .external-link i {
+            margin-right: 6px;
         }
 
-        .empty-state {
-            text-align: center;
-            padding: 40px 20px;
-            color: #6c757d;
+        #resourceModal .external-link:hover {
+            background-color: var(--luna-primary);
         }
 
-        .empty-state i {
-            font-size: 3rem;
-            margin-bottom: 20px;
-            color: #adb5bd;
-        }
-
-        .empty-state h3 {
-            margin-bottom: 10px;
-            color: #495057;
-        }
-
-        @media (max-width: 768px) {
-            .search-filter-row {
-                grid-template-columns: 1fr;
+        /* Fade in animation */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.96);
             }
 
-            .resources-grid {
-                grid-template-columns: 1fr;
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* Responsive tweaks */
+        @media (max-width: 600px) {
+            #resourceModal .modal-content {
+                padding: 15px;
             }
 
-            .resource-actions {
-                flex-direction: column;
+            #resourceModal .modal-header {
+                padding: 14px 20px;
             }
 
-            .btn-small {
-                width: 100%;
+            #resourceModal #modalBody {
+                padding: 16px 20px;
             }
         }
     </style>
 </head>
 
 <body>
-    <!-- Navigation Component - Include this in each HTML page -->
-
-    <!-- Title Bar -->
     <div class="title-bar">
         <div class="hamburger-menu">
             <div class="hamburger-line"></div>
             <div class="hamburger-line"></div>
             <div class="hamburger-line"></div>
         </div>
-        <div class="notification-container">
-            <button id="notificationBell" class="bell-icon">
-                🔔
+        <div class="notification-wrapper">
+            <button id="notificationBell">
+                <i class="fas fa-bell"></i>
                 <span id="notificationCount" class="notification-count">0</span>
             </button>
-            <!-- Notification Dropdown -->
             <div id="notificationDropdown" class="notification-dropdown hidden">
-                <div class="notification-header">Notifications</div>
-                <ul id="notificationList" class="notification-list"></ul>
+                <div class="notification-header">
+                    <span>Notifications</span>
+                    <button id="markAllRead">Mark all as read</button>
+                </div>
+                <ul id="notificationList"></ul>
             </div>
         </div>
     </div>
-
-    <!-- Overlay for mobile -->
     <div class="overlay" id="overlay"></div>
-
-    <!-- Navigation Sidebar -->
     <div class="sidebar" id="sidebar">
         <div class="logo">
             <div class="logo-circle">
@@ -465,88 +313,87 @@
             <h3>Dashboard</h3>
             <ul>
                 <li><a href="patientDashboard.html" class="nav-link" data-page="dashboard">
-                        <span class="icon">🏠</span>Home</a></li>
+                        <span class="icon"><i class="fas fa-home"></i></span> Home</a></li>
                 <li><a href="appointments.html" class="nav-link" data-page="appointments">
-                        <span class="icon">📅</span>My Appointments</a></li>
+                        <span class="icon"><i class="fas fa-calendar-alt"></i></span> My Appointments</a></li>
                 <li><a href="patientsClinics.html" class="nav-link" data-page="clinics">
-                        <span class="icon">🏥</span>Clinics</a></li>
+                        <span class="icon"><i class="fas fa-hospital"></i></span> Clinics</a></li>
                 <li><a href="patientHealthResources.html" class="nav-link" data-page="health-resources">
-                        <span class="icon">📚</span>Health Resources</a></li>
+                        <span class="icon"><i class="fas fa-book-medical"></i></span> Health Resources</a></li>
             </ul>
         </div>
         <div class="nav-section">
             <h3>Medical</h3>
             <ul>
                 <li><a href="medicalHistory.html" class="nav-link" data-page="medical-history">
-                        <span class="icon">📋</span>Medical History</a></li>
+                        <span class="icon"><i class="fas fa-notes-medical"></i></span> Medical History</a></li>
                 <li><a href="patientLabTests.html" class="nav-link" data-page="lab-tests">
-                        <span class="icon">🧪</span>Lab Tests</a></li>
+                        <span class="icon"><i class="fas fa-vials"></i></span> Lab Tests</a></li>
                 <li><a href="patientRadiology.html" class="nav-link" data-page="radiology">
-                        <span class="icon">💎</span>Radiology</a></li>
+                        <span class="icon"><i class="fas fa-x-ray"></i></span> Radiology</a></li>
                 <li><a href="patientMedications.html" class="nav-link" data-page="prescriptions">
-                        <span class="icon">💊</span>Medications</a></li>
+                        <span class="icon"><i class="fas fa-pills"></i></span> Medications</a></li>
             </ul>
         </div>
         <div class="nav-section nav-bottom">
             <ul>
                 <li><a href="profile.html" class="nav-link" id="profile-link" data-page="profile">
-                        <span class="icon">👤</span>Profile</a></li>
+                        <span class="icon"><i class="fas fa-user"></i></span> Profile</a></li>
                 <li><a href="#" class="nav-link" id="logout-link">
-                        <span class="icon">🚪</span>Log Out</a></li>
+                        <span class="icon"><i class="fas fa-sign-out-alt"></i></span> Log Out</a></li>
             </ul>
         </div>
     </div>
-    <h1><i class="fas fa-heartbeat"></i> Patient Health Resources</h1>
+    <div id="mainContent" class="main-content">
+        <h1><i class="fas fa-book-medical"></i>Patient Health Resources</h1>
 
-    <div class="welcome-message">
-        <p>Explore our library of trusted health resources. Find articles, guides, and information to support your
-            health journey. Bookmark your favorites for easy access later.</p>
-    </div>
+        <div class="welcome-message">
+            <p>Explore our library of trusted health resources. Find articles, guides, and information to support your
+                health journey. Bookmark your favorites for easy access later.</p>
+        </div>
 
-    <!-- Search and Filter Section -->
-    <div class="search-filter-section">
-        <div class="search-filter-row">
-            <div class="form-group">
-                <label for="searchInput">Search Resources</label>
-                <input type="text" id="searchInput" placeholder="Search by title, content, or tags...">
+        <!-- Search and Filter Section -->
+        <div class="search-filter-section">
+            <div class="search-filter-row">
+                <div class="form-group">
+                    <label for="searchInput">Search Resources</label>
+                    <input type="text" id="searchInput" placeholder="Search by title, content, or tags...">
+                </div>
+                <div class="form-group">
+                    <label for="categoryFilter">Filter by Category</label>
+                    <select id="categoryFilter">
+                        <option value="">All Categories</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="sortBy">Sort By</label>
+                    <select id="sortBy">
+                        <option value="newest">Newest First</option>
+                        <option value="oldest">Oldest First</option>
+                        <option value="title">Title A-Z</option>
+                        <option value="category">Category</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>&nbsp;</label>
+                    <button type="button" id="clearFilters" class="secondary"><i class="fas fa-undo"></i> Clear</button>
+                </div>
             </div>
-            <div class="form-group">
-                <label for="categoryFilter">Filter by Category</label>
-                <select id="categoryFilter">
-                    <option value="">All Categories</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="sortBy">Sort By</label>
-                <select id="sortBy">
-                    <option value="newest">Newest First</option>
-                    <option value="oldest">Oldest First</option>
-                    <option value="title">Title A-Z</option>
-                    <option value="category">Category</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label>&nbsp;</label>
-                <button type="button" id="clearFilters" class="secondary"><i class="fas fa-undo"></i> Clear</button>
+        </div>
+
+        <div class="tabs">
+            <div class="tab active" data-tab="all">All Resources</div>
+            <div class="tab" data-tab="bookmarked">Bookmarked</div>
+        </div>
+
+        <!-- Resources Display Section -->
+        <div class="resources-section">
+            <div id="resourcesList">
+                <div class="loading">Loading health resources...</div>
             </div>
         </div>
     </div>
 
-    <!-- Resources Tabs -->
-    <div class="tabs">
-        <div class="tab active" data-tab="all">All Resources</div>
-        <div class="tab" data-tab="bookmarked">Bookmarked</div>
-    </div>
-
-    <!-- Resources Display Section -->
-    <div class="resources-section">
-        <div id="resourcesList">
-            <div class="loading">Loading health resources...</div>
-        </div>
-    </div>
-    </div>
-
-    <!-- Resource Detail Modal -->
     <div id="resourceModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">

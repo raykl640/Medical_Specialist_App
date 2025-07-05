@@ -1,163 +1,440 @@
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Appointments - Medical Specialist App</title>
-    <link rel="stylesheet" href="css/styles.css" />
-    <link rel="stylesheet" href="css/appointments.css" />
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="https://kit.fontawesome.com/87385ae8db.js" crossorigin="anonymous"></script>
+    <style>
+        :root {
+            --luna-light: #A7EBF2;
+            --luna-accent: #54ACBF;
+            --luna-primary: #26658C;
+            --luna-deep: #023859;
+            --luna-dark: #011C40;
+        }
+
+        /* Adjust padding based on sidebar */
+        .container {
+            padding: 20px 20px 40px 300px;
+            /* assume sidebar width 280px + margin */
+            max-width: 100%;
+            transition: padding-left 0.3s ease;
+        }
+
+        body:not(.with-sidebar) .container {
+            padding-left: 20px;
+        }
+
+        /* Header */
+        .header h1 {
+            font-size: 28px;
+            color: var(--luna-dark);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header h1 i {
+            color: var(--luna-accent);
+        }
+
+        .book-new-btn,
+        .submit-btn {
+            background: var(--luna-accent);
+            color: #fff;
+            padding: 10px 16px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .book-new-btn:hover,
+        .submit-btn:hover {
+            background: var(--luna-primary);
+        }
+
+        .section h2 {
+            font-size: 20px;
+            color: var(--luna-primary);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .loading {
+            font-size: 14px;
+            color: gray;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            margin-top: 30px;
+        }
+
+        .modal-content {
+            background: #fff;
+            width: 90%;
+            max-width: 600px;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--luna-dark);
+            margin-bottom: 15px;
+        }
+
+        .modal-header h2 {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .modal-header h2 i {
+            color: var(--luna-primary);
+        }
+
+        .modal-body label {
+            display: block;
+            margin: 10px 0 5px;
+            color: var(--luna-dark);
+            font-weight: 600;
+        }
+
+        .modal-body input,
+        .modal-body select,
+        .modal-body textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .time-slots-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .time-slot {
+            padding: 8px 12px;
+            background: var(--luna-light);
+            border-radius: 4px;
+            border: 1px solid var(--luna-accent);
+            cursor: pointer;
+        }
+
+        .time-slot.unavailable {
+            background: #f0f0f0;
+            color: #999;
+            border: none;
+            cursor: not-allowed;
+        }
+
+        .close {
+            font-size: 24px;
+            color: #999;
+            cursor: pointer;
+        }
+
+        /* Appointment Card */
+        .appointment-card {
+            background: #fff;
+            border: 1px solid #ccc;
+            border-left: 5px solid var(--luna-primary);
+            margin-bottom: 15px;
+            padding: 15px;
+            border-radius: 6px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .appointment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .appointment-info h3 {
+            margin: 0;
+            font-size: 18px;
+            color: var(--luna-dark);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .specialty {
+            font-size: 14px;
+            color: var(--luna-primary);
+            margin-top: 4px;
+        }
+
+        .appointment-status {
+            text-transform: capitalize;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            background: var(--luna-light);
+            color: var(--luna-deep);
+            font-weight: 600;
+        }
+
+        .appointment-details {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .detail-item {
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .detail-item i {
+            color: var(--luna-primary);
+        }
+
+        /* Action Buttons */
+        .appointment-actions {
+            margin-top: 12px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .action-btn {
+            background: var(--luna-accent);
+            color: #fff;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
+            font-size: 13px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .action-btn:hover {
+            background: var(--luna-primary);
+        }
+
+        .cancel-btn {
+            background: #f44336;
+        }
+
+        .cancel-btn:hover {
+            background: #c62828;
+        }
+
+        .view-btn {
+            background: var(--luna-dark);
+        }
+
+        .view-btn:hover {
+            background: #02253f;
+        }
+
+        .no-appointments {
+            background: var(--luna-light);
+            padding: 20px;
+            border-radius: 6px;
+            text-align: center;
+            color: var(--luna-deep);
+        }
+
+        /* Responsive */
+        @media (max-width: 800px) {
+            .container {
+                padding: 15px;
+            }
+
+            .modal-content {
+                width: 95%;
+                padding: 15px;
+            }
+
+            .appointment-card {
+                padding: 12px;
+            }
+
+            .appointment-actions {
+                flex-direction: column;
+            }
+
+            .action-btn,
+            .book-new-btn,
+            .submit-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
 </head>
+
 <body>
-    <!-- Navigation Component - Include this in each HTML page -->
-
-<!-- Title Bar -->
-<div class="title-bar">
-    <div class="hamburger-menu">
-        <div class="hamburger-line"></div>
-        <div class="hamburger-line"></div>
-        <div class="hamburger-line"></div>
-    </div>
-    <div class="notification-container">
-        <button id="notificationBell" class="bell-icon">
-            🔔
-            <span id="notificationCount" class="notification-count">0</span>
-        </button>
-        <!-- Notification Dropdown -->
-        <div id="notificationDropdown" class="notification-dropdown hidden">
-            <div class="notification-header">Notifications</div>
-            <ul id="notificationList" class="notification-list"></ul>
+    <div class="title-bar">
+        <div class="hamburger-menu">
+            <div class="hamburger-line"></div>
+            <div class="hamburger-line"></div>
+            <div class="hamburger-line"></div>
         </div>
-    </div>
-</div>
-
-<!-- Overlay for mobile -->
-<div class="overlay" id="overlay"></div>
-
-<!-- Navigation Sidebar -->
-<div class="sidebar" id="sidebar">
-    <div class="logo">
-        <div class="logo-circle">
-            <div class="profile-picture" id="userInitial">
-                U
+        <div class="notification-wrapper">
+            <button id="notificationBell">
+                <i class="fas fa-bell"></i>
+                <span id="notificationCount" class="notification-count">0</span>
+            </button>
+            <div id="notificationDropdown" class="notification-dropdown hidden">
+                <div class="notification-header">
+                    <span>Notifications</span>
+                    <button id="markAllRead">Mark all as read</button>
+                </div>
+                <ul id="notificationList"></ul>
             </div>
         </div>
     </div>
-    <div class="nav-section">
-        <h3>Dashboard</h3>
-        <ul>
-            <li><a href="patientDashboard.html" class="nav-link" data-page="dashboard">
-                <span class="icon">🏠</span>Home</a></li>
-            <li><a href="appointments.html" class="nav-link" data-page="appointments">
-                <span class="icon">📅</span>My Appointments</a></li>
-            <li><a href="patientsClinics.html" class="nav-link" data-page="clinics">
-                <span class="icon">🏥</span>Clinics</a></li>
-            <li><a href="patientHealthResources.html" class="nav-link" data-page="health-resources">
-                <span class="icon">📚</span>Health Resources</a></li>
-        </ul>
+    <div class="overlay" id="overlay"></div>
+    <div class="sidebar" id="sidebar">
+        <div class="logo">
+            <div class="logo-circle">
+                <div class="profile-picture" id="userInitial">
+                    U
+                </div>
+            </div>
+        </div>
+        <div class="nav-section">
+            <h3>Dashboard</h3>
+            <ul>
+                <li><a href="patientDashboard.html" class="nav-link" data-page="dashboard">
+                        <span class="icon"><i class="fas fa-home"></i></span> Home</a></li>
+                <li><a href="appointments.html" class="nav-link" data-page="appointments">
+                        <span class="icon"><i class="fas fa-calendar-alt"></i></span> My Appointments</a></li>
+                <li><a href="patientsClinics.html" class="nav-link" data-page="clinics">
+                        <span class="icon"><i class="fas fa-hospital"></i></span> Clinics</a></li>
+                <li><a href="patientHealthResources.html" class="nav-link" data-page="health-resources">
+                        <span class="icon"><i class="fas fa-book-medical"></i></span> Health Resources</a></li>
+            </ul>
+        </div>
+        <div class="nav-section">
+            <h3>Medical</h3>
+            <ul>
+                <li><a href="medicalHistory.html" class="nav-link" data-page="medical-history">
+                        <span class="icon"><i class="fas fa-notes-medical"></i></span> Medical History</a></li>
+                <li><a href="patientLabTests.html" class="nav-link" data-page="lab-tests">
+                        <span class="icon"><i class="fas fa-vials"></i></span> Lab Tests</a></li>
+                <li><a href="patientRadiology.html" class="nav-link" data-page="radiology">
+                        <span class="icon"><i class="fas fa-x-ray"></i></span> Radiology</a></li>
+                <li><a href="patientMedications.html" class="nav-link" data-page="prescriptions">
+                        <span class="icon"><i class="fas fa-pills"></i></span> Medications</a></li>
+            </ul>
+        </div>
+        <div class="nav-section nav-bottom">
+            <ul>
+                <li><a href="profile.html" class="nav-link" id="profile-link" data-page="profile">
+                        <span class="icon"><i class="fas fa-user"></i></span> Profile</a></li>
+                <li><a href="#" class="nav-link" id="logout-link">
+                        <span class="icon"><i class="fas fa-sign-out-alt"></i></span> Log Out</a></li>
+            </ul>
+        </div>
     </div>
-    <div class="nav-section">
-        <h3>Medical</h3>
-        <ul>
-            <li><a href="medicalHistory.html" class="nav-link" data-page="medical-history">
-                <span class="icon">📋</span>Medical History</a></li>
-            <li><a href="patientLabTests.html" class="nav-link" data-page="lab-tests">
-                <span class="icon">🧪</span>Lab Tests</a></li>
-            <li><a href="patientRadiology.html" class="nav-link" data-page="radiology">
-                <span class="icon">💎</span>Radiology</a></li>
-            <li><a href="patientMedications.html" class="nav-link" data-page="prescriptions">
-                <span class="icon">💊</span>Medications</a></li>
-        </ul>
-    </div>
-    <div class="nav-section nav-bottom">
-        <ul>
-            <li><a href="profile.html" class="nav-link" id="profile-link" data-page="profile">
-                <span class="icon">👤</span>Profile</a></li>
-            <li><a href="#" class="nav-link" id="logout-link">
-                <span class="icon">🚪</span>Log Out</a></li>
-        </ul>
-    </div>
-</div>
-
-    <div class="container">
+    <div id="mainContent" class="main-content">
         <div class="header">
-            <h1>📅 My Appointments</h1>
+            <h1><i class="fas fa-calendar-alt"></i>My Appointments</h1>
             <p>Manage your medical appointments, schedule new ones, and view your appointment history.</p>
         </div>
-
         <div class="content">
-            <!-- Book New Appointment Button -->
             <button class="book-new-btn" onclick="showBookingModal()">
-                ➕ Book New Appointment
+                <i class="fas fa-plus"></i>Book New Appointment
             </button>
-
-            <!-- Upcoming Appointments -->
             <div class="section">
-                <h2>Upcoming Appointments</h2>
+                <h2><i class="fas fa-calendar-check"></i>Upcoming Appointments</h2>
                 <div id="upcomingAppointments">
                     <div class="loading">Loading upcoming appointments...</div>
                 </div>
             </div>
-
-            <!-- Past Appointments -->
             <div class="section">
-                <h2>📋 Past Appointments</h2>
+                <h2><i class="fas fa-file-medical"></i>Past Appointments</h2>
                 <div id="pastAppointments">
                     <div class="loading">Loading appointment history...</div>
                 </div>
             </div>
         </div>
-    </div>
-
-    <!-- Booking Modal -->
-    <div id="bookingModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2>📅 Book New Appointment</h2>
-                <span class="close" onclick="closeBookingModal()">&times;</span>
-            </div>
-            <div class="modal-body">
-                <form id="bookingForm">
-                    <div class="form-group">
-                        <label for="clinicSelect">🏥 Select Clinic:</label>
-                        <select id="clinicSelect" required>
-                            <option value="">Choose a clinic...</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="specialistSelect">👨‍⚕️ Select Specialist:</label>
-                        <select id="specialistSelect" required disabled>
-                            <option value="">First select a clinic...</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="appointmentDate">📅 Appointment Date:</label>
-                        <input type="date" id="appointmentDate" required>
-                    </div>
-
-                    <div class="form-group">
-                        <label>🕒 Available Time Slots:</label>
-                        <div id="timeSlots" class="time-slots-grid">
-                            <div class="time-slot unavailable">Select date first</div>
+        <div id="bookingModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Book New Appointment</h2>
+                    <span class="close" onclick="closeBookingModal()">&times;</span>
+                </div>
+                <div class="modal-body">
+                    <form id="bookingForm">
+                        <div class="form-group">
+                            <label for="clinicSelect"><i class="fas fa-hospital"></i>Select Clinic:</label>
+                            <select id="clinicSelect" required>
+                                <option value="">Choose a clinic...</option>
+                            </select>
                         </div>
-                    </div>
 
-                    <div class="form-group">
-                        <label for="appointmentReason">📝 Reason for Visit:</label>
-                        <textarea id="appointmentReason" rows="3" placeholder="Describe your symptoms or reason for the appointment..."></textarea>
-                    </div>
+                        <div class="form-group">
+                            <label for="specialistSelect"><i class="fas fa-user-md"></i>Select Specialist:</label>
+                            <select id="specialistSelect" required disabled>
+                                <option value="">First select a clinic...</option>
+                            </select>
+                        </div>
 
-                    <div class="form-group">
-                        <label for="patientNotes">📋 Additional Notes (Optional):</label>
-                        <textarea id="patientNotes" rows="2" placeholder="Any additional information you'd like to share..."></textarea>
-                    </div>
+                        <div class="form-group">
+                            <label for="appointmentDate"><i class="fas fa-calendar-alt"></i>Appointment Date:</label>
+                            <input type="date" id="appointmentDate" required>
+                        </div>
 
-                    <button type="submit" class="submit-btn">
-                        ✅ Book Appointment
-                    </button>
-                </form>
+                        <div class="form-group">
+                            <label><i class="fas fa-clock"></i>Available Time Slots:</label>
+                            <div id="timeSlots" class="time-slots-grid">
+                                <div class="time-slot unavailable">Select date first</div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="appointmentReason"><i class="fas fa-pen"></i>Reason for Visit:</label>
+                            <textarea id="appointmentReason" rows="3"
+                                placeholder="Describe your symptoms or reason for the appointment..."></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="patientNotes"><i class="fas fa-notes-medical"></i>Additional Notes
+                                (Optional):</label>
+                            <textarea id="patientNotes" rows="2"
+                                placeholder="Any additional information you'd like to share..."></textarea>
+                        </div>
+
+                        <button type="submit" class="submit-btn">
+                            <i class="fas fa-check-circle"></i>Book Appointment
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
@@ -166,7 +443,7 @@
     <div id="rescheduleModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>📅 Reschedule Appointment</h2>
+                <h2>Reschedule Appointment</h2>
                 <span class="close" onclick="closeRescheduleModal()">&times;</span>
             </div>
             <div class="modal-body">
@@ -176,24 +453,25 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="newAppointmentDate">📅 New Appointment Date:</label>
+                        <label for="newAppointmentDate"><i class="fas fa-calendar-alt"></i>New Appointment Date:</label>
                         <input type="date" id="newAppointmentDate" required>
                     </div>
 
                     <div class="form-group">
-                        <label>🕒 Available Time Slots:</label>
+                        <label><i class="fas fa-clock"></i>Available Time Slots:</label>
                         <div id="rescheduleTimeSlots" class="time-slots-grid">
                             <div class="time-slot unavailable">Select date first</div>
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label for="rescheduleReason">📝 Reason for Rescheduling:</label>
-                        <textarea id="rescheduleReason" rows="3" placeholder="Why are you rescheduling this appointment?"></textarea>
+                        <label for="rescheduleReason"><i class="fas fa-pen"></i>Reason for Rescheduling:</label>
+                        <textarea id="rescheduleReason" rows="3"
+                            placeholder="Why are you rescheduling this appointment?"></textarea>
                     </div>
 
                     <button type="submit" class="submit-btn">
-                        ✅ Confirm Reschedule
+                        <i class="fas fa-check-circle"></i>Confirm Reschedule
                     </button>
                 </form>
             </div>
@@ -205,4 +483,5 @@
     <script src="https://cdn.botpress.cloud/webchat/v3.0/inject.js"></script>
     <script src="https://files.bpcontent.cloud/2025/06/15/12/20250615120138-GUVYWBFG.js"></script>
 </body>
+
 </html>

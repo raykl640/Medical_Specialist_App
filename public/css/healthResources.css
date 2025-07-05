@@ -1,0 +1,75 @@
+.resource-card {
+  background: white;
+  border-radius: 15px;
+  border: 2px solid transparent;
+  overflow: hidden;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.3s ease;
+}
+
+.resource-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(15, 150, 188, 0.3);
+  border-color: var(--luna-primary);
+}
+
+.resource-image {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  display: block;
+}
+
+.resource-content {
+  padding: 15px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.resource-actions {
+  margin-top: auto;
+  padding-top: 10px;
+  display: flex;
+  justify-content: flex-start;
+  /* aligns to bottom-left */
+}
+
+.btn-view {
+  background-color: var(--luna-accent);
+  color: white;
+  padding: 8px 14px;
+  font-size: 13px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+  display: flex;
+  align-items: center;
+}
+
+.btn-view i {
+  margin-right: 6px;
+}
+
+.btn-view:hover {
+  background-color: var(--luna-primary);
+  transform: translateY(-1px);
+}
+
+.bookmark-btn {
+  background-color: var(--luna-accent);
+  border: none;
+  cursor: pointer;
+  color: white;
+  font-size: 18px;
+  transition: color 0.2s ease;
+}
+
+.bookmark-btn:hover {
+  color: var(--luna-primary);
+}

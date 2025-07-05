@@ -1,0 +1,19 @@
+:root {
+  --luna-light: #A7EBF2;
+  --luna-accent: #54ACBF;
+  --luna-primary: #26658C;
+  --luna-deep: #023859;
+  --luna-midnight: #011C40;
+}
+
+.sidebar .icon i,
+#notificationBell i {
+  color: var(--luna-accent); /* Light blue by default */
+  font-size: 1.2rem;
+  transition: color 0.3s ease;
+}
+
+.sidebar .nav-link:hover .icon i,
+#notificationBell:hover i {
+  color: var(--luna-light); /* Light cyan on hover */
+}

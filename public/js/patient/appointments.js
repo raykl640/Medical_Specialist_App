@@ -480,7 +480,7 @@ const ui = {
         if (!appointments || appointments.length === 0) {
             container.innerHTML = `
                 <div class="no-appointments">
-                    <h3>📅 No ${type} appointments</h3>
+                    <h3><i class="fas fa-calendar-times"></i>No ${type} appointments</h3>
                     <p>${type === 'upcoming' ?
                     'You have no upcoming appointments. Book one using the button above!' :
                     'No appointment history available.'
@@ -500,7 +500,7 @@ const ui = {
             appointmentCard.innerHTML = `
                 <div class="appointment-header">
                     <div class="appointment-info">
-                        <h3>👨‍⚕️ ${appointment.specialistName}</h3>
+                        <h3><i class="fas fa-user-md"></i>${appointment.specialistName}</h3>
                         <div class="specialty">🩺 ${appointment.specialty}</div>
                     </div>
                     <div class="appointment-status status-${appointment.status}">
@@ -509,39 +509,24 @@ const ui = {
                 </div>
                 
                 <div class="appointment-details">
-                    <div class="detail-item">
-                        <span>🏥</span>
-                        <span><strong>Clinic:</strong> ${appointment.clinicName}</span>
-                    </div>
-                    <div class="detail-item">
-                        <span>📅</span>
-                        <span><strong>Date:</strong> ${utils.formatDate(appointment.date)}</span>
-                    </div>
-                    <div class="detail-item">
-                        <span>🕒</span>
-                        <span><strong>Time:</strong> ${appointment.time}</span>
-                    </div>
-                    <div class="detail-item">
-                        <span>📍</span>
-                        <span><strong>Location:</strong> ${appointment.location}</span>
-                    </div>
-                    <div class="detail-item">
-                        <span>📝</span>
-                        <span><strong>Reason:</strong> ${appointment.reason}</span>
-                    </div>
-                </div>
+                <div class="detail-item"><i class="fas fa-hospital"></i> <strong>Clinic:</strong> ${appointment.clinicName}</div>
+                <div class="detail-item"><i class="fas fa-calendar-alt"></i> <strong>Date:</strong> ${utils.formatDate(appointment.date)}</div>
+                <div class="detail-item"><i class="fas fa-clock"></i> <strong>Time:</strong> ${appointment.time}</div>
+                <div class="detail-item"><i class="fas fa-map-marker-alt"></i> <strong>Location:</strong> ${appointment.location}</div>
+                <div class="detail-item"><i class="fas fa-pen"></i> <strong>Reason:</strong> ${appointment.reason}</div>
+            </div>
                 
                 <div class="appointment-actions">
                     ${type === 'upcoming' && appointment.status !== 'cancelled' ? `
                         <button class="action-btn reschedule-btn" onclick="showRescheduleModal('${appointment.id}')">
-                            📅 Reschedule
+                            <i class="fas fa-calendar-edit"></i>Reschedule
                         </button>
                         <button class="action-btn cancel-btn" onclick="cancelAppointment('${appointment.id}')">
-                            ❌ Cancel
+                            <i class="fas fa-times-circle"></i>Cancel
                         </button>
                     ` : ''}
                     <button class="action-btn view-btn" onclick="viewAppointmentDetails('${appointment.id}')">
-                        👁️ View Details
+                        <i class="fas fa-eye"></i>View Details
                     </button>
                 </div>
             `;
