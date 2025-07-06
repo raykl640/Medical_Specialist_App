@@ -60,6 +60,12 @@
             border-radius: 6px;
         }
 
+        .reset-filters-btn {
+            margin-top: 25px;
+        }
+
+        
+
         /* Clinics Grid Layout */
         .clinics-grid {
             display: grid;
@@ -356,8 +362,11 @@
             </button>
             <div id="notificationDropdown" class="notification-dropdown hidden">
                 <div class="notification-header">
-                    <span>Notifications</span>
-                    <button id="markAllRead">Mark all as read</button>
+                    <span class="notification-title">Notifications</span>
+                    <div class="notification-actions">
+                        <button id="markAllRead">Mark all as read</button>
+                        <button id="clearAllNotifications">Clear all</button>
+                    </div>
                 </div>
                 <ul id="notificationList"></ul>
             </div>
@@ -419,6 +428,10 @@
                     <div class="filter-group">
                         <label for="searchFilter"><i class="fas fa-search"></i>Search:</label>
                         <input type="text" id="searchFilter" placeholder="Search clinics...">
+                    </div>
+                    <div class="filter-group">
+                        <button id="resetFilters" class="reset-filters-btn"><i class="fas fa-undo"></i> Reset
+                            Filters</button>
                     </div>
                 </div>
             </div>
@@ -859,6 +872,14 @@
                 document.getElementById('locationFilter').addEventListener('change', this.applyFilters.bind(this));
                 document.getElementById('specialtyFilter').addEventListener('change', this.applyFilters.bind(this));
                 document.getElementById('searchFilter').addEventListener('input', this.applyFilters.bind(this));
+
+                document.getElementById('resetFilters').addEventListener('click', () => {
+                    document.getElementById('locationFilter').value = '';
+                    document.getElementById('specialtyFilter').value = '';
+                    document.getElementById('searchFilter').value = '';
+                    this.applyFilters();
+                });
+
             },
 
             applyFilters() {

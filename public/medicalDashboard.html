@@ -9,53 +9,52 @@
   <link rel="stylesheet" href="css/medical.css">
   <script src="https://kit.fontawesome.com/87385ae8db.js" crossorigin="anonymous"></script>
   <style>
-   .tabs {
-  margin-top: 20px;
-}
+    .tabs {
+      margin-top: 20px;
+    }
 
-.tab-buttons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 15px;
-}
+    .tab-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
 
-.tab-btn {
-  padding: 10px 16px;
-  background-color: var(--luna-light, #e8f0fe);
-  border: 1px solid var(--luna-dark, #1E88E5);
-  border-radius: 8px;
-  font-size: 14px;
-  color: var(--luna-dark, #1E88E5);
-  font-weight: 500;
-  cursor: pointer;
-  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
-}
+    .tab-btn {
+      padding: 10px 16px;
+      background-color: var(--luna-light, #e8f0fe);
+      border: 1px solid var(--luna-dark, #1E88E5);
+      border-radius: 8px;
+      font-size: 14px;
+      color: var(--luna-dark, #1E88E5);
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+    }
 
-.tab-btn:hover {
-  background-color: var(--luna-dark, #1E88E5);
-  color: white;
-}
+    .tab-btn:hover {
+      background-color: var(--luna-dark, #1E88E5);
+      color: white;
+    }
 
-.tab-btn.active {
-  background-color: var(--luna-dark, #1E88E5);
-  color: white;
-  font-weight: 600;
-  border-color: var(--luna-dark, #1E88E5);
-}
+    .tab-btn.active {
+      background-color: var(--luna-dark, #1E88E5);
+      color: white;
+      font-weight: 600;
+      border-color: var(--luna-dark, #1E88E5);
+    }
 
-.tab-content {
-  display: none;
-  background-color: #ffffff;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-}
+    .tab-content {
+      display: none;
+      background-color: #ffffff;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    }
 
-.tab-content.active {
-  display: block;
-}
-
+    .tab-content.active {
+      display: block;
+    }
   </style>
 </head>
 
@@ -69,12 +68,15 @@
     <div class="notification-wrapper">
       <button id="notificationBell">
         <i class="fas fa-bell"></i>
-        <span id="notificationCount" class="notification-count hidden">0</span>
+        <span id="notificationCount" class="notification-count">0</span>
       </button>
       <div id="notificationDropdown" class="notification-dropdown hidden">
         <div class="notification-header">
-          <span>Notifications</span>
-          <button id="markAllRead">Mark all as read</button>
+          <span class="notification-title">Notifications</span>
+          <div class="notification-actions">
+            <button id="markAllRead">Mark all as read</button>
+            <button id="clearAllNotifications">Clear all</button>
+          </div>
         </div>
         <ul id="notificationList"></ul>
       </div>
@@ -130,7 +132,7 @@
           <select id="specialtyFilter">
             <option value="">All Specialties</option>
           </select>
-          <button type="button" id="clearFilters" class="secondary"><i class="fas fa-undo"></i> Clear</button>
+          <button id="resetFilters" class="reset-filters-btn"><i class="fas fa-undo"></i> Reset Filters</button>
         </div>
       </div>
     </div>
@@ -163,23 +165,23 @@
           <button data-view="cards">Card View</button>
         </div>
         <div class="table-responsive">
-        <table>
-          <thead>
-            <tr>
-              <th>Visit Date</th>
-              <th>Clinic Name</th>
-              <th>Specialist Name</th>
-              <th>Specialty</th>
-              <th>Diagnosis Summary</th>
-              <th>View full Record</th>
-            </tr>
-          </thead>
-          <tbody id="medicalHistoryTbody">
-            <!-- Populated by JS -->
-          </tbody>
-        </table>
-        <div id="medicalHistoryCards" class="card-grid" style="display: none;"></div>
-        <div id="paginationContainer"></div>
+          <table>
+            <thead>
+              <tr>
+                <th>Visit Date</th>
+                <th>Clinic Name</th>
+                <th>Specialist Name</th>
+                <th>Specialty</th>
+                <th>Diagnosis Summary</th>
+                <th>View full Record</th>
+              </tr>
+            </thead>
+            <tbody id="medicalHistoryTbody">
+              <!-- Populated by JS -->
+            </tbody>
+          </table>
+          <div id="medicalHistoryCards" class="card-grid" style="display: none;"></div>
+          <div id="paginationContainer"></div>
         </div>
       </div>
 
@@ -202,23 +204,23 @@
           <button data-view="cards">Card View</button>
         </div>
         <div class="table-responsive">
-        <table>
-          <thead>
-            <tr>
-              <th>Test Name</th>
-              <th>Test Date</th>
-              <th>Clinic Name</th>
-              <th>Specialist</th>
-              <th>Result</th>
-              <th>View full Record</th>
-            </tr>
-          </thead>
-          <tbody id="labTestsTbody">
-            <!-- Populated by JS -->
-          </tbody>
-        </table>
-        <div id="labTestsCards" class="card-grid" style="display: none;"></div>
-        <div id="paginationContainer"></div>
+          <table>
+            <thead>
+              <tr>
+                <th>Test Name</th>
+                <th>Test Date</th>
+                <th>Clinic Name</th>
+                <th>Specialist</th>
+                <th>Result</th>
+                <th>View full Record</th>
+              </tr>
+            </thead>
+            <tbody id="labTestsTbody">
+              <!-- Populated by JS -->
+            </tbody>
+          </table>
+          <div id="labTestsCards" class="card-grid" style="display: none;"></div>
+          <div id="paginationContainer"></div>
         </div>
       </div>
 
@@ -240,23 +242,23 @@
           <button data-view="cards">Card View</button>
         </div>
         <div class="table-responsive">
-        <table>
-          <thead>
-            <tr>
-              <th>Test Type</th>
-              <th>Date Conducted</th>
-              <th>Clinic Name</th>
-              <th>Specialist</th>
-              <th>Result</th>
-              <th>View full Record</th>
-            </tr>
-          </thead>
-          <tbody id="radiologyTbody">
-            <!-- Populated by JS -->
-          </tbody>
-        </table>
-        <div id="radiologyCards" class="card-grid" style="display: none;"></div>
-        <div id="paginationContainer"></div>
+          <table>
+            <thead>
+              <tr>
+                <th>Test Type</th>
+                <th>Date Conducted</th>
+                <th>Clinic Name</th>
+                <th>Specialist</th>
+                <th>Result</th>
+                <th>View full Record</th>
+              </tr>
+            </thead>
+            <tbody id="radiologyTbody">
+              <!-- Populated by JS -->
+            </tbody>
+          </table>
+          <div id="radiologyCards" class="card-grid" style="display: none;"></div>
+          <div id="paginationContainer"></div>
         </div>
       </div>
 
@@ -278,24 +280,24 @@
           <button data-view="cards">Card View</button>
         </div>
         <div class="table-responsive">
-        <table id="medicationsTable">
-          <thead>
-            <tr>
-              <th>Medicine</th>
-              <th>Dosage</th>
-              <th>Frequency</th>
-              <th>Duration</th>
-              <th>Prescribed on</th>
-              <th>Clinic</th>
-              <th>Specialist</th>
-            </tr>
-          </thead>
-          <tbody id="medicationsTbody">
-            <!-- Populated by JS -->
-          </tbody>
-        </table>
-        <div id="medicationsCards" class="card-grid" style="display: none;"></div>
-        <div id="paginationContainer"></div>
+          <table id="medicationsTable">
+            <thead>
+              <tr>
+                <th>Medicine</th>
+                <th>Dosage</th>
+                <th>Frequency</th>
+                <th>Duration</th>
+                <th>Prescribed on</th>
+                <th>Clinic</th>
+                <th>Specialist</th>
+              </tr>
+            </thead>
+            <tbody id="medicationsTbody">
+              <!-- Populated by JS -->
+            </tbody>
+          </table>
+          <div id="medicationsCards" class="card-grid" style="display: none;"></div>
+          <div id="paginationContainer"></div>
         </div>
       </div>
     </div>
