@@ -278,8 +278,11 @@
             </button>
             <div id="notificationDropdown" class="notification-dropdown hidden">
                 <div class="notification-header">
-                    <span>Notifications</span>
-                    <button id="markAllRead">Mark all as read</button>
+                    <span class="notification-title">Notifications</span>
+                    <div class="notification-actions">
+                        <button id="markAllRead">Mark all as read</button>
+                        <button id="clearAllNotifications">Clear all</button>
+                    </div>
                 </div>
                 <ul id="notificationList"></ul>
             </div>
@@ -348,7 +351,7 @@
                     <div class="form-group">
                         <label>&nbsp;</label>
                         <button type="button" id="clearFilters" class="secondary"><i class="fas fa-undo"></i>
-                            Clear</button>
+                            Reset Filters</button>
                     </div>
                 </div>
             </div>
