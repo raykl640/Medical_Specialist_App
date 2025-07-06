@@ -3,6 +3,35 @@ import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/fi
 import { getFirestore, collection, query, where, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { firebaseConfig } from './firebase-config.js';
 
+const auth = getAuth();
+
+onAuthStateChanged(auth, user => {
+  if (user) {
+    startInactivityTimer(); 
+  } else {
+  }
+});
+
+let inactivityTimeout;
+
+function startInactivityTimer() {
+  resetInactivityTimer();
+
+  ['click', 'mousemove', 'keydown', 'scroll', 'touchstart'].forEach(evt =>
+    document.addEventListener(evt, resetInactivityTimer)
+  );
+}
+
+function resetInactivityTimer() {
+  clearTimeout(inactivityTimeout);
+  inactivityTimeout = setTimeout(() => {
+    signOut(getAuth()).then(() => {
+      console.log('User logged out due to inactivity');
+      window.location.href = 'login.html';
+    });
+  }, 15 * 60 * 1000);
+}
+
 class NavigationManager {
     constructor() {
         this.isLoggingOut = false;
