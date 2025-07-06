@@ -125,7 +125,7 @@ onAuthStateChanged(auth, async (user) => {
         <div class="appointment-card confirmed">
           <div class="appointment-header">
             <div class="appointment-info">
-              <h3>👨‍⚕️ ${closest.specialistName || "Specialist Name"}</h3>
+              <h3><i class="fas fa-user-md"></i> ${closest.specialistName || "Specialist Name"}</h3>
               <div class="specialty">🩺 ${closest.specialty || "Specialty"}</div>
             </div>
             <div class="appointment-status status-confirmed">
@@ -134,23 +134,23 @@ onAuthStateChanged(auth, async (user) => {
           </div>
           <div class="appointment-details">
             <div class="detail-item">
-              <span>🏥</span>
+              <span><i class="fas fa-hospital"></i></span>
               <span><strong>Clinic:</strong> ${closest.clinicName || "Clinic Name"}</span>
             </div>
             <div class="detail-item">
-              <span>📅</span>
+              <span><i class="fas fa-calendar-alt"></i></span>
               <span><strong>Date:</strong> ${formatDate(closest.date)}</span>
             </div>
             <div class="detail-item">
-              <span>🕒</span>
+              <span><i class="fas fa-clock"></i></span>
               <span><strong>Time:</strong> ${closest.time || "-"}</span>
             </div>
             <div class="detail-item">
-              <span>📍</span>
+              <span><i class="fas fa-map-marker-alt"></i></span>
               <span><strong>Location:</strong> ${closest.location || "Location"}</span>
             </div>
             <div class="detail-item">
-              <span>📝</span>
+              <span><i class="fas fa-file-alt"></i></span>
               <span><strong>Reason:</strong> ${closest.reason || "-"}</span>
             </div>
           </div>
