@@ -500,8 +500,8 @@ const ui = {
             appointmentCard.innerHTML = `
                 <div class="appointment-header">
                     <div class="appointment-info">
-                        <h3><i class="fas fa-user-md"></i>${appointment.specialistName}</h3>
-                        <div class="specialty">🩺 ${appointment.specialty}</div>
+                        <h3><i class="fas fa-user-md"></i> ${appointment.specialistName}</h3>
+                        <div class="specialty"><i class="fas fa-stethoscope"></i> ${appointment.specialty}</div>
                     </div>
                     <div class="appointment-status status-${appointment.status}">
                         ${appointment.status}
@@ -509,24 +509,24 @@ const ui = {
                 </div>
                 
                 <div class="appointment-details">
-                <div class="detail-item"><i class="fas fa-hospital"></i> <strong>Clinic:</strong> ${appointment.clinicName}</div>
-                <div class="detail-item"><i class="fas fa-calendar-alt"></i> <strong>Date:</strong> ${utils.formatDate(appointment.date)}</div>
-                <div class="detail-item"><i class="fas fa-clock"></i> <strong>Time:</strong> ${appointment.time}</div>
-                <div class="detail-item"><i class="fas fa-map-marker-alt"></i> <strong>Location:</strong> ${appointment.location}</div>
-                <div class="detail-item"><i class="fas fa-pen"></i> <strong>Reason:</strong> ${appointment.reason}</div>
+                <div class="detail-item"><i class="fas fa-hospital"></i> <strong> Clinic:</strong> ${appointment.clinicName}</div>
+                <div class="detail-item"><i class="fas fa-calendar-alt"></i> <strong> Date:</strong> ${utils.formatDate(appointment.date)}</div>
+                <div class="detail-item"><i class="fas fa-clock"></i> <strong> Time:</strong> ${appointment.time}</div>
+                <div class="detail-item"><i class="fas fa-map-marker-alt"></i> <strong> Location:</strong> ${appointment.location}</div>
+                <div class="detail-item"><i class="fas fa-pen"></i> <strong> Reason:</strong> ${appointment.reason}</div>
             </div>
                 
                 <div class="appointment-actions">
                     ${type === 'upcoming' && appointment.status !== 'cancelled' ? `
                         <button class="action-btn reschedule-btn" onclick="showRescheduleModal('${appointment.id}')">
-                            <i class="fas fa-calendar-edit"></i>Reschedule
+                            <i class="fas fa-calendar-edit"></i> Reschedule
                         </button>
                         <button class="action-btn cancel-btn" onclick="cancelAppointment('${appointment.id}')">
-                            <i class="fas fa-times-circle"></i>Cancel
+                            <i class="fas fa-times-circle"></i> Cancel
                         </button>
                     ` : ''}
                     <button class="action-btn view-btn" onclick="viewAppointmentDetails('${appointment.id}')">
-                        <i class="fas fa-eye"></i>View Details
+                        <i class="fas fa-eye"></i> View Details
                     </button>
                 </div>
             `;
@@ -839,13 +839,13 @@ const ui = {
 // Global functions for modal handling
 window.showBookingModal = (selectedSpecialist = null) => {
     const modal = document.getElementById('bookingModal');
-    modal.style.display = 'block';
+    modal.style.display = 'flex';
     ui.setupBookingModal(selectedSpecialist);
 };
 
 window.closeBookingModal = () => {
     const modal = document.getElementById('bookingModal');
-    modal.style.display = 'none';
+    modal.style.display = 'flex';
     document.getElementById('bookingForm').reset();
     selectedTimeSlot = null;
 };
@@ -866,21 +866,21 @@ window.showRescheduleModal = (appointmentId) => {
         <h3>Current Appointment</h3>
         <div class="appointment-details">
             <div class="detail-item">
-                <span>👨‍⚕️</span>
-                <span><strong>Specialist:</strong> ${appointment.specialistName}</span>
+                <span><i class="fas fa-user-md"></i></span>
+                <span><strong> Specialist:</strong> ${appointment.specialistName}</span>
             </div>
             <div class="detail-item">
-                <span>📅</span>
-                <span><strong>Date:</strong> ${utils.formatDate(appointment.date)}</span>
+                <span><i class="fas fa-calendar-alt"></i></span>
+                <span><strong> Date:</strong> ${utils.formatDate(appointment.date)}</span>
             </div>
             <div class="detail-item">
-                <span>🕒</span>
-                <span><strong>Time:</strong> ${appointment.time}</span>
+                <span><i class="fas fa-clock"></i></span>
+                <span><strong> Time:</strong> ${appointment.time}</span>
             </div>
         </div>
     `;
 
-    modal.style.display = 'block';
+    modal.style.display = 'flex';
 };
 
 window.closeRescheduleModal = () => {
@@ -924,20 +924,24 @@ window.viewAppointmentDetails = (appointmentId) => {
         return;
     }
 
-    alert(`
-        Appointment Details:
-        -----------------
-        Specialist: ${appointment.specialistName}
-        Specialty: ${appointment.specialty}
-        Clinic: ${appointment.clinicName}
-        Date: ${utils.formatDate(appointment.date)}
-        Time: ${appointment.time}
-        Location: ${appointment.location}
-        Reason: ${appointment.reason}
-        Status: ${appointment.status}
-        ${appointment.notes ? `\nNotes: ${appointment.notes}` : ''}
-    `);
+    const modal = document.getElementById('appointmentModal');
+    const body = document.getElementById('appointmentModalBody');
+
+    body.innerHTML = `
+        <p><strong>Specialist:</strong> ${appointment.specialistName}</p>
+        <p><strong>Specialty:</strong> ${appointment.specialty}</p>
+        <p><strong>Clinic:</strong> ${appointment.clinicName}</p>
+        <p><strong>Date:</strong> ${utils.formatDate(appointment.date)}</p>
+        <p><strong>Time:</strong> ${appointment.time}</p>
+        <p><strong>Location:</strong> ${appointment.location}</p>
+        <p><strong>Reason:</strong> ${appointment.reason}</p>
+        <p><strong>Status:</strong> ${appointment.status}</p>
+        ${appointment.notes ? `<p><strong>Notes:</strong> ${utils.escapeHtml(appointment.notes)}</p>` : ''}
+    `;
+
+    modal.style.display = 'flex';
 };
+
 
 // Initialize the application
 async function startApp() {

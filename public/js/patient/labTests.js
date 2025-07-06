@@ -28,43 +28,47 @@ const filterInput = document.getElementById("filterInput");
 const sortSelect = document.getElementById("sortSelect");
 const clinicFilter = document.getElementById("clinicFilter");
 const specialistFilter = document.getElementById("specialistFilter");
-const patientTbody = document.getElementById("patientTbody");
+const labTestsTbody = document.getElementById("labTestsTbody");
 const paginationContainer = document.getElementById("paginationContainer");
-const cardContainer = document.getElementById("cardContainer");
+const labTestsCards = document.getElementById("labTestsCards");
 
 let labTests = [];
 let filteredResults = [];
 let currentPage = 1;
 const itemsPerPage = 5;
 
-// Modal
-const modal = document.createElement("div");
-modal.id = "modal";
-modal.style.cssText = `
+// Modal creation
+const labTestModal = document.createElement("div");
+labTestModal.id = "labTestModal";
+labTestModal.style.cssText = `
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(18, 18, 18, 0.21);
   display: none;
   align-items: center;
   justify-content: center;
   z-index: 1000;
 `;
-modal.innerHTML = `
-  <div style="background: white; padding: 20px; border-radius: 10px; max-width: 500px; width: 90%;">
-    <h3 id="modalTitle">Lab Test Details</h3>
-    <pre id="modalBody" style="white-space: pre-wrap;"></pre>
-    <button onclick="document.getElementById('modal').style.display='none'">Close</button>
+
+labTestModal.innerHTML = `
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>Lab Test Details</h3>
+      <button class="close" onclick="document.getElementById('labTestModal').style.display='none'">&times;</button>
+    </div>
+    <div id="labTestModalBody" class="modal-body"></div>
   </div>
 `;
-document.body.appendChild(modal);
+
+document.body.appendChild(labTestModal);
 
 // View toggle setup
 let currentViewMode = "table";
 
-const getViewMode = setupViewToggle("viewToggle", (newMode) => {
+const getViewMode = setupViewToggle("labViewToggle", (newMode) => {
     currentViewMode = newMode;
     // Reset to first page when changing views
     currentPage = 1;
@@ -197,24 +201,23 @@ function filterAndSort() {
 }
 
 function renderLabTests(data, viewMode) {
-  const cardContainer = document.getElementById("cardContainer");
 
   // Clear both containers
-  patientTbody.innerHTML = '';
-  cardContainer.innerHTML = '';
+  labTestsTbody.innerHTML = '';
+  labTestsCards.innerHTML = '';
 
   if (data.length === 0) {
     if (viewMode === "card") {
-      cardContainer.innerHTML = `<p>Loading...</p>`;
+      labTestsCards.innerHTML = `<p>Loading...</p>`;
     } else {
-      patientTbody.innerHTML = `<tr><td colspan="6">Loading...</td></tr>`;
+      labTestsTbody.innerHTML = `<tr><td colspan="6">Loading...</td></tr>`;
     }
     return;
   }
 
   if (viewMode === "card") {
-    cardContainer.style.display = "grid";
-    patientTbody.parentElement.style.display = "none";
+    labTestsCards.style.display = "grid";
+    labTestsTbody.parentElement.style.display = "none";
 
     data.forEach(test => {
       const testDate = test.testDate?.toDate?.().toLocaleDateString() || "N/A";
@@ -226,13 +229,13 @@ function renderLabTests(data, viewMode) {
         <p><strong>Clinic:</strong> ${test.clinicName || ''}</p>
         <p><strong>Specialist:</strong> ${test.specialistName || ''}</p>
         <p><strong>Result:</strong> ${test.parameters?.[0]?.result || 'N/A'}</p>
-        <button onclick="showDetails('${encodeURIComponent(JSON.stringify(test))}')">View Record</button>
+        <button onclick="showLabTestDetails('${encodeURIComponent(JSON.stringify(test))}')">View Full Record</button>
       `;
-      cardContainer.appendChild(card);
+      labTestsCards.appendChild(card);
     });
   } else {
-    cardContainer.style.display = "none";
-    patientTbody.parentElement.style.display = "table";
+    labTestsCards.style.display = "none";
+    labTestsTbody.parentElement.style.display = "table";
 
     data.forEach(test => {
       const testDate = test.testDate?.toDate?.().toLocaleDateString() || "N/A";
@@ -243,29 +246,34 @@ function renderLabTests(data, viewMode) {
         <td>${test.clinicName || ''}</td>
         <td>${test.specialistName || ''}</td>
         <td>${test.parameters?.[0]?.result || 'N/A'}</td>
-        <td><button onclick="showDetails('${encodeURIComponent(JSON.stringify(test))}')">View Record</button></td>
+        <td><button onclick="showLabTestDetails('${encodeURIComponent(JSON.stringify(test))}')">View Full Record</button></td>
       `;
-      patientTbody.appendChild(tr);
+      labTestsTbody.appendChild(tr);
     });
   }
 }
 
-window.showDetails = (encoded) => {
+window.showLabTestDetails = (encoded) => {
   const test = JSON.parse(decodeURIComponent(encoded));
-  const testDate = test.testDate?.toDate?.().toLocaleString() || "N/A";
+  const testDate = test.testDate?.seconds ? new Date(test.testDate.seconds * 1000).toLocaleDateString() : "N/A";
 
-  let details = `Test Name: ${test.testName}\n`;
-  details += `Date: ${testDate}\n`;
-  details += `Clinic: ${test.clinicName}\n`;
-  details += `Specialist: ${test.specialistName}\n\n`;
+  let body = `
+    <div class="modal-row"><strong>Test Date:</strong> ${testDate}</div>
+    <div class="modal-row"><strong>Clinic:</strong> ${test.clinicName || 'N/A'}</div>
+    <div class="modal-row"><strong>Test Name:</strong> ${test.testName || 'N/A'}</div>
+    <div class="modal-row"><strong>Requested By:</strong> ${test.requestedBy || 'N/A'}</div>
+  `;
 
-  details += "Parameters:\n";
-  test.parameters?.forEach(p => {
-    details += `- ${p.name}: ${p.result} ${p.unit} (Ref: ${p.referenceRange})\n`;
-  });
+  if (Array.isArray(test.parameters)) {
+    body += `<div class="modal-row"><strong>Parameters:</strong><ul style="padding-left: 20px;">`;
+    test.parameters.forEach(p => {
+      body += `<li>${p.name || 'Unnamed'}: ${p.result || 'N/A'} ${p.unit || ''} (Ref: ${p.referenceRange || 'N/A'})</li>`;
+    });
+    body += `</ul></div>`;
+  }
 
-  document.getElementById("modalBody").textContent = details;
-  document.getElementById("modal").style.display = "flex";
+  document.getElementById("labTestModalBody").innerHTML = body;
+  document.getElementById("labTestModal").style.display = "flex";
 };
 
 // Event Listeners

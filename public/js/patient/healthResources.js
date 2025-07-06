@@ -267,36 +267,46 @@ window.toggleBookmark = async function (resourceId) {
 window.viewResource = function (resourceId) {
     const resource = allResources.find(r => r.id === resourceId);
     if (!resource) return;
-    const modal = document.getElementById('resourceModal');
+
+    const modal = document.getElementById('resourceModal').style.display = 'flex';
     const modalTitle = document.getElementById('modalTitle');
     const modalBody = document.getElementById('modalBody');
+
     modalTitle.textContent = resource.title;
-    const imageHtml = resource.imageUrl ?
-        `<img src="${resource.imageUrl}" alt="${utils.escapeHtml(resource.title)}" class="resource-detail-image" onerror="this.style.display='none'">` : '';
-    const externalLinkHtml = resource.externalLink ?
-        `<a href="${resource.externalLink}" target="_blank" class="external-link"><i class="fas fa-external-link-alt"></i> View External Resource</a>` : '';
+
+    const imageHtml = resource.imageUrl
+        ? `<img src="${resource.imageUrl}" alt="${utils.escapeHtml(resource.title)}" class="resource-detail-image" onerror="this.style.display='none'">`
+        : '';
+
+    const externalLinkHtml = resource.externalLink
+        ? `<a href="${resource.externalLink}" target="_blank" class="external-link"><i class="fas fa-external-link-alt"></i> View External Resource</a>`
+        : '';
+
     modalBody.innerHTML = `
-                ${imageHtml}
-                <div class="resource-meta">
-                    <span class="resource-category">${utils.escapeHtml(resource.category)}</span>
-                    <span>Created: ${utils.formatDate(resource.createdAt?.seconds ? resource.createdAt.seconds * 1000 : resource.createdAt)}</span>
-                </div>
-                <div class="resource-tags" style="margin: 15px 0;">
-                    ${resource.tags ? resource.tags.map(tag =>
-        `<span class="resource-tag">${utils.escapeHtml(tag)}</span>`
-    ).join('') : ''}
-                </div>
-                <h3 style="margin: 20px 0 10px 0; color: #2c3e50;">Summary</h3>
-                <p style="color: #5d6d7e; line-height: 1.6; margin-bottom: 20px;">${utils.escapeHtml(resource.summary)}</p>
-                <h3 style="margin: 20px 0 10px 0; color: #2c3e50;">Full Content</h3>
-                <div class="resource-content-full">${utils.escapeHtml(resource.content)}</div>
-                ${externalLinkHtml}
-            `;
+        ${imageHtml}
+        <div class="resource-meta">
+            <span class="resource-category">${utils.escapeHtml(resource.category)}</span>
+            <span class="resource-date">Created: ${utils.formatDate(resource.createdAt?.seconds ? resource.createdAt.seconds * 1000 : resource.createdAt)}</span>
+        </div>
+        <div class="resource-tags">
+            ${resource.tags ? resource.tags.map(tag =>
+                `<span class="resource-tag">${utils.escapeHtml(tag)}</span>`
+            ).join('') : ''}
+        </div>
+        <h3 class="resource-section-title">Summary</h3>
+        <p class="resource-summary">${utils.escapeHtml(resource.summary)}</p>
+        <h3 class="resource-section-title">Full Content</h3>
+        <div class="resource-content-full">${utils.escapeHtml(resource.content)}</div>
+        ${externalLinkHtml}
+    `;
+
     modal.style.display = 'block';
 };
+
 window.closeModal = function () {
     document.getElementById('resourceModal').style.display = 'none';
 };
+
 
 // --- Initialize application ---
 document.addEventListener('DOMContentLoaded', async function () {

@@ -28,9 +28,9 @@ const filterInput = document.getElementById("filterInput");
 const sortSelect = document.getElementById("sortSelect");
 const clinicFilter = document.getElementById("clinicFilter");
 const specialistFilter = document.getElementById("specialistFilter");
-const patientTbody = document.getElementById("patientTbody");
+const medicalHistoryTbody = document.getElementById("medicalHistoryTbody");
 const paginationContainer = document.getElementById("paginationContainer");
-const cardContainer = document.getElementById("cardContainer");
+const medicalHistoryCards = document.getElementById("medicalHistoryCards");
 
 let medicalHistory = [];
 let filteredResults = [];
@@ -38,9 +38,9 @@ let currentPage = 1;
 const itemsPerPage = 5;
 
 // Modal
-const modal = document.createElement("div");
-modal.id = "modal";
-modal.style.cssText = `
+const medicalHistoryModal = document.createElement("div");
+medicalHistoryModal.id = "medicalHistoryModal";
+medicalHistoryModal.style.cssText = `
   position: fixed;
   top: 0;
   left: 0;
@@ -52,14 +52,17 @@ modal.style.cssText = `
   justify-content: center;
   z-index: 1000;
 `;
-modal.innerHTML = `
-  <div style="background: white; padding: 20px; border-radius: 10px; max-width: 500px; width: 90%;">
-    <h3 id="modalTitle">Medical History Details</h3>
-    <pre id="modalBody" style="white-space: pre-wrap;"></pre>
-    <button onclick="document.getElementById('modal').style.display='none'">Close</button>
+medicalHistoryModal.innerHTML = `
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>Medical History Details</h3>
+      <button onclick="document.getElementById('medicalHistoryModal').style.display='none'">&times;</button>
+    </div>
+    <div id="medicalHistoryModalBody" style="margin-top: 20px;"></div>
   </div>
 `;
-document.body.appendChild(modal);
+
+document.body.appendChild(medicalHistoryModal);
 
 // View toggle setup
 let currentViewMode = "table";
@@ -70,7 +73,7 @@ const getViewMode = setupViewToggle("viewToggle", (newMode) => {
     currentPage = 1;
     const paginated = paginate(filteredResults, itemsPerPage, currentPage);
     rendermedicalHistory(paginated, currentViewMode);
-    
+
     // Update pagination controls
     setupPaginationControls(
         "paginationContainer",
@@ -188,24 +191,23 @@ function filterAndSort() {
 }
 
 function rendermedicalHistory(data, viewMode) {
-    const cardContainer = document.getElementById("cardContainer");
 
     // Clear both containers
-    patientTbody.innerHTML = '';
-    cardContainer.innerHTML = '';
+    medicalHistoryTbody.innerHTML = '';
+    medicalHistoryCards.innerHTML = '';
 
     if (data.length === 0) {
         if (viewMode === "card") {
-            cardContainer.innerHTML = `<p>Loading...</p>`;
+            medicalHistoryCards.innerHTML = `<p>Loading...</p>`;
         } else {
-            patientTbody.innerHTML = `<tr><td colspan="6">Loading...</td></tr>`;
+            medicalHistoryTbody.innerHTML = `<tr><td colspan="6">Loading...</td></tr>`;
         }
         return;
     }
 
     if (viewMode === "card") {
-        cardContainer.style.display = "grid";
-        patientTbody.parentElement.style.display = "none";
+        medicalHistoryCards.style.display = "grid";
+        medicalHistoryTbody.parentElement.style.display = "none";
 
         data.forEach(hist => {
             const date = hist.visitDate?.toDate?.().toLocaleDateString() || "N/A";
@@ -217,13 +219,13 @@ function rendermedicalHistory(data, viewMode) {
         <p><strong>Specialist:</strong> ${hist.specialistName || ''}</p>
         <p><strong>Specialty:</strong> ${hist.specialistType || ''}</p>
         <p><strong>Diagnosis Summary:</strong> ${hist.diagnosisSummary || ''}</p>
-        <button onclick="showDetails('${encodeURIComponent(JSON.stringify(hist))}')">View Full Record</button>
+        <button onclick="showMedicalHistoryDetails('${encodeURIComponent(JSON.stringify(hist))}')">View Full Record</button>
       `;
-            cardContainer.appendChild(card);
+            medicalHistoryCards.appendChild(card);
         });
     } else {
-        cardContainer.style.display = "none";
-        patientTbody.parentElement.style.display = "table";
+        medicalHistoryCards.style.display = "none";
+        medicalHistoryTbody.parentElement.style.display = "table";
 
         data.forEach(hist => {
             const date = hist.visitDate?.toDate?.().toLocaleDateString() || "N/A";
@@ -234,25 +236,36 @@ function rendermedicalHistory(data, viewMode) {
         <td>${hist.specialistName || ''}</td>
         <td>${hist.specialistType || ''}</td>
         <td>${hist.diagnosisSummary || ''}</td>
-        <td><button onclick="showDetails('${encodeURIComponent(JSON.stringify(hist))}')">View Record</button></td>
+        <td><button onclick="showMedicalHistoryDetails('${encodeURIComponent(JSON.stringify(hist))}')">View Record</button></td>
       `;
-            patientTbody.appendChild(tr);
+            medicalHistoryTbody.appendChild(tr);
         });
     }
 }
 
-window.showDetails = (encoded) => {
-    const hist = JSON.parse(decodeURIComponent(encoded));
-    const date = hist.visitDate?.toDate?.().toLocaleDateString() || "N/A";
+window.showMedicalHistoryDetails = (encoded) => {
+  const hist = JSON.parse(decodeURIComponent(encoded));
+  const seconds = hist.visitDate?.seconds;
+  const visitDate = seconds ? new Date(seconds * 1000).toLocaleDateString() : "N/A";
 
-    let details = `Visit Date: ${date}\n`;
-    details += `Clinic: ${hist.clinicName}\n`;
-    details += `Specialist: ${hist.specialistName}\n`;
-    details += `Specialty: ${hist.specialty}\n`;
+  const fields = [
+    ["Visit Date", visitDate],
+    ["Clinic", hist.clinicName],
+    ["Specialist", hist.specialistName],
+    ["Specialty", hist.specialistType || hist.specialty],
+    ["Diagnosis Summary", hist.diagnosisSummary]
+  ];
 
-    document.getElementById("modalBody").textContent = details;
-    document.getElementById("modal").style.display = "flex";
+  const body = fields.map(
+    ([label, value]) => `<div class="modal-row"><strong>${label}:</strong> ${value || 'N/A'}</div>`
+  ).join("");
+
+  document.getElementById("medicalHistoryModalBody").innerHTML = body;
+  document.getElementById("medicalHistoryModal").style.display = "flex";
 };
+
+
+
 
 // Event Listeners
 filterInput.addEventListener("input", filterAndSort);

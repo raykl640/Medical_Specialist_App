@@ -4,6 +4,25 @@ import { getFirestore, collection, query, where, onSnapshot } from "https://www.
 import { firebaseConfig } from './firebase-config.js';
 
 class NavigationManager {
+    startInactivityTimer() {
+        this.resetInactivityTimer();
+        ['click', 'mousemove', 'keydown', 'scroll', 'touchstart'].forEach(evt =>
+            document.addEventListener(evt, this.resetInactivityTimer.bind(this))
+        );
+    }
+
+    resetInactivityTimer() {
+        clearTimeout(this.inactivityTimeout);
+        this.inactivityTimeout = setTimeout(() => {
+            if (window.firebaseAuth && window.firebaseSignOut) {
+                window.firebaseSignOut(window.firebaseAuth).then(() => {
+                    console.log('User logged out due to inactivity');
+                    window.location.href = 'login.html';
+                });
+            }
+        }, 15 * 60 * 1000);
+    }
+
     constructor() {
         this.isLoggingOut = false;
         this.eventListenersAttached = false;
@@ -42,20 +61,30 @@ class NavigationManager {
                 this.hideBadge();
             });
         }
+        this.clearAllBtn = document.getElementById('clearAllNotifications');
+        if (this.clearAllBtn) {
+            this.clearAllBtn.addEventListener('click', () => {
+                if (this.list) this.list.innerHTML = '';
+                this.hideBadge();
+                if (this.dropdown) this.dropdown.classList.add('hidden');
+                console.log("All notifications cleared");
+            });
+        }
+
         document.addEventListener("appointmentBooked", e => {
             const date = e.detail.date;
             const readableDate = date ? new Date(date).toLocaleString() : '';
-            this.showNotification(`📅 Appointment booked for ${readableDate}`);
+            this.showNotification(`Appointment booked for ${readableDate}`);
         });
 
         document.addEventListener("appointmentRescheduled", e => {
             const { date, time } = e.detail || {};
             const readableDate = date ? new Date(date).toLocaleDateString() : '';
-            this.showNotification(`✏️ Appointment rescheduled to ${readableDate} at ${time}`);
+            this.showNotification(`Appointment rescheduled to ${readableDate} at ${time}`);
         });
 
         document.addEventListener("appointmentCanceled", () => {
-            this.showNotification(`❌ Appointment canceled`);
+            this.showNotification(`ppointment canceled`);
         });
 
     }
@@ -151,7 +180,7 @@ class NavigationManager {
                     console.log('User is authenticated:', user.email);
                     this.loadAuthenticatedContent(user);
                     this.attachListenersForUser(db, user.uid);
-
+                    this.startInactivityTimer();
                     if (loadingScreen) {
                         loadingScreen.style.display = 'none';
                     }
@@ -178,23 +207,33 @@ class NavigationManager {
         }
     }
     attachListenersForUser(db, uid) {
-        // Medical record types
-        const recordTypes = ['medicalHistory', 'labTests', 'radiology', 'medications'];
-        this.medicalUnsubs = recordTypes.map(type => {
-            const recQuery = query(
-                collection(db, type),
-                where('patientId', '==', uid)
-            );
-            return onSnapshot(recQuery, snap => {
-                snap.docChanges().forEach(change => {
-                    if (change.type === 'added') {
-                        const name = type.replace(/([A-Z])/g, ' $1');
-                        this.showNotification(`🩺 New ${name.trim()} record added`);
-                    }
-                });
+    const recordTypes = ['medicalHistory', 'labTests', 'radiology', 'medications'];
+
+    // Load shown notification IDs from sessionStorage (if any)
+    this.shownNotificationIds = new Set(JSON.parse(sessionStorage.getItem('shownNotifIds') || '[]'));
+
+    this.medicalUnsubs = recordTypes.map(type => {
+        const recQuery = query(
+            collection(db, type),
+            where('patientId', '==', uid)
+        );
+        return onSnapshot(recQuery, snap => {
+            snap.docChanges().forEach(change => {
+                const docId = change.doc.id;
+
+                if (change.type === 'added' && !this.shownNotificationIds.has(docId)) {
+                    const name = type.replace(/([A-Z])/g, ' $1');
+                    this.showNotification(`🩺 New ${name.trim()} record added`);
+
+                    // Add to the Set and save to sessionStorage
+                    this.shownNotificationIds.add(docId);
+                    sessionStorage.setItem('shownNotifIds', JSON.stringify([...this.shownNotificationIds]));
+                }
             });
         });
-    }
+    });
+}
+
     detachListeners() {
         this.medicalUnsubs.forEach(unsub => unsub && unsub());
         this.medicalUnsubs = [];

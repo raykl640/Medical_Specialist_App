@@ -8,38 +8,8 @@
     <link rel="stylesheet" href="css/styles.css">
     <script src="https://kit.fontawesome.com/87385ae8db.js" crossorigin="anonymous"></script>
     <style>
-        :root {
-            --luna-light: #A7EBF2;
-            --luna-accent: #54ACBF;
-            --luna-primary: #26658C;
-            --luna-deep: #023859;
-            --luna-dark: #011C40;
-        }
-
-        /* Adjust padding based on sidebar */
-        .container {
-            padding: 20px 20px 40px 300px;
-            /* assume sidebar width 280px + margin */
-            max-width: 100%;
-            transition: padding-left 0.3s ease;
-        }
-
-        body:not(.with-sidebar) .container {
-            padding-left: 20px;
-        }
-
-        /* Header */
-        .header h1 {
-            font-size: 28px;
-            color: var(--luna-dark);
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .header h1 i {
-            color: var(--luna-accent);
+        .content {
+            margin-top: 20px;
         }
 
         .book-new-btn,
@@ -63,7 +33,7 @@
         }
 
         .section h2 {
-            font-size: 20px;
+            font-size: 24px;
             color: var(--luna-primary);
             margin-bottom: 10px;
             display: flex;
@@ -81,6 +51,7 @@
             display: none;
             position: fixed;
             inset: 0;
+            top: 25px;
             background: rgba(0, 0, 0, 0.4);
             z-index: 1000;
             justify-content: center;
@@ -121,6 +92,10 @@
             font-weight: 600;
         }
 
+        .section {
+            margin-top: 20px;
+        }
+
         .modal-body input,
         .modal-body select,
         .modal-body textarea {
@@ -154,8 +129,18 @@
 
         .close {
             font-size: 24px;
-            color: #999;
+            color: var(--luna-dark);
+            background: transparent;
+            border: none;
             cursor: pointer;
+            transition: color 0.2s ease;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .close:hover {
+            color: var(--luna-accent);
+            background-color: rgba(0, 0, 0, 0.05);
         }
 
         /* Appointment Card */
@@ -186,10 +171,19 @@
         }
 
         .specialty {
+            display: inline-flex;
+            margin-top: 8px;
+            align-items: center;
+            gap: 6px;
+            background-color: var(--luna-light);
+            color: var(--luna-deep);
+            padding: 4px 10px;
+            border-radius: 20px;
             font-size: 14px;
-            color: var(--luna-primary);
-            margin-top: 4px;
+            font-weight: 500;
+            border: 1px solid var(--luna-accent);
         }
+
 
         .appointment-status {
             text-transform: capitalize;
@@ -256,7 +250,7 @@
         }
 
         .view-btn:hover {
-            background: #02253f;
+            background: var(--luna-deep);
         }
 
         .no-appointments {
@@ -269,10 +263,6 @@
 
         /* Responsive */
         @media (max-width: 800px) {
-            .container {
-                padding: 15px;
-            }
-
             .modal-content {
                 width: 95%;
                 padding: 15px;
@@ -310,8 +300,11 @@
             </button>
             <div id="notificationDropdown" class="notification-dropdown hidden">
                 <div class="notification-header">
-                    <span>Notifications</span>
-                    <button id="markAllRead">Mark all as read</button>
+                    <span class="notification-title">Notifications</span>
+                    <div class="notification-actions">
+                        <button id="markAllRead">Mark all as read</button>
+                        <button id="clearAllNotifications">Clear all</button>
+                    </div>
                 </div>
                 <ul id="notificationList"></ul>
             </div>
@@ -329,7 +322,7 @@
         <div class="nav-section">
             <h3>Dashboard</h3>
             <ul>
-                <li><a href="patientDashboard.html" class="nav-link" data-page="dashboard">
+                <li><a href="index.html" class="nav-link" data-page="dashboard">
                         <span class="icon"><i class="fas fa-home"></i></span> Home</a></li>
                 <li><a href="appointments.html" class="nav-link" data-page="appointments">
                         <span class="icon"><i class="fas fa-calendar-alt"></i></span> My Appointments</a></li>
@@ -337,19 +330,8 @@
                         <span class="icon"><i class="fas fa-hospital"></i></span> Clinics</a></li>
                 <li><a href="patientHealthResources.html" class="nav-link" data-page="health-resources">
                         <span class="icon"><i class="fas fa-book-medical"></i></span> Health Resources</a></li>
-            </ul>
-        </div>
-        <div class="nav-section">
-            <h3>Medical</h3>
-            <ul>
-                <li><a href="medicalHistory.html" class="nav-link" data-page="medical-history">
-                        <span class="icon"><i class="fas fa-notes-medical"></i></span> Medical History</a></li>
-                <li><a href="patientLabTests.html" class="nav-link" data-page="lab-tests">
-                        <span class="icon"><i class="fas fa-vials"></i></span> Lab Tests</a></li>
-                <li><a href="patientRadiology.html" class="nav-link" data-page="radiology">
-                        <span class="icon"><i class="fas fa-x-ray"></i></span> Radiology</a></li>
-                <li><a href="patientMedications.html" class="nav-link" data-page="prescriptions">
-                        <span class="icon"><i class="fas fa-pills"></i></span> Medications</a></li>
+                <li><a href="medicalDashboard.html" class="nav-link" data-page="medical-history">
+                        <span class="icon"><i class="fas fa-notes-medical"></i></span> Medical Dashboard</a></li>
             </ul>
         </div>
         <div class="nav-section nav-bottom">
@@ -363,21 +345,22 @@
     </div>
     <div id="mainContent" class="main-content">
         <div class="header">
-            <h1><i class="fas fa-calendar-alt"></i>My Appointments</h1>
+            <h1><i class="fas fa-calendar-alt"></i> My Appointments</h1>
             <p>Manage your medical appointments, schedule new ones, and view your appointment history.</p>
+
+            <button class="book-new-btn" onclick="showBookingModal()">
+                <i class="fas fa-plus"></i> Book New Appointment
+            </button>
         </div>
         <div class="content">
-            <button class="book-new-btn" onclick="showBookingModal()">
-                <i class="fas fa-plus"></i>Book New Appointment
-            </button>
             <div class="section">
-                <h2><i class="fas fa-calendar-check"></i>Upcoming Appointments</h2>
+                <h2><i class="fas fa-calendar-check"></i> Upcoming Appointments</h2>
                 <div id="upcomingAppointments">
                     <div class="loading">Loading upcoming appointments...</div>
                 </div>
             </div>
             <div class="section">
-                <h2><i class="fas fa-file-medical"></i>Past Appointments</h2>
+                <h2><i class="fas fa-file-medical"></i> Past Appointments</h2>
                 <div id="pastAppointments">
                     <div class="loading">Loading appointment history...</div>
                 </div>
@@ -392,46 +375,46 @@
                 <div class="modal-body">
                     <form id="bookingForm">
                         <div class="form-group">
-                            <label for="clinicSelect"><i class="fas fa-hospital"></i>Select Clinic:</label>
+                            <label for="clinicSelect"><i class="fas fa-hospital"></i> Select Clinic:</label>
                             <select id="clinicSelect" required>
                                 <option value="">Choose a clinic...</option>
                             </select>
                         </div>
 
                         <div class="form-group">
-                            <label for="specialistSelect"><i class="fas fa-user-md"></i>Select Specialist:</label>
+                            <label for="specialistSelect"><i class="fas fa-user-md"></i> Select Specialist:</label>
                             <select id="specialistSelect" required disabled>
                                 <option value="">First select a clinic...</option>
                             </select>
                         </div>
 
                         <div class="form-group">
-                            <label for="appointmentDate"><i class="fas fa-calendar-alt"></i>Appointment Date:</label>
+                            <label for="appointmentDate"><i class="fas fa-calendar-alt"></i> Appointment Date:</label>
                             <input type="date" id="appointmentDate" required>
                         </div>
 
                         <div class="form-group">
-                            <label><i class="fas fa-clock"></i>Available Time Slots:</label>
+                            <label><i class="fas fa-clock"></i> Available Time Slots:</label>
                             <div id="timeSlots" class="time-slots-grid">
                                 <div class="time-slot unavailable">Select date first</div>
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label for="appointmentReason"><i class="fas fa-pen"></i>Reason for Visit:</label>
+                            <label for="appointmentReason"><i class="fas fa-pen"></i> Reason for Visit:</label>
                             <textarea id="appointmentReason" rows="3"
                                 placeholder="Describe your symptoms or reason for the appointment..."></textarea>
                         </div>
 
                         <div class="form-group">
-                            <label for="patientNotes"><i class="fas fa-notes-medical"></i>Additional Notes
+                            <label for="patientNotes"><i class="fas fa-notes-medical"></i> Additional Notes
                                 (Optional):</label>
                             <textarea id="patientNotes" rows="2"
                                 placeholder="Any additional information you'd like to share..."></textarea>
                         </div>
 
                         <button type="submit" class="submit-btn">
-                            <i class="fas fa-check-circle"></i>Book Appointment
+                            <i class="fas fa-check-circle"></i> Book Appointment
                         </button>
                     </form>
                 </div>
@@ -453,30 +436,48 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="newAppointmentDate"><i class="fas fa-calendar-alt"></i>New Appointment Date:</label>
+                        <label for="newAppointmentDate"><i class="fas fa-calendar-alt"></i> New Appointment
+                            Date:</label>
                         <input type="date" id="newAppointmentDate" required>
                     </div>
 
                     <div class="form-group">
-                        <label><i class="fas fa-clock"></i>Available Time Slots:</label>
+                        <label><i class="fas fa-clock"></i> Available Time Slots:</label>
                         <div id="rescheduleTimeSlots" class="time-slots-grid">
-                            <div class="time-slot unavailable">Select date first</div>
+                            <div class="time-slot unavailable"> Select date first</div>
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label for="rescheduleReason"><i class="fas fa-pen"></i>Reason for Rescheduling:</label>
+                        <label for="rescheduleReason"><i class="fas fa-pen"></i> Reason for Rescheduling:</label>
                         <textarea id="rescheduleReason" rows="3"
                             placeholder="Why are you rescheduling this appointment?"></textarea>
                     </div>
 
                     <button type="submit" class="submit-btn">
-                        <i class="fas fa-check-circle"></i>Confirm Reschedule
+                        <i class="fas fa-check-circle"></i> Confirm Reschedule
                     </button>
                 </form>
             </div>
         </div>
     </div>
+
+    <!-- Appointment Details Modal -->
+    <div id="appointmentModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-calendar-check"></i> Appointment Details</h2>
+                <span class="close"
+                    onclick="document.getElementById('appointmentModal').style.display='none'">&times;</span>
+            </div>
+            <div class="modal-body" id="appointmentModalBody">
+                <!-- Content gets injected here -->
+            </div>
+        </div>
+    </div>
+
+
+
 
     <script type="module" src="js/navigation.js"></script>
     <script type="module" src="js/patient/appointments.js"></script>

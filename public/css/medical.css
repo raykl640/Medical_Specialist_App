@@ -1,17 +1,4 @@
-h2 {
-    font-size: 1.5rem;
-    margin-bottom: 0.5rem;
-    color: var(--luna-deep);
-}
-
-h4 {
-    font-size: 1rem;
-    margin-bottom: 1.5rem;
-    color: var(--luna-dark);
-}
-
-/* === View Toggle Buttons === */
-#viewToggle {
+.viewToggle {
     display: flex;
     background: #e2e8f0;
     border-radius: 12px;
@@ -19,7 +6,7 @@ h4 {
     width: 206px;
 }
 
-#viewToggle button {
+.viewToggle button {
     padding: 8px 16px;
     border: none;
     background: transparent;
@@ -27,37 +14,71 @@ h4 {
     cursor: pointer;
     transition: all 0.3s ease;
     font-size: 14px;
-    color: var(--luna-deep);
+    color: var(--luna-accent);
 }
 
-#viewToggle button.active {
+.viewToggle button.active {
     background: white;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    color: var(--luna-primary);
+    color: var(--luna-deep);
 }
 
 /* === Controls (search + filters) === */
 .controls {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
-    min-width: 30px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 1rem 0;
+}
+
+/* Stack inputs on small screens */
+@media (max-width: 768px) {
+  .controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .controls input,
+  .controls select,
+  .controls button {
+    width: 100%;
+  }
 }
 
 .controls input,
 .controls select {
-    padding: 0.5rem;
-    border-radius: 6px;
-    border: 1px solid #cbd5e1;
-    min-width: 180px;
-    background: white;
-    color: var(--luna-deep);
+  padding: 0.5rem;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+  min-width: 180px;
+  background: white;
+  color: var(--luna-deep);
+}
+
+.controls button {
+  padding: 0.5rem 1rem;
+  border: none;
+  background: var(--luna-primary);
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.controls button:hover {
+  background: var(--luna-accent);
 }
 
 #filter-input {
-    min-width: 80px;
+  min-width: 80px;
 }
 
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 12px;
+}
 /* === Table === */
 table {
     width: 100%;
@@ -109,6 +130,191 @@ tbody tr:hover {
 .card:hover {
     transform: translateY(-4px);
 }
+.viewToggle {
+  display: flex;
+  background: #e2e8f0;
+  border-radius: 12px;
+  padding: 4px;
+  width: 206px;
+}
+
+.viewToggle button {
+  padding: 8px 16px;
+  border: none;
+  background: transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 14px;
+  color: var(--luna-accent);
+}
+
+.viewToggle button.active {
+  background: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  color: var(--luna-deep);
+}
+
+/* === Controls (search + filters) === */
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 16px 0;
+}
+
+@media (max-width: 768px) {
+  .controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .controls input,
+  .controls select,
+  .controls button {
+    width: 100%;
+  }
+}
+
+.controls input,
+.controls select {
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+  min-width: 180px;
+  background: white;
+  color: var(--luna-deep);
+}
+
+.controls button {
+  padding: 8px 16px;
+  border: none;
+  background: var(--luna-primary);
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.controls button:hover {
+  background: var(--luna-accent);
+}
+
+#filter-input {
+  min-width: 80px;
+}
+
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 12px;
+}
+
+/* === Table === */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  margin-top: 16px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+thead th {
+  background: var(--luna-primary);
+  color: white;
+  text-align: left;
+  padding: 12px;
+  font-size: 14px;
+  text-transform: uppercase;
+}
+
+tbody td {
+  padding: 12px;
+  border-top: 1px solid #e2e8f0;
+  color: var(--luna-dark);
+}
+
+tbody tr:hover {
+  background-color: #f1f5f9;
+}
+
+/* === Cards === */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+  margin-top: 24px;
+}
+
+.card {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  position: relative;
+  transition: transform 0.2s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 4px;
+  right: 0;
+  background: linear-gradient(to right, var(--luna-accent), var(--luna-primary));
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+}
+
+.card h3 {
+  margin-top: 8px;
+  font-size: 16px;
+  color: var(--luna-deep);
+}
+
+.card p {
+  font-size: 14px;
+  margin-top: 4px;
+  color: var(--luna-dark);
+}
+
+/* === Pagination === */
+#paginationContainer {
+  display: flex;
+  justify-content: center;
+  margin-top: 32px;
+  gap: 8px;
+}
+
+#paginationContainer button {
+  padding: 8px 12px;
+  background: var(--luna-accent);
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  border: none;
+}
+
+#paginationContainer button.active {
+  background: var(--luna-primary);
+  color: white;
+  border-color: var(--luna-primary);
+}
+
+/* === Active Navigation Link === */
+.navbar-list li a.active {
+  color: var(--luna-accent);
+  font-weight: bold;
+}
 
 .card::before {
     content: '';
@@ -145,7 +351,6 @@ tbody tr:hover {
 
 #paginationContainer button {
     padding: 0.5rem 0.75rem;
-    border: 1px solid var(--luna-primary);
     background: var(--luna-accent);
     color: white;
     border-radius: 6px;
@@ -163,3 +368,64 @@ tbody tr:hover {
     color: var(--luna-accent);
     font-weight: bold;
 }
+
+#medicalHistoryModal,
+#radiologyModal,
+#labTestModal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(18, 18, 18, 0.21); /* semi-transparent dark overlay */
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: var(--luna-dark);
+  padding: 20px 25px;
+  border-radius: 8px;
+  max-width: 600px;
+  width: 90%;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  color: var(--text-color);
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+}
+
+.modal-body {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--text-color);
+}
+
+
+.modal-row {
+  margin-bottom: 12px;
+}
+
+.modal-content button {
+  font-size: 20px;
+  cursor: pointer;
+  color: var(--text-color);
+  border: none;
+  background: var(--luna-accent);
+  transition: color 0.2s ease;
+}
+
+.modal-content button:hover {
+  color: var(--luna-deep);
+}
+
+
+
