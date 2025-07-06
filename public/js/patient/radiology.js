@@ -38,34 +38,38 @@ const itemsPerPage = 5;
 let currentViewMode = "table";
 
 // Create modal
-const modal = document.createElement("div");
-modal.id = "modal";
-modal.style.cssText = `
+const radiologyModal = document.createElement("div");
+radiologyModal.id = "radiologyModal";
+radiologyModal.style.cssText = `
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(18, 18, 18, 0.21);
   display: none;
   align-items: center;
   justify-content: center;
   z-index: 1000;
 `;
-modal.innerHTML = `
-  <div style="background: white; padding: 20px; border-radius: 10px; max-width: 500px; width: 90%;">
-    <h3 id="modalTitle">Radiology Test Details</h3>
-    <pre id="modalBody" style="white-space: pre-wrap;"></pre>
-    <button onclick="document.getElementById('modal').style.display='none'">Close</button>
+radiologyModal.innerHTML = `
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>Radiology Test Details</h3>
+      <button onclick="document.getElementById('radiologyModal').style.display='none'">&times;</button>
+    </div>
+    <div id="radiologyModalBody" class="modal-body" style="margin-top: 20px;"></div>
   </div>
 `;
-document.body.appendChild(modal);
+document.body.appendChild(radiologyModal);
 
 // Setup view toggle
 const getViewMode = setupViewToggle("radiologyViewToggle", (newMode) => {
   currentViewMode = newMode;
+  currentPage = 1;
   const paginated = paginate(filteredResults, itemsPerPage, currentPage);
-  renderradiologyTests(paginated, currentViewMode);
+  renderRadiologyTests(paginated, currentViewMode);
+  setupPagination();
 }, currentViewMode);
 
 onAuthStateChanged(auth, user => {
@@ -152,36 +156,41 @@ function filterAndSort() {
   if (clinicVal) filtered = filtered.filter(r => r.clinicName === clinicVal);
   if (specialistVal) filtered = filtered.filter(r => r.specialistName === specialistVal);
 
-  if (sortVal === "email") {
-    filtered.sort((a, b) => (b.testDate?.toDate?.() - a.testDate?.toDate?.()));
-  } else if (sortVal === "clinic") {
-    filtered.sort((a, b) => (a.clinicName || '').localeCompare(b.clinicName || ''));
-  } else if (sortVal === "specialist") {
-    filtered.sort((a, b) => (a.specialistName || '').localeCompare(b.specialistName || ''));
-  } else {
-    filtered.sort((a, b) => (a.type || '').localeCompare(b.type || ''));
+  switch (sortVal) {
+    case "email":
+      filtered.sort((a, b) => (b.testDate?.toDate?.() - a.testDate?.toDate?.()));
+      break;
+    case "clinic":
+      filtered.sort((a, b) => (a.clinicName || '').localeCompare(b.clinicName || ''));
+      break;
+    case "specialist":
+      filtered.sort((a, b) => (a.specialistName || '').localeCompare(b.specialistName || ''));
+      break;
+    default:
+      filtered.sort((a, b) => (a.type || '').localeCompare(b.type || ''));
   }
 
   filteredResults = filtered;
-  currentPage = 1; // Reset to first page when filtering
-
+  currentPage = 1;
   const paginated = paginate(filteredResults, itemsPerPage, currentPage);
-  renderradiologyTests(paginated, getViewMode());
+  renderRadiologyTests(paginated, getViewMode());
+  setupPagination();
+}
 
+function setupPagination() {
   setupPaginationControls(
     "paginationContainer",
     filteredResults.length,
     itemsPerPage,
     (newPage) => {
       currentPage = newPage;
-      const newPaginated = paginate(filteredResults, itemsPerPage, currentPage);
-      renderradiologyTests(newPaginated, getViewMode());
+      const paginated = paginate(filteredResults, itemsPerPage, currentPage);
+      renderRadiologyTests(paginated, getViewMode());
     }
   );
 }
 
-function renderradiologyTests(data, viewMode) {
-  // Clear both containers
+function renderRadiologyTests(data, viewMode) {
   radiologyTbody.innerHTML = '';
   radiologyCards.innerHTML = '';
 
@@ -189,7 +198,7 @@ function renderradiologyTests(data, viewMode) {
     if (viewMode === "card") {
       radiologyCards.innerHTML = `<p>No matching radiology tests found.</p>`;
     } else {
-      radiologyTbody.innerHTML = `<tr><td colspan="6">Loading...</td></tr>`;
+      radiologyTbody.innerHTML = `<tr><td colspan="6">No data found.</td></tr>`;
     }
     return;
   }
@@ -208,7 +217,7 @@ function renderradiologyTests(data, viewMode) {
         <p><strong>Clinic:</strong> ${test.clinicName || ''}</p>
         <p><strong>Specialist:</strong> ${test.specialistName || ''}</p>
         <p><strong>Result:</strong> ${test.report || ''}</p>
-        <button onclick="showDetails('${encodeURIComponent(JSON.stringify(test))}')">View Full Record</button>
+        <button onclick="showRadiologyDetails('${encodeURIComponent(JSON.stringify(test))}')">View Full Record</button>
       `;
       radiologyCards.appendChild(card);
     });
@@ -225,27 +234,36 @@ function renderradiologyTests(data, viewMode) {
         <td>${test.clinicName || ''}</td>
         <td>${test.specialistName || ''}</td>
         <td>${test.report || ''}</td>
-        <td><button onclick="showDetails('${encodeURIComponent(JSON.stringify(test))}')">View Record</button></td>
+        <td><button onclick="showRadiologyDetails('${encodeURIComponent(JSON.stringify(test))}')">View Record</button></td>
       `;
       radiologyTbody.appendChild(tr);
     });
   }
 }
 
-window.showDetails = (encoded) => {
+window.showRadiologyDetails = (encoded) => {
   const test = JSON.parse(decodeURIComponent(encoded));
-  const testDate = test.testDate?.toDate?.().toLocaleDateString() || "N/A";
+  const seconds = test.testDate?.seconds;
+  const testDate = seconds ? new Date(seconds * 1000).toLocaleDateString() : "N/A";
 
-  let details = `Test type: ${test.type}\n`;
-  details += `Date Conducted: ${testDate}\n`;
-  details += `Clinic: ${test.clinicName}\n`;
-  details += `Specialist: ${test.specialistName}\n`;
-  details += `Result: ${test.report}\n`;
 
-  document.getElementById("modalBody").textContent = details;
-  document.getElementById("modal").style.display = "flex";
+  const fields = [
+    ["Test Type", test.type],
+    ["Date Conducted", testDate],
+    ["Clinic", test.clinicName],
+    ["Specialist", test.specialistName],
+    ["Result", test.report]
+  ];
+
+  const body = fields.map(
+    ([label, value]) => `<div class="modal-row"><strong>${label}:</strong> ${value || 'N/A'}</div>`
+  ).join("");
+
+  document.getElementById("radiologyModalBody").innerHTML = body;
+  document.getElementById("radiologyModal").style.display = "flex";
 };
 
+// Filters
 filterInput.addEventListener("input", filterAndSort);
 sortSelect.addEventListener("change", filterAndSort);
 clinicFilter.addEventListener("change", filterAndSort);
