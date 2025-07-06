@@ -33,14 +33,15 @@ const filterInput = document.getElementById("filterInput");
 const sortSelect = document.getElementById("sortSelect");
 const clinicFilter = document.getElementById("clinicFilter");
 const specialistFilter = document.getElementById("specialistFilter");
-const patientTbody = document.getElementById("patientTbody");
-const cardContainer = document.getElementById("cardContainer");
-const tableContainer = document.querySelector("table");
+const medicationsTbody = document.getElementById("medicationsTbody");
+const medicationsCards = document.getElementById("medicationsCards");
+const medicationsTable = document.getElementById("medicationsTable");
+
 
 let medications = [];
 
 // Setup view toggle once, outside of the auth state change
-const viewToggleGetter = setupViewToggle("viewToggle", (view) => {
+const viewToggleGetter = setupViewToggle("medicationViewToggle", (view) => {
     console.log("Switching to view:", view);
   currentView = view;
   renderFilteredData(); // rerender when toggling view
@@ -148,9 +149,9 @@ function filterAndSort() {
 }
 
 function rendermedications(data) {
-    patientTbody.innerHTML = '';
+    medicationsTbody.innerHTML = '';
     if (data.length === 0) {
-        patientTbody.innerHTML = `<tr><td colspan="6">Loading...</td></tr>`;
+        medicationsTbody.innerHTML = `<tr><td colspan="6">Loading...</td></tr>`;
         return;
     }
 
@@ -168,7 +169,7 @@ function rendermedications(data) {
       <td>${medicine.specialistName || ''}</td>
     `;
 
-        patientTbody.appendChild(tr);
+        medicationsTbody.appendChild(tr);
     });
 }
 
@@ -210,12 +211,12 @@ function renderFilteredData() {
   // Render based on view
   if (currentView === "card") {
     renderCards(paginatedData);
-    if (tableContainer) tableContainer.style.display = "none";
-    if (cardContainer) cardContainer.style.display = "grid";
+    if (medicationsTable) medicationsTable.style.display = "none";
+    if (medicationsCards) medicationsCards.style.display = "grid";
   } else {
     rendermedications(paginatedData);
-    if (tableContainer) tableContainer.style.display = "table";
-    if (cardContainer) cardContainer.style.display = "none";
+    if (medicationsTable) medicationsTable.style.display = "table";
+    if (medicationsCards) medicationsCards.style.display = "none";
   }
 
   setupPaginationControls("paginationContainer", filtered.length, itemsPerPage, (page) => {
@@ -225,7 +226,7 @@ function renderFilteredData() {
 }
 
 function renderCards(data) {
-  const container = document.getElementById("cardContainer");
+  const container = document.getElementById("medicationsCards");
   if (!container) return;
   
   container.innerHTML = "";
