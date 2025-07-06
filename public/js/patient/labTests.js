@@ -28,9 +28,9 @@ const filterInput = document.getElementById("filterInput");
 const sortSelect = document.getElementById("sortSelect");
 const clinicFilter = document.getElementById("clinicFilter");
 const specialistFilter = document.getElementById("specialistFilter");
-const patientTbody = document.getElementById("patientTbody");
+const labTestsTbody = document.getElementById("labTestsTbody");
 const paginationContainer = document.getElementById("paginationContainer");
-const cardContainer = document.getElementById("cardContainer");
+const labTestsCards = document.getElementById("labTestsCards");
 
 let labTests = [];
 let filteredResults = [];
@@ -64,7 +64,7 @@ document.body.appendChild(modal);
 // View toggle setup
 let currentViewMode = "table";
 
-const getViewMode = setupViewToggle("viewToggle", (newMode) => {
+const getViewMode = setupViewToggle("labViewToggle", (newMode) => {
     currentViewMode = newMode;
     // Reset to first page when changing views
     currentPage = 1;
@@ -197,24 +197,23 @@ function filterAndSort() {
 }
 
 function renderLabTests(data, viewMode) {
-  const cardContainer = document.getElementById("cardContainer");
 
   // Clear both containers
-  patientTbody.innerHTML = '';
-  cardContainer.innerHTML = '';
+  labTestsTbody.innerHTML = '';
+  labTestsCards.innerHTML = '';
 
   if (data.length === 0) {
     if (viewMode === "card") {
-      cardContainer.innerHTML = `<p>Loading...</p>`;
+      labTestsCards.innerHTML = `<p>Loading...</p>`;
     } else {
-      patientTbody.innerHTML = `<tr><td colspan="6">Loading...</td></tr>`;
+      labTestsTbody.innerHTML = `<tr><td colspan="6">Loading...</td></tr>`;
     }
     return;
   }
 
   if (viewMode === "card") {
-    cardContainer.style.display = "grid";
-    patientTbody.parentElement.style.display = "none";
+    labTestsCards.style.display = "grid";
+    labTestsTbody.parentElement.style.display = "none";
 
     data.forEach(test => {
       const testDate = test.testDate?.toDate?.().toLocaleDateString() || "N/A";
@@ -228,11 +227,11 @@ function renderLabTests(data, viewMode) {
         <p><strong>Result:</strong> ${test.parameters?.[0]?.result || 'N/A'}</p>
         <button onclick="showDetails('${encodeURIComponent(JSON.stringify(test))}')">View Record</button>
       `;
-      cardContainer.appendChild(card);
+      labTestsCards.appendChild(card);
     });
   } else {
-    cardContainer.style.display = "none";
-    patientTbody.parentElement.style.display = "table";
+    labTestsCards.style.display = "none";
+    labTestsTbody.parentElement.style.display = "table";
 
     data.forEach(test => {
       const testDate = test.testDate?.toDate?.().toLocaleDateString() || "N/A";
@@ -245,7 +244,7 @@ function renderLabTests(data, viewMode) {
         <td>${test.parameters?.[0]?.result || 'N/A'}</td>
         <td><button onclick="showDetails('${encodeURIComponent(JSON.stringify(test))}')">View Record</button></td>
       `;
-      patientTbody.appendChild(tr);
+      labTestsTbody.appendChild(tr);
     });
   }
 }

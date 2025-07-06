@@ -11,15 +11,14 @@ h4 {
 }
 
 /* === View Toggle Buttons === */
-#viewToggle {
+.viewToggle {
     display: flex;
     background: #e2e8f0;
     border-radius: 12px;
     padding: 4px;
     width: 206px;
 }
-
-#viewToggle button {
+.viewToggle button {
     padding: 8px 16px;
     border: none;
     background: transparent;
@@ -27,13 +26,13 @@ h4 {
     cursor: pointer;
     transition: all 0.3s ease;
     font-size: 14px;
-    color: var(--luna-deep);
+    color: var(--luna-accent);
 }
 
-#viewToggle button.active {
+.viewToggle button.active {
     background: white;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    color: var(--luna-primary);
+    color: var(--luna-deep);
 }
 
 /* === Controls (search + filters) === */
@@ -163,3 +162,4 @@ tbody tr:hover {
     color: var(--luna-accent);
     font-weight: bold;
 }
+

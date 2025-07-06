@@ -28,9 +28,9 @@ const filterInput = document.getElementById("filterInput");
 const sortSelect = document.getElementById("sortSelect");
 const clinicFilter = document.getElementById("clinicFilter");
 const specialistFilter = document.getElementById("specialistFilter");
-const patientTbody = document.getElementById("patientTbody");
+const medicalHistoryTbody = document.getElementById("medicalHistoryTbody");
 const paginationContainer = document.getElementById("paginationContainer");
-const cardContainer = document.getElementById("cardContainer");
+const medicalHistoryCards = document.getElementById("medicalHistoryCards");
 
 let medicalHistory = [];
 let filteredResults = [];
@@ -188,24 +188,23 @@ function filterAndSort() {
 }
 
 function rendermedicalHistory(data, viewMode) {
-    const cardContainer = document.getElementById("cardContainer");
 
     // Clear both containers
-    patientTbody.innerHTML = '';
-    cardContainer.innerHTML = '';
+    medicalHistoryTbody.innerHTML = '';
+    medicalHistoryCards.innerHTML = '';
 
     if (data.length === 0) {
         if (viewMode === "card") {
-            cardContainer.innerHTML = `<p>Loading...</p>`;
+            medicalHistoryCards.innerHTML = `<p>Loading...</p>`;
         } else {
-            patientTbody.innerHTML = `<tr><td colspan="6">Loading...</td></tr>`;
+            medicalHistoryTbody.innerHTML = `<tr><td colspan="6">Loading...</td></tr>`;
         }
         return;
     }
 
     if (viewMode === "card") {
-        cardContainer.style.display = "grid";
-        patientTbody.parentElement.style.display = "none";
+        medicalHistoryCards.style.display = "grid";
+        medicalHistoryTbody.parentElement.style.display = "none";
 
         data.forEach(hist => {
             const date = hist.visitDate?.toDate?.().toLocaleDateString() || "N/A";
@@ -219,11 +218,11 @@ function rendermedicalHistory(data, viewMode) {
         <p><strong>Diagnosis Summary:</strong> ${hist.diagnosisSummary || ''}</p>
         <button onclick="showDetails('${encodeURIComponent(JSON.stringify(hist))}')">View Full Record</button>
       `;
-            cardContainer.appendChild(card);
+            medicalHistoryCards.appendChild(card);
         });
     } else {
-        cardContainer.style.display = "none";
-        patientTbody.parentElement.style.display = "table";
+        medicalHistoryCards.style.display = "none";
+        medicalHistoryTbody.parentElement.style.display = "table";
 
         data.forEach(hist => {
             const date = hist.visitDate?.toDate?.().toLocaleDateString() || "N/A";
@@ -236,7 +235,7 @@ function rendermedicalHistory(data, viewMode) {
         <td>${hist.diagnosisSummary || ''}</td>
         <td><button onclick="showDetails('${encodeURIComponent(JSON.stringify(hist))}')">View Record</button></td>
       `;
-            patientTbody.appendChild(tr);
+            medicalHistoryTbody.appendChild(tr);
         });
     }
 }

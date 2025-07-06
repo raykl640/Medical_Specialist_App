@@ -27,8 +27,8 @@ const filterInput = document.getElementById("filterInput");
 const sortSelect = document.getElementById("sortSelect");
 const clinicFilter = document.getElementById("clinicFilter");
 const specialistFilter = document.getElementById("specialistFilter");
-const patientTbody = document.getElementById("patientTbody");
-const cardContainer = document.getElementById("cardContainer");
+const radiologyTbody = document.getElementById("radiologyTbody");
+const radiologyCards = document.getElementById("radiologyCards");
 const paginationContainer = document.getElementById("paginationContainer");
 
 let radiologyTests = [];
@@ -62,7 +62,7 @@ modal.innerHTML = `
 document.body.appendChild(modal);
 
 // Setup view toggle
-const getViewMode = setupViewToggle("viewToggle", (newMode) => {
+const getViewMode = setupViewToggle("radiologyViewToggle", (newMode) => {
   currentViewMode = newMode;
   const paginated = paginate(filteredResults, itemsPerPage, currentPage);
   renderradiologyTests(paginated, currentViewMode);
@@ -182,21 +182,21 @@ function filterAndSort() {
 
 function renderradiologyTests(data, viewMode) {
   // Clear both containers
-  patientTbody.innerHTML = '';
-  cardContainer.innerHTML = '';
+  radiologyTbody.innerHTML = '';
+  radiologyCards.innerHTML = '';
 
   if (data.length === 0) {
     if (viewMode === "card") {
-      cardContainer.innerHTML = `<p>No matching radiology tests found.</p>`;
+      radiologyCards.innerHTML = `<p>No matching radiology tests found.</p>`;
     } else {
-      patientTbody.innerHTML = `<tr><td colspan="6">Loading...</td></tr>`;
+      radiologyTbody.innerHTML = `<tr><td colspan="6">Loading...</td></tr>`;
     }
     return;
   }
 
   if (viewMode === "card") {
-    cardContainer.style.display = "grid";
-    patientTbody.parentElement.style.display = "none";
+    radiologyCards.style.display = "grid";
+    radiologyTbody.parentElement.style.display = "none";
 
     data.forEach(test => {
       const testDate = test.testDate?.toDate?.().toLocaleDateString() || "N/A";
@@ -210,11 +210,11 @@ function renderradiologyTests(data, viewMode) {
         <p><strong>Result:</strong> ${test.report || ''}</p>
         <button onclick="showDetails('${encodeURIComponent(JSON.stringify(test))}')">View Full Record</button>
       `;
-      cardContainer.appendChild(card);
+      radiologyCards.appendChild(card);
     });
   } else {
-    cardContainer.style.display = "none";
-    patientTbody.parentElement.style.display = "table";
+    radiologyCards.style.display = "none";
+    radiologyTbody.parentElement.style.display = "table";
 
     data.forEach(test => {
       const testDate = test.testDate?.toDate?.().toLocaleDateString() || "N/A";
@@ -227,7 +227,7 @@ function renderradiologyTests(data, viewMode) {
         <td>${test.report || ''}</td>
         <td><button onclick="showDetails('${encodeURIComponent(JSON.stringify(test))}')">View Record</button></td>
       `;
-      patientTbody.appendChild(tr);
+      radiologyTbody.appendChild(tr);
     });
   }
 }
