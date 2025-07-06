@@ -9,27 +9,26 @@
     <script src="https://kit.fontawesome.com/87385ae8db.js" crossorigin="anonymous"></script>
 
     <style>
-        h1 {
-            font-size: 24px;
-            color: var(--luna-primary);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 10px;
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
         }
 
         p {
             font-size: 15px;
             color: #444;
         }
-
+        .content {
+            margin-top: 20px;
+        }
         /* Filters Section */
         .filters {
             display: flex;
             flex-wrap: wrap;
             gap: 20px;
             margin-bottom: 25px;
-            background: #f5f5f5;
+            background: #eceeef;
             padding: 15px;
             border-radius: 8px;
         }
@@ -191,7 +190,7 @@
         <div class="nav-section">
             <h3>Dashboard</h3>
             <ul>
-                <li><a href="patientDashboard.html" class="nav-link" data-page="dashboard">
+                <li><a href="index.html" class="nav-link" data-page="dashboard">
                         <span class="icon"><i class="fas fa-home"></i></span> Home</a></li>
                 <li><a href="appointments.html" class="nav-link" data-page="appointments">
                         <span class="icon"><i class="fas fa-calendar-alt"></i></span> My Appointments</a></li>
@@ -214,33 +213,35 @@
     </div>
 
     <div id="mainContent" class="main-content">
-        <h1><i class="fas fa-hospital-alt"></i> Available Clinics</h1>
-        <p>Browse through clinics and find the right specialist. Click on the cards to see more details or schedule
-            an appointment.</p>
-        <div class="content">
-            <div class="filters">
-                <div class="filter-group">
-                    <label for="locationFilter"><i class="fas fa-map-marker-alt"></i>Location:</label>
-                    <select id="locationFilter">
-                        <option value="">All Locations</option>
-                    </select>
+        <div class="header">
+            <h1><i class="fas fa-hospital-alt"></i> Available Clinics</h1>
+            <p>Browse through clinics and find the right specialist. Click on the cards to see more details or schedule
+                an appointment.</p>
+            <div class="content">
+                <div class="filters">
+                    <div class="filter-group">
+                        <label for="locationFilter"><i class="fas fa-map-marker-alt"></i>Location:</label>
+                        <select id="locationFilter">
+                            <option value="">All Locations</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="specialtyFilter"><i class="fas fa-stethoscope"></i>Specialty:</label>
+                        <select id="specialtyFilter">
+                            <option value="">All Specialties</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="searchFilter"><i class="fas fa-search"></i>Search:</label>
+                        <input type="text" id="searchFilter" placeholder="Search clinics...">
+                    </div>
                 </div>
-                <div class="filter-group">
-                    <label for="specialtyFilter"><i class="fas fa-stethoscope"></i>Specialty:</label>
-                    <select id="specialtyFilter">
-                        <option value="">All Specialties</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label for="searchFilter"><i class="fas fa-search"></i>Search:</label>
-                    <input type="text" id="searchFilter" placeholder="Search clinics...">
-                </div>
-            </div>
-
-            <div id="clinicsContainer">
-                <div class="loading">Loading available clinics...</div>
             </div>
         </div>
+        <div id="clinicsContainer">
+            <div class="loading">Loading available clinics...</div>
+        </div>
+
     </div>
 
     <!-- Clinic Details Modal -->

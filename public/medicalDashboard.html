@@ -9,47 +9,53 @@
   <link rel="stylesheet" href="css/medical.css">
   <script src="https://kit.fontawesome.com/87385ae8db.js" crossorigin="anonymous"></script>
   <style>
-    .tabs {
-      margin-top: 20px;
-    }
+   .tabs {
+  margin-top: 20px;
+}
 
-    .tab-buttons {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 15px;
-    }
+.tab-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 15px;
+}
 
-    .tab-btn {
-      padding: 10px 16px;
-      background-color: #f0f0f0;
-      border: none;
-      border-radius: 8px;
-      font-size: 14px;
-      cursor: pointer;
-      transition: background-color 0.2s ease;
-    }
+.tab-btn {
+  padding: 10px 16px;
+  background-color: var(--luna-light, #e8f0fe);
+  border: 1px solid var(--luna-dark, #1E88E5);
+  border-radius: 8px;
+  font-size: 14px;
+  color: var(--luna-dark, #1E88E5);
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
 
-    .tab-btn:hover {
-      background-color: #e0e0e0;
-    }
+.tab-btn:hover {
+  background-color: var(--luna-dark, #1E88E5);
+  color: white;
+}
 
-    .tab-btn.active {
-      background-color: #0275d8;
-      color: white;
-    }
+.tab-btn.active {
+  background-color: var(--luna-dark, #1E88E5);
+  color: white;
+  font-weight: 600;
+  border-color: var(--luna-dark, #1E88E5);
+}
 
-    .tab-content {
-      display: none;
-      background-color: #ffffff;
-      border-radius: 12px;
-      padding: 20px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-    }
+.tab-content {
+  display: none;
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
 
-    .tab-content.active {
-      display: block;
-    }
+.tab-content.active {
+  display: block;
+}
+
   </style>
 </head>
 
@@ -86,7 +92,7 @@
     <div class="nav-section">
       <h3>Dashboard</h3>
       <ul>
-        <li><a href="patientDashboard.html" class="nav-link" data-page="dashboard">
+        <li><a href="index.html" class="nav-link" data-page="dashboard">
             <span class="icon"><i class="fas fa-home"></i></span> Home</a></li>
         <li><a href="appointments.html" class="nav-link" data-page="appointments">
             <span class="icon"><i class="fas fa-calendar-alt"></i></span> My Appointments</a></li>
@@ -108,22 +114,24 @@
     </div>
   </div>
   <div id="mainContent" class="main-content">
-    <h1>Medical Dashboard</h1>
-    <h4>Browse your Medical Dashboard through the tabs below</h4>
-    <div class="controls">
+    <div class="header">
+      <h1><i class="fas fa-notes-medical"></i> Medical Dashboard</h1>
+      <p>Browse your medical records, lab tests, radiology reports, and medications through the tabs below.</p>
       <div class="controls">
-        <input type="text" id="filterInput" placeholder="Search......">
-        <select id="clinicFilter">
-          <option value="">All Clinics</option>
-        </select>
+        <div class="controls">
+          <input type="text" id="filterInput" placeholder="Search......">
+          <select id="clinicFilter">
+            <option value="">All Clinics</option>
+          </select>
 
-        <select id="specialistFilter">
-          <option value="">All Specialists</option>
-        </select>
-        <select id="specialtyFilter">
-          <option value="">All Specialties</option>
-        </select>
-        <button type="button" id="clearFilters" class="secondary"><i class="fas fa-undo"></i> Clear</button>
+          <select id="specialistFilter">
+            <option value="">All Specialists</option>
+          </select>
+          <select id="specialtyFilter">
+            <option value="">All Specialties</option>
+          </select>
+          <button type="button" id="clearFilters" class="secondary"><i class="fas fa-undo"></i> Clear</button>
+        </div>
       </div>
     </div>
     <div class="tabs">
@@ -138,8 +146,8 @@
 
       <!-- Tab Content -->
       <div class="tab-content active" id="medical-history">
-        <h2>Medical History</h2>
-        <h4>Browse your Medical History by clinic or Specialty. Click 'view Record' to see more details.</h4>
+        <h3>Medical History</h3>
+        <h6>Browse your Medical History by clinic or Specialty. Click 'view Record' to see more details.</h6>
         <div class="controls">
           <select id="sortSelect">
             <option value="">Sort By</option>
@@ -154,6 +162,7 @@
           <button data-view="table">Table View</button>
           <button data-view="cards">Card View</button>
         </div>
+        <div class="table-responsive">
         <table>
           <thead>
             <tr>
@@ -171,11 +180,12 @@
         </table>
         <div id="medicalHistoryCards" class="card-grid" style="display: none;"></div>
         <div id="paginationContainer"></div>
+        </div>
       </div>
 
       <div class="tab-content" id="lab-tests">
-        <h2>Lab Tests</h2>
-        <h4>Browse your lab Tests by clinic or test Name. Click 'view Record' to see more details.</h4>
+        <h3>Lab Tests</h3>
+        <h6>Browse your lab Tests by clinic or test Name. Click 'view Record' to see more details.</h6>
         <div class="controls">
           <select id="sortSelect">
             <option value="">Sort By</option>
@@ -191,6 +201,7 @@
           <button data-view="table">Table View</button>
           <button data-view="cards">Card View</button>
         </div>
+        <div class="table-responsive">
         <table>
           <thead>
             <tr>
@@ -199,7 +210,7 @@
               <th>Clinic Name</th>
               <th>Specialist</th>
               <th>Result</th>
-              <th>View full Record</th> 
+              <th>View full Record</th>
             </tr>
           </thead>
           <tbody id="labTestsTbody">
@@ -208,11 +219,12 @@
         </table>
         <div id="labTestsCards" class="card-grid" style="display: none;"></div>
         <div id="paginationContainer"></div>
+        </div>
       </div>
 
       <div class="tab-content" id="radiology">
-        <h2>Radiology</h2>
-        <h4>Browse your radiology reports by clinic or specialist. Click view records for the full report</h4>
+        <h3>Radiology</h3>
+        <h6>Browse your radiology reports by clinic or specialist. Click view records for the full report</h6>
         <div class="controls">
           <select id="sortSelect">
             <option value="">Sort By</option>
@@ -227,6 +239,7 @@
           <button data-view="table">Table View</button>
           <button data-view="cards">Card View</button>
         </div>
+        <div class="table-responsive">
         <table>
           <thead>
             <tr>
@@ -244,18 +257,19 @@
         </table>
         <div id="radiologyCards" class="card-grid" style="display: none;"></div>
         <div id="paginationContainer"></div>
+        </div>
       </div>
 
       <div class="tab-content" id="medications">
-        <h2>Medications</h2>
-        <h4>Browse through your medications by clinic or specialist.</h4>
+        <h3>Medications</h3>
+        <h6>Browse through your medications by clinic or specialist.</h6>
         <div class="controls">
           <select id="sortSelect">
             <option value="">Sort By</option>
-                <option value="">Medication</option>
-                <option value="email">Date Prescribed</option>
-                <option value="clinic">Clinic (A-Z)</option>
-                <option value="specialist">Specialist (A-Z)</option>
+            <option value="">Medication</option>
+            <option value="email">Date Prescribed</option>
+            <option value="clinic">Clinic (A-Z)</option>
+            <option value="specialist">Specialist (A-Z)</option>
           </select>
           <button type="button" id="clearFilters" class="secondary"><i class="fas fa-undo"></i> Clear</button>
         </div>
@@ -263,6 +277,7 @@
           <button data-view="table">Table View</button>
           <button data-view="cards">Card View</button>
         </div>
+        <div class="table-responsive">
         <table id="medicationsTable">
           <thead>
             <tr>
@@ -281,6 +296,7 @@
         </table>
         <div id="medicationsCards" class="card-grid" style="display: none;"></div>
         <div id="paginationContainer"></div>
+        </div>
       </div>
     </div>
   </div>
