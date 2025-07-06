@@ -578,6 +578,11 @@ const ui = {
         document.getElementById('newAppointmentDate').addEventListener('change', this.handleRescheduleDateChange.bind(this));
         document.getElementById('bookingForm').addEventListener('submit', this.handleBookingSubmit.bind(this));
         document.getElementById('rescheduleForm').addEventListener('submit', this.handleRescheduleSubmit.bind(this));
+
+        document.querySelector('#bookingModal .close').addEventListener('click', () => {
+            document.getElementById('bookingModal').style.display = 'none';
+        });
+
     },
 
     handleClinicChange(event) {
@@ -845,7 +850,7 @@ window.showBookingModal = (selectedSpecialist = null) => {
 
 window.closeBookingModal = () => {
     const modal = document.getElementById('bookingModal');
-    modal.style.display = 'flex';
+    modal.style.display = 'none';
     document.getElementById('bookingForm').reset();
     selectedTimeSlot = null;
 };

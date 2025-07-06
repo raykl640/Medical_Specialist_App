@@ -114,10 +114,25 @@
 
         .time-slot {
             padding: 8px 12px;
-            background: var(--luna-light);
+            background: var(--luna-accent);
             border-radius: 4px;
-            border: 1px solid var(--luna-accent);
             cursor: pointer;
+        }
+
+        .time-slot:hover:not(.booked):not(.unavailable) {
+            background: var(--luna-primary);
+            color: #fff;
+        }
+
+        .time-slot.selected {
+            background: var(--luna-deep);
+            color: #fff;
+        }
+
+        .time-slot.booked {
+            background: var(--luna-deep);
+            color: #fff;
+            cursor: not-allowed;
         }
 
         .time-slot.unavailable {
