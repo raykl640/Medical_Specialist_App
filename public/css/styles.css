@@ -51,6 +51,49 @@ body.fade-out {
   }
 }
 
+h1 {
+  font-size: 36px;
+  color: var(--luna-dark);
+  margin-bottom: 10px;
+}
+
+h2 {
+  font-size: 30px;
+  color: var(--luna-dark);
+  margin-bottom: 8px;
+}
+
+h3 {
+  font-size: 24px;
+  color: var(--luna-dark);
+  margin-bottom: 6px;
+}
+
+h4 {
+  font-size: 20px;
+  color: var(--luna-dark);
+  margin-bottom: 5px;
+}
+
+h5 {
+  font-size: 18px;
+  color: var(--luna-dark);
+  margin-bottom: 4px;
+}
+
+h6 {
+  font-size: 16px;
+  color: var(--luna-dark);
+  margin-bottom: 3px;
+}
+
+p {
+  font-size: 15px;
+  color: var(--luna-dark);
+  line-height: 1.6;
+  margin-bottom: 10px;
+}
+
 .main-app {
   display: none;
 }
@@ -459,3 +502,9 @@ button:disabled,
 }
 
 /*Modal */
+
+.header {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+}

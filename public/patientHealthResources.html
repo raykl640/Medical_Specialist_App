@@ -9,16 +9,6 @@
     <link rel="stylesheet" href="css/healthResources.css">
     <script src="https://kit.fontawesome.com/87385ae8db.js" crossorigin="anonymous"></script>
     <style>
-        /* Page Header */
-        h1 {
-            font-size: 24px;
-            color: var(--luna-deep);
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
         .welcome-message {
             margin-bottom: 25px;
             font-size: 15px;
@@ -29,7 +19,7 @@
         /* Search + Filter Section */
         .search-filter-section {
             margin-bottom: 25px;
-            background: #ffffff;
+            background: #eceeef;
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
@@ -70,26 +60,13 @@
             box-shadow: 0 0 3px var(--luna-accent);
         }
 
-        button.secondary {
-            background: #eee;
-            color: #333;
-            padding: 10px 14px;
-            border: none;
-            border-radius: 6px;
-            font-size: 14px;
-            cursor: pointer;
-            transition: background 0.2s ease;
-        }
-
-        button.secondary:hover {
-            background: #ddd;
-        }
 
         /* Tabs */
         .tabs {
             display: flex;
             gap: 10px;
             margin-bottom: 20px;
+            margin-top: 20px;
         }
 
         .tab {
@@ -312,7 +289,7 @@
         <div class="nav-section">
             <h3>Dashboard</h3>
             <ul>
-                <li><a href="patientDashboard.html" class="nav-link" data-page="dashboard">
+                <li><a href="index.html" class="nav-link" data-page="dashboard">
                         <span class="icon"><i class="fas fa-home"></i></span> Home</a></li>
                 <li><a href="appointments.html" class="nav-link" data-page="appointments">
                         <span class="icon"><i class="fas fa-calendar-alt"></i></span> My Appointments</a></li>
@@ -334,42 +311,40 @@
         </div>
     </div>
     <div id="mainContent" class="main-content">
-        <h1><i class="fas fa-book-medical"></i>Patient Health Resources</h1>
-
-        <div class="welcome-message">
+        <div class="header">
+            <h1><i class="fas fa-book-medical"></i> Patient Health Resources</h1>
             <p>Explore our library of trusted health resources. Find articles, guides, and information to support your
                 health journey. Bookmark your favorites for easy access later.</p>
-        </div>
-
-        <!-- Search and Filter Section -->
-        <div class="search-filter-section">
-            <div class="search-filter-row">
-                <div class="form-group">
-                    <label for="searchInput">Search Resources</label>
-                    <input type="text" id="searchInput" placeholder="Search by title, content, or tags...">
-                </div>
-                <div class="form-group">
-                    <label for="categoryFilter">Filter by Category</label>
-                    <select id="categoryFilter">
-                        <option value="">All Categories</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="sortBy">Sort By</label>
-                    <select id="sortBy">
-                        <option value="newest">Newest First</option>
-                        <option value="oldest">Oldest First</option>
-                        <option value="title">Title A-Z</option>
-                        <option value="category">Category</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>&nbsp;</label>
-                    <button type="button" id="clearFilters" class="secondary"><i class="fas fa-undo"></i> Clear</button>
+            <!-- Search and Filter Section -->
+            <div class="search-filter-section">
+                <div class="search-filter-row">
+                    <div class="form-group">
+                        <label for="searchInput">Search Resources</label>
+                        <input type="text" id="searchInput" placeholder="Search by title, content, or tags...">
+                    </div>
+                    <div class="form-group">
+                        <label for="categoryFilter">Filter by Category</label>
+                        <select id="categoryFilter">
+                            <option value="">All Categories</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="sortBy">Sort By</label>
+                        <select id="sortBy">
+                            <option value="newest">Newest First</option>
+                            <option value="oldest">Oldest First</option>
+                            <option value="title">Title A-Z</option>
+                            <option value="category">Category</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>&nbsp;</label>
+                        <button type="button" id="clearFilters" class="secondary"><i class="fas fa-undo"></i>
+                            Clear</button>
+                    </div>
                 </div>
             </div>
         </div>
-
         <div class="tabs">
             <div class="tab active" data-tab="all">All Resources</div>
             <div class="tab" data-tab="bookmarked">Bookmarked</div>

@@ -501,7 +501,7 @@ const ui = {
                 <div class="appointment-header">
                     <div class="appointment-info">
                         <h3><i class="fas fa-user-md"></i>${appointment.specialistName}</h3>
-                        <div class="specialty">🩺 ${appointment.specialty}</div>
+                        <div class="specialty"><i class="fas fa-stethoscope"></i> ${appointment.specialty}</div>
                     </div>
                     <div class="appointment-status status-${appointment.status}">
                         ${appointment.status}
@@ -866,15 +866,15 @@ window.showRescheduleModal = (appointmentId) => {
         <h3>Current Appointment</h3>
         <div class="appointment-details">
             <div class="detail-item">
-                <span>👨‍⚕️</span>
+                <span><i class="fas fa-user-md"></i></span>
                 <span><strong>Specialist:</strong> ${appointment.specialistName}</span>
             </div>
             <div class="detail-item">
-                <span>📅</span>
+                <span><i class="fas fa-calendar-alt"></i></span>
                 <span><strong>Date:</strong> ${utils.formatDate(appointment.date)}</span>
             </div>
             <div class="detail-item">
-                <span>🕒</span>
+                <span><i class="fas fa-clock"></i></span>
                 <span><strong>Time:</strong> ${appointment.time}</span>
             </div>
         </div>
