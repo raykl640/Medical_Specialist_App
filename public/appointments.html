@@ -11,6 +11,7 @@
         .content {
             margin-top: 20px;
         }
+
         .book-new-btn,
         .submit-btn {
             background: var(--luna-accent);
@@ -50,6 +51,7 @@
             display: none;
             position: fixed;
             inset: 0;
+            top: 25px;
             background: rgba(0, 0, 0, 0.4);
             z-index: 1000;
             justify-content: center;
@@ -89,7 +91,8 @@
             color: var(--luna-dark);
             font-weight: 600;
         }
-        .section{
+
+        .section {
             margin-top: 20px;
         }
 
@@ -126,8 +129,18 @@
 
         .close {
             font-size: 24px;
-            color: #999;
+            color: var(--luna-dark);
+            background: transparent;
+            border: none;
             cursor: pointer;
+            transition: color 0.2s ease;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .close:hover {
+            color: var(--luna-accent);
+            background-color: rgba(0, 0, 0, 0.05);
         }
 
         /* Appointment Card */
@@ -158,10 +171,19 @@
         }
 
         .specialty {
+            display: inline-flex;
+            margin-top: 8px;
+            align-items: center;
+            gap: 6px;
+            background-color: var(--luna-light);
+            color: var(--luna-deep);
+            padding: 4px 10px;
+            border-radius: 20px;
             font-size: 14px;
-            color: var(--luna-primary);
-            margin-top: 4px;
+            font-weight: 500;
+            border: 1px solid var(--luna-accent);
         }
+
 
         .appointment-status {
             text-transform: capitalize;
@@ -324,18 +346,18 @@
             <p>Manage your medical appointments, schedule new ones, and view your appointment history.</p>
 
             <button class="book-new-btn" onclick="showBookingModal()">
-                <i class="fas fa-plus"></i>Book New Appointment
+                <i class="fas fa-plus"></i> Book New Appointment
             </button>
         </div>
         <div class="content">
             <div class="section">
-                <h2><i class="fas fa-calendar-check"></i>Upcoming Appointments</h2>
+                <h2><i class="fas fa-calendar-check"></i> Upcoming Appointments</h2>
                 <div id="upcomingAppointments">
                     <div class="loading">Loading upcoming appointments...</div>
                 </div>
             </div>
             <div class="section">
-                <h2><i class="fas fa-file-medical"></i>Past Appointments</h2>
+                <h2><i class="fas fa-file-medical"></i> Past Appointments</h2>
                 <div id="pastAppointments">
                     <div class="loading">Loading appointment history...</div>
                 </div>
@@ -350,46 +372,46 @@
                 <div class="modal-body">
                     <form id="bookingForm">
                         <div class="form-group">
-                            <label for="clinicSelect"><i class="fas fa-hospital"></i>Select Clinic:</label>
+                            <label for="clinicSelect"><i class="fas fa-hospital"></i> Select Clinic:</label>
                             <select id="clinicSelect" required>
                                 <option value="">Choose a clinic...</option>
                             </select>
                         </div>
 
                         <div class="form-group">
-                            <label for="specialistSelect"><i class="fas fa-user-md"></i>Select Specialist:</label>
+                            <label for="specialistSelect"><i class="fas fa-user-md"></i> Select Specialist:</label>
                             <select id="specialistSelect" required disabled>
                                 <option value="">First select a clinic...</option>
                             </select>
                         </div>
 
                         <div class="form-group">
-                            <label for="appointmentDate"><i class="fas fa-calendar-alt"></i>Appointment Date:</label>
+                            <label for="appointmentDate"><i class="fas fa-calendar-alt"></i> Appointment Date:</label>
                             <input type="date" id="appointmentDate" required>
                         </div>
 
                         <div class="form-group">
-                            <label><i class="fas fa-clock"></i>Available Time Slots:</label>
+                            <label><i class="fas fa-clock"></i> Available Time Slots:</label>
                             <div id="timeSlots" class="time-slots-grid">
                                 <div class="time-slot unavailable">Select date first</div>
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label for="appointmentReason"><i class="fas fa-pen"></i>Reason for Visit:</label>
+                            <label for="appointmentReason"><i class="fas fa-pen"></i> Reason for Visit:</label>
                             <textarea id="appointmentReason" rows="3"
                                 placeholder="Describe your symptoms or reason for the appointment..."></textarea>
                         </div>
 
                         <div class="form-group">
-                            <label for="patientNotes"><i class="fas fa-notes-medical"></i>Additional Notes
+                            <label for="patientNotes"><i class="fas fa-notes-medical"></i> Additional Notes
                                 (Optional):</label>
                             <textarea id="patientNotes" rows="2"
                                 placeholder="Any additional information you'd like to share..."></textarea>
                         </div>
 
                         <button type="submit" class="submit-btn">
-                            <i class="fas fa-check-circle"></i>Book Appointment
+                            <i class="fas fa-check-circle"></i> Book Appointment
                         </button>
                     </form>
                 </div>
@@ -411,30 +433,48 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="newAppointmentDate"><i class="fas fa-calendar-alt"></i>New Appointment Date:</label>
+                        <label for="newAppointmentDate"><i class="fas fa-calendar-alt"></i> New Appointment
+                            Date:</label>
                         <input type="date" id="newAppointmentDate" required>
                     </div>
 
                     <div class="form-group">
-                        <label><i class="fas fa-clock"></i>Available Time Slots:</label>
+                        <label><i class="fas fa-clock"></i> Available Time Slots:</label>
                         <div id="rescheduleTimeSlots" class="time-slots-grid">
-                            <div class="time-slot unavailable">Select date first</div>
+                            <div class="time-slot unavailable"> Select date first</div>
                         </div>
                     </div>
 
                     <div class="form-group">
-                        <label for="rescheduleReason"><i class="fas fa-pen"></i>Reason for Rescheduling:</label>
+                        <label for="rescheduleReason"><i class="fas fa-pen"></i> Reason for Rescheduling:</label>
                         <textarea id="rescheduleReason" rows="3"
                             placeholder="Why are you rescheduling this appointment?"></textarea>
                     </div>
 
                     <button type="submit" class="submit-btn">
-                        <i class="fas fa-check-circle"></i>Confirm Reschedule
+                        <i class="fas fa-check-circle"></i> Confirm Reschedule
                     </button>
                 </form>
             </div>
         </div>
     </div>
+
+    <!-- Appointment Details Modal -->
+    <div id="appointmentModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-calendar-check"></i> Appointment Details</h2>
+                <span class="close"
+                    onclick="document.getElementById('appointmentModal').style.display='none'">&times;</span>
+            </div>
+            <div class="modal-body" id="appointmentModalBody">
+                <!-- Content gets injected here -->
+            </div>
+        </div>
+    </div>
+
+
+
 
     <script type="module" src="js/navigation.js"></script>
     <script type="module" src="js/patient/appointments.js"></script>

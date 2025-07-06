@@ -19,9 +19,11 @@
             font-size: 15px;
             color: #444;
         }
+
         .content {
             margin-top: 20px;
         }
+
         /* Filters Section */
         .filters {
             display: flex;
@@ -154,6 +156,189 @@
             gap: 10px;
             margin-bottom: 10px;
         }
+
+        /* Modal Overlay */
+        #clinicModal.modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: none;
+            /* Hidden by default */
+            align-items: center;
+            justify-content: center;
+            background: rgba(18, 18, 18, 0.21);
+            z-index: 1000;
+        }
+
+        /* Modal Content */
+        #clinicModal .modal-content {
+            background: #fff;
+            padding: 30px;
+            border-radius: 12px;
+            max-width: 700px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+            animation: fadeIn 0.25s ease;
+        }
+
+        /* Modal Header */
+        #clinicModal .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 20px;
+        }
+
+        #clinicModal .modal-header h2 {
+            font-size: 20px;
+            margin: 0;
+            color: var(--luna-primary);
+        }
+
+        #clinicModal .modal-header .close {
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--luna-dark);
+            padding: 4px 10px;
+            border-radius: 6px;
+        }
+
+        #clinicModal .modal-header .close:hover {
+            background: var(--luna-light);
+        }
+
+        /* Modal Body */
+        #clinicModal .modal-body {
+            color: #333;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        /* Clinic Info Section */
+        #clinicModal .clinic-info,
+        #clinicModal .specialists-section {
+            margin-bottom: 25px;
+        }
+
+        #clinicModal .clinic-info h3,
+        #clinicModal .specialists-section h3 {
+            color: var(--luna-primary);
+            margin-bottom: 12px;
+            font-size: 18px;
+        }
+
+        /* Specialist Cards */
+        .specialist-card {
+            background: #f9f9f9;
+            padding: 16px;
+            margin-bottom: 16px;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .specialist-card h4 {
+            margin: 0;
+            color: var(--luna-deep);
+        }
+
+        .specialist-card .specialty {
+            margin-top: 6px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .availability-section h5 {
+            margin-top: 12px;
+            font-size: 15px;
+            color: var(--luna-primary);
+        }
+
+        .time-slots {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 8px;
+        }
+
+        .time-slot {
+            background: var(--luna-light);
+            padding: 8px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            color: var(--luna-deep);
+            transition: background 0.2s ease;
+        }
+
+        .time-slot:hover {
+            background: var(--luna-accent);
+            color: white;
+        }
+
+        .time-slot.booked {
+            background: #ddd;
+            color: #999;
+            cursor: not-allowed;
+        }
+
+        /* Book Appointment Button */
+        .book-appointment-btn {
+            margin-top: 12px;
+            background-color: var(--luna-primary);
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: background 0.3s ease;
+        }
+
+        .book-appointment-btn:hover {
+            background-color: var(--luna-deep);
+        }
+
+        /* No Availability Notice */
+        .no-availability {
+            color: #888;
+            font-size: 14px;
+            background: #f1f5f9;
+            padding: 12px;
+            border-radius: 6px;
+        }
+
+        /* Fade In Animation */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.96);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            #clinicModal .modal-content {
+                padding: 20px;
+            }
+
+            .specialist-card {
+                padding: 14px;
+            }
+        }
     </style>
 </head>
 
@@ -253,13 +438,13 @@
             </div>
             <div class="modal-body">
                 <div class="clinic-info">
-                    <h3>📍 Clinic Information</h3>
+                    <h3><i class="fas fa-hospital-alt"></i> Clinic Information</h3>
                     <p><strong>Location:</strong> <span id="modalClinicLocation"></span></p>
                     <p><strong>Clinic ID:</strong> <span id="modalClinicId"></span></p>
                 </div>
 
                 <div class="specialists-section">
-                    <h3>👨‍⚕️ Available Specialists</h3>
+                    <h3><i class="fas fa-user-md"></i> Available Specialists</h3>
                     <div id="specialistsList">
                         <div class="loading">Loading specialists...</div>
                     </div>
@@ -513,7 +698,7 @@
                 <div class="specialist-count">
                     <i class="fas fa-user-md"></i> ${specialistCount} ${specialistCount === 1 ? 'Specialist' : 'Specialists'}
                 </div>
-                <button class="view-details-btn" onclick="event.stopPropagation()">
+                <button class="view-details-btn" onclick="ui.openClinicModal(${JSON.stringify(clinic)})">
                     View Details & Book Appointment
                 </button>
             `;
@@ -548,7 +733,12 @@
 
                 this.renderSpecialists(clinicSpecialists, specialistsList);
 
-                modal.style.display = 'block';
+                modal.style.display = 'flex';
+
+                document.querySelector('#clinicModal .close').onclick = () => {
+                    document.getElementById('clinicModal').style.display = 'none';
+                };
+
             },
 
             renderSpecialists(specialists, container) {
@@ -557,8 +747,7 @@
                 if (!specialists || specialists.length === 0) {
                     container.innerHTML = `
                 <div class="no-availability">
-                    ❌ No specialists available at this clinic currently.
-                    <br><small>Please check if the clinic_Id in specialists matches the clinic's Firebase document ID.</small>
+                    <i class="fas fa-user-md"></i> No specialists available at this clinic currently.
                 </div>
             `;
                     return;
@@ -575,8 +764,8 @@
                     specialistCard.innerHTML = `
                 <div class="specialist-header">
                     <div class="specialist-info">
-                        <h4>👨‍⚕️ ${utils.escapeHtml(specialist.name || 'Dr. Unknown')}</h4>
-                        <div class="specialty">🩺 ${utils.escapeHtml(specialist.specialty || 'General Practice')}</div>
+                        <h4><i class="fas fa-user-md"></i> ${utils.escapeHtml(specialist.name || 'Dr. Unknown')}</h4>
+                        <div class="specialty"><i class="fas fa-stethoscope"></i> ${utils.escapeHtml(specialist.specialty || 'General Practice')}</div>
                         <div style="font-size: 0.8em; color: #666; margin-top: 5px;">
                             Specialist ID: ${specialist.specialistId || specialist.id}
                         </div>
@@ -586,13 +775,13 @@
                     </div>
                 </div>
                 <div class="availability-section">
-                    <h5>🕒 Available Time Slots:</h5>
+                    <h5><i class="fas fa-clock"></i> Available Time Slots:</h5>
                     <div class="time-slots">
                         ${this.renderTimeSlots(specialist.availability)}
                     </div>
                 </div>
                 <button class="book-appointment-btn" onclick="bookAppointment('${specialist.id}', '${specialist.name}')">
-                    📅 Book Appointment
+                    <i class="fas fa-calendar-check"></i> Book Appointment
                 </button>
             `;
 
@@ -606,7 +795,7 @@
                 if (!availability || !Array.isArray(availability) || availability.length === 0) {
                     return `
                 <div class="no-availability">
-                    📅 No available time slots configured
+                    <i class="fas fa-calendar-times"></i> No available time slots configured
                     <br><small>Please contact the clinic directly</small>
                 </div>
             `;

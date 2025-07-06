@@ -37,29 +37,33 @@ let filteredResults = [];
 let currentPage = 1;
 const itemsPerPage = 5;
 
-// Modal
-const modal = document.createElement("div");
-modal.id = "modal";
-modal.style.cssText = `
+// Modal creation
+const labTestModal = document.createElement("div");
+labTestModal.id = "labTestModal";
+labTestModal.style.cssText = `
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(18, 18, 18, 0.21);
   display: none;
   align-items: center;
   justify-content: center;
   z-index: 1000;
 `;
-modal.innerHTML = `
-  <div style="background: white; padding: 20px; border-radius: 10px; max-width: 500px; width: 90%;">
-    <h3 id="modalTitle">Lab Test Details</h3>
-    <pre id="modalBody" style="white-space: pre-wrap;"></pre>
-    <button onclick="document.getElementById('modal').style.display='none'">Close</button>
+
+labTestModal.innerHTML = `
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3>Lab Test Details</h3>
+      <button class="close" onclick="document.getElementById('labTestModal').style.display='none'">&times;</button>
+    </div>
+    <div id="labTestModalBody" class="modal-body"></div>
   </div>
 `;
-document.body.appendChild(modal);
+
+document.body.appendChild(labTestModal);
 
 // View toggle setup
 let currentViewMode = "table";
@@ -225,7 +229,7 @@ function renderLabTests(data, viewMode) {
         <p><strong>Clinic:</strong> ${test.clinicName || ''}</p>
         <p><strong>Specialist:</strong> ${test.specialistName || ''}</p>
         <p><strong>Result:</strong> ${test.parameters?.[0]?.result || 'N/A'}</p>
-        <button onclick="showDetails('${encodeURIComponent(JSON.stringify(test))}')">View Record</button>
+        <button onclick="showLabTestDetails('${encodeURIComponent(JSON.stringify(test))}')">View Full Record</button>
       `;
       labTestsCards.appendChild(card);
     });
@@ -242,29 +246,34 @@ function renderLabTests(data, viewMode) {
         <td>${test.clinicName || ''}</td>
         <td>${test.specialistName || ''}</td>
         <td>${test.parameters?.[0]?.result || 'N/A'}</td>
-        <td><button onclick="showDetails('${encodeURIComponent(JSON.stringify(test))}')">View Record</button></td>
+        <td><button onclick="showLabTestDetails('${encodeURIComponent(JSON.stringify(test))}')">View Full Record</button></td>
       `;
       labTestsTbody.appendChild(tr);
     });
   }
 }
 
-window.showDetails = (encoded) => {
+window.showLabTestDetails = (encoded) => {
   const test = JSON.parse(decodeURIComponent(encoded));
-  const testDate = test.testDate?.toDate?.().toLocaleString() || "N/A";
+  const testDate = test.testDate?.seconds ? new Date(test.testDate.seconds * 1000).toLocaleDateString() : "N/A";
 
-  let details = `Test Name: ${test.testName}\n`;
-  details += `Date: ${testDate}\n`;
-  details += `Clinic: ${test.clinicName}\n`;
-  details += `Specialist: ${test.specialistName}\n\n`;
+  let body = `
+    <div class="modal-row"><strong>Test Date:</strong> ${testDate}</div>
+    <div class="modal-row"><strong>Clinic:</strong> ${test.clinicName || 'N/A'}</div>
+    <div class="modal-row"><strong>Test Name:</strong> ${test.testName || 'N/A'}</div>
+    <div class="modal-row"><strong>Requested By:</strong> ${test.requestedBy || 'N/A'}</div>
+  `;
 
-  details += "Parameters:\n";
-  test.parameters?.forEach(p => {
-    details += `- ${p.name}: ${p.result} ${p.unit} (Ref: ${p.referenceRange})\n`;
-  });
+  if (Array.isArray(test.parameters)) {
+    body += `<div class="modal-row"><strong>Parameters:</strong><ul style="padding-left: 20px;">`;
+    test.parameters.forEach(p => {
+      body += `<li>${p.name || 'Unnamed'}: ${p.result || 'N/A'} ${p.unit || ''} (Ref: ${p.referenceRange || 'N/A'})</li>`;
+    });
+    body += `</ul></div>`;
+  }
 
-  document.getElementById("modalBody").textContent = details;
-  document.getElementById("modal").style.display = "flex";
+  document.getElementById("labTestModalBody").innerHTML = body;
+  document.getElementById("labTestModal").style.display = "flex";
 };
 
 // Event Listeners
