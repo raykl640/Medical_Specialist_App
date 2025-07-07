@@ -834,9 +834,9 @@
                         timeStr = `Slot ${index + 1}`;
                     }
 
+                    // Remove the onclick handler to make the button unclickable, but keep the same styling
                     return `
-                <div class="time-slot ${isBooked ? 'booked' : ''}" 
-                     onclick="${isBooked ? '' : `selectTimeSlot('${timeStr}')`}">
+                <div class="time-slot ${isBooked ? 'booked' : ''}">
                     ${timeStr} ${isBooked ? '(Booked)' : ''}
                 </div>
             `;

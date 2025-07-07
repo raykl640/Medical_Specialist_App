@@ -82,7 +82,7 @@ onAuthStateChanged(auth, async (user) => {
             ${(tip.tags || []).map(tag => `<span class='resource-tag'>${tag}</span>`).join('')}
           </div>
           <div class="resource-actions">
-            <button class="btn-small btn-view" onclick="window.location.href='patientHealthResources.html?id=${tip.id}'">
+            <button class="btn-small btn-view" onclick="viewResourceFromDashboard('${tip.id}')">
               <i class="fas fa-eye"></i> View
             </button>
           </div>
@@ -162,4 +162,10 @@ onAuthStateChanged(auth, async (user) => {
   } catch (e) {
     document.getElementById("upcomingAppointmentSection").innerHTML = `<h3>Upcoming Appointment</h3><div class='appointment-card'><div>Error loading appointment.</div></div>`;
   }
-}); 
+});
+
+// Add this global function to set the resource id in sessionStorage and redirect
+window.viewResourceFromDashboard = function(resourceId) {
+  sessionStorage.setItem('viewResourceId', resourceId);
+  window.location.href = 'patientHealthResources.html';
+}

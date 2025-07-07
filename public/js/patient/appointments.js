@@ -7,7 +7,10 @@ import {
     doc,
     getDocs,
     getFirestore,
+    addDoc as logAddDoc,
+    collection as logCollection,
     query,
+    serverTimestamp,
     Timestamp,
     updateDoc,
     where
@@ -22,7 +25,6 @@ const firebaseConfig = {
     appId: "1:990201081362:web:273dbe33edbbee6f2bb2cb",
     measurementId: "G-ECMD5067CE"
 };
-import { collection as logCollection, addDoc as logAddDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js";
 
 
 // Initialize Firebase
@@ -962,6 +964,13 @@ async function startApp() {
             sessionStorage.removeItem('selectedSpecialist');
             // Show booking modal with pre-selected specialist
             showBookingModal(specialist);
+        }
+
+        // Check for showBookingModal flag from index.html
+        const showBookingModalFlag = sessionStorage.getItem('showBookingModal');
+        if (showBookingModalFlag === 'true') {
+            sessionStorage.removeItem('showBookingModal');
+            showBookingModal();
         }
 
         // Wait for auth state

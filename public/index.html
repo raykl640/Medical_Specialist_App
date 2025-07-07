@@ -161,7 +161,7 @@
             <section class="dashboard-section" id="quickActionsSection">
                 <h3>Quick Actions</h3>
                 <div class="quick-actions">
-                    <a href="appointments.html" class="quick-btn">Book Appointment</a>
+                    <a href="appointments.html" class="quick-btn" id="bookAppointmentBtn">Book Appointment</a>
                     <a href="patientsClinics.html" class="quick-btn">Clinics</a>
                     <a href="medicalHistory.html" class="quick-btn">Medical History</a>
                     <a href="patientMedications.html" class="quick-btn">Prescriptions</a>
@@ -178,6 +178,19 @@
     <script type="module" src="js/patient/appointments.js"></script>
     <script type="module" src="js/patient/healthResources.js"></script>
     <script type="module" src="js/patient/dashboard.js"></script>
+    <script>
+      // Add this script to handle Book Appointment button
+      document.addEventListener('DOMContentLoaded', function() {
+        const bookBtn = document.getElementById('bookAppointmentBtn');
+        if (bookBtn) {
+          bookBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            sessionStorage.setItem('showBookingModal', 'true');
+            window.location.href = 'appointments.html';
+          });
+        }
+      });
+    </script>
     <script src="https://cdn.botpress.cloud/webchat/v3.0/inject.js"></script>
     <script src="https://files.bpcontent.cloud/2025/06/15/12/20250615120138-GUVYWBFG.js"></script>
 </body>

@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, collection, getDocs, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { collection, doc, getDoc, getDocs, getFirestore, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 const firebaseConfig = {
     apiKey: "AIzaSyBWkXxtI9514_YD6H4kQ6IgltPoSSf7W80",
     authDomain: "medical-specialist-app-d3a46.firebaseapp.com",
@@ -140,6 +140,12 @@ const ui = {
             t.classList.toggle('active', t.dataset.tab === tab);
         });
         searchFilter.applyFilters();
+    },
+    openResourceModalById(resourceId) {
+        const resource = allResources.find(r => r.id === resourceId);
+        if (resource) {
+            window.viewResource(resourceId);
+        }
     }
 };
 
@@ -341,5 +347,22 @@ document.addEventListener('keydown', function (event) {
     if (event.ctrlKey && event.key === 'k') {
         event.preventDefault();
         document.getElementById('searchInput').focus();
+    }
+});
+
+// --- On page load, check for viewResourceId flag ---
+document.addEventListener('DOMContentLoaded', function() {
+    const viewResourceId = sessionStorage.getItem('viewResourceId');
+    if (viewResourceId) {
+        sessionStorage.removeItem('viewResourceId');
+        // Wait for resources to load, then open modal
+        const checkAndOpen = () => {
+            if (allResources && allResources.length > 0) {
+                ui.openResourceModalById(viewResourceId);
+            } else {
+                setTimeout(checkAndOpen, 100);
+            }
+        };
+        checkAndOpen();
     }
 });
