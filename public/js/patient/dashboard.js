@@ -126,7 +126,7 @@ onAuthStateChanged(auth, async (user) => {
           <div class="appointment-header">
             <div class="appointment-info">
               <h3><i class="fas fa-user-md"></i> ${closest.specialistName || "Specialist Name"}</h3>
-              <div class="specialty">🩺 ${closest.specialty || "Specialty"}</div>
+              <div class="specialty"><i class="fas fa-stethoscope"></i> ${closest.specialty || "Specialty"}</div>
             </div>
             <div class="appointment-status status-confirmed">
               Confirmed
